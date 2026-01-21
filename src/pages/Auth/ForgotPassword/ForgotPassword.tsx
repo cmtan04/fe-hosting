@@ -12,7 +12,11 @@ export const ForgotPassword = () => {
   const navigate = useNavigate();
 
   const onSubmit = () => {
-    navigate(ROUTER_PATH.DASH_BOARD);
+    navigate(ROUTER_PATH.VERIFY_EMAIL, {
+      state: {
+        email: form.getFieldValue("email"),
+      },
+    });
   };
   return (
     <div className="auth">

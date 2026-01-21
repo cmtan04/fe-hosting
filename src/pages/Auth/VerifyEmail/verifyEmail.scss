@@ -1,6 +1,6 @@
 @import "../../../color.scss";
 
-.forgot_password {
+.verify_email {
   position: absolute;
   z-index: 12;
   top: 200px;
@@ -52,6 +52,14 @@
         line-height: 1.5;
         font-family: $font_family_1;
       }
+
+      .email {
+        font-weight: 700;
+        color: $color-text-primary;
+        font-size: 14px;
+        line-height: 1.5;
+        font-family: $font_family_1;
+      }
     }
 
     &-3 {
@@ -59,6 +67,40 @@
         display: flex;
         flex-direction: column;
         gap: 24px;
+
+        .ant-row {
+          flex-direction: column;
+          gap: 24px;
+          height: fit-content;
+
+          .ant-col {
+            height: fit-content;
+            flex: auto;
+
+            .ant-form-item-explain-error {
+              text-align: center;
+              margin-top: 12px;
+            }
+          }
+
+          .ant-form-item-label {
+            label {
+              font-weight: 500;
+              color: $color-text-primary;
+              font-size: 14px;
+              line-height: 1.5;
+              font-family: $font_family_1;
+              flex-direction: row-reverse;
+              justify-content: flex-end;
+              gap: 4px;
+              width: 100%;
+
+              &::after {
+                content: "";
+              }
+            }
+          }
+        }
         .button-submit {
           width: 100%;
           margin-bottom: 24px;
