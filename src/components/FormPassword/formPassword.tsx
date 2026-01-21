@@ -2,6 +2,8 @@ import { Form, type FormItemProps } from "antd";
 import Password from "antd/es/input/Password";
 import type { ReactNode } from "react";
 import "./formPassword.scss";
+import { useNavigate } from "react-router-dom";
+import { ROUTER_PATH } from "../../router/Route";
 
 interface IFormPassword {
   label: string;
@@ -38,11 +40,20 @@ export const FormPassword = ({
   status,
   visibilityToggle = true,
 }: IFormPassword) => {
+  const navigate = useNavigate();
+
   return (
     <div className={`form-input ${vertical ? "form-input--vertical" : ""}`}>
       <div className="label">
         <span className="label__right">{label}</span>
-        <span className="label__left">{subLabel}</span>
+        <span
+          className="label__left"
+          onClick={() => {
+            navigate(ROUTER_PATH.FORGOT_PASSWORD);
+          }}
+        >
+          {subLabel}
+        </span>
       </div>
       <Form.Item
         name={name}
