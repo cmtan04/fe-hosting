@@ -39,29 +39,30 @@ export const FormPassword = ({
   visibilityToggle = true,
 }: IFormPassword) => {
   return (
-    <Form.Item
-      name={name}
-      className={`form-input ${vertical ? "form-input--vertical" : ""}`}
-      {...formItemProps}
-      labelCol={vertical ? { span: 24 } : undefined}
-    >
+    <div className={`form-input ${vertical ? "form-input--vertical" : ""}`}>
       <div className="label">
         <span className="label__right">{label}</span>
         <span className="label__left">{subLabel}</span>
       </div>
-      <Password
-        className="form-input__password"
-        placeholder={placeholder}
-        size={size}
-        prefix={prefix}
-        suffix={suffix}
-        disabled={disabled}
-        allowClear={allowClear}
-        bordered={bordered}
-        status={status}
-        visibilityToggle={visibilityToggle}
-        {...passwordProps}
-      />
-    </Form.Item>
+      <Form.Item
+        name={name}
+        {...formItemProps}
+        labelCol={vertical ? { span: 24 } : undefined}
+      >
+        <Password
+          className="form-input__password"
+          placeholder={placeholder}
+          size={size}
+          prefix={prefix}
+          suffix={suffix}
+          disabled={disabled}
+          allowClear={allowClear}
+          bordered={bordered}
+          status={status}
+          visibilityToggle={visibilityToggle}
+          {...passwordProps}
+        />
+      </Form.Item>
+    </div>
   );
 };
