@@ -7,6 +7,7 @@ import { FormInput } from "../../../components/FormInput/formInput";
 import { EMAIL_REGEX } from "../../../common/constants/regexs";
 import { useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "../../../router/Route";
+import { AUTH_FLOWTYPE } from "../../../common/constants/constants";
 export const ForgotPassword = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export const ForgotPassword = () => {
     navigate(ROUTER_PATH.VERIFY_EMAIL, {
       state: {
         email: form.getFieldValue("email"),
+        type: AUTH_FLOWTYPE.FORGOT,
       },
     });
   };

@@ -2,7 +2,7 @@ import { Button, Form } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import background from "../../../assets/images/auth/authBackGround.jpg";
 import back from "../../../assets/svg/icn-back_black.svg";
-import { OTP_REGEX } from "../../../common/constants/regexs";
+import { AUTH_FLOWTYPE } from "../../../common/constants/constants";
 import OTPInput from "../../../components/FormOtp/formOtp";
 import { ROUTER_PATH } from "../../../router/Route";
 import "../auth.scss";
@@ -14,12 +14,15 @@ export const VerifyEmail = () => {
   const location = useLocation();
 
   const onSubmit = () => {
-    navigate(ROUTER_PATH.DASH_BOARD, {
-      state: {
-        email: form.getFieldValue("email"),
-      },
-    });
+    if (location?.state?.type === AUTH_FLOWTYPE.SIGN_IN) {
+      navigate(ROUTER_PATH.DASH_BOARD);
+    } else if (location?.state?.type === AUTH_FLOWTYPE.SIGN_UP) {
+      navigate(ROUTER_PATH.SIGN_IN);
+    } else {
+      navigate(ROUTER_PATH.RESET_PASSWORD);
+    }
   };
+
   return (
     <div className="auth">
       <div className="auth__banner">
