@@ -7,11 +7,20 @@ import { FormPassword } from "../../../components/FormPassword/formPassword";
 import { ROUTER_PATH } from "../../../router/Route";
 import { useNavigate } from "react-router";
 import { EMAIL_REGEX, PASSWORD_REGEX } from "../../../common/constants/regexs";
+import { AUTH_FLOWTYPE } from "../../../common/constants/constants";
 
 export const SignUp = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const onSubmit = () => {};
+
+  const onSubmit = () => {
+    navigate(ROUTER_PATH.VERIFY_EMAIL, {
+      state: {
+        email: form.getFieldValue("email"),
+        type: AUTH_FLOWTYPE.SIGN_UP,
+      },
+    });
+  };
 
   return (
     <div className="auth">
