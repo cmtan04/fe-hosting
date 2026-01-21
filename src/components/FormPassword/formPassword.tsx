@@ -1,12 +1,12 @@
-import { Form } from "antd";
+import { Form, type FormItemProps } from "antd";
 import Password from "antd/es/input/Password";
-import "./formPassword.scss";
 import type { ReactNode } from "react";
-import type { FormItemInputProps } from "antd/es/form/FormItemInput";
+import "./formPassword.scss";
 
 interface IFormPassword {
   label: string;
-  formItemProps?: FormItemInputProps;
+  subLabel?: string;
+  formItemProps?: FormItemProps;
   passwordProps?: any;
   name: string;
   vertical?: boolean;
@@ -28,6 +28,7 @@ export const FormPassword = ({
   name,
   vertical = false,
   placeholder,
+  subLabel,
   size = "middle",
   prefix,
   suffix,
@@ -39,12 +40,15 @@ export const FormPassword = ({
 }: IFormPassword) => {
   return (
     <Form.Item
-      label={label}
       name={name}
       className={`form-input ${vertical ? "form-input--vertical" : ""}`}
       {...formItemProps}
       labelCol={vertical ? { span: 24 } : undefined}
     >
+      <div className="label">
+        <span className="label__right">{label}</span>
+        <span className="label__left">{subLabel}</span>
+      </div>
       <Password
         className="form-input__password"
         placeholder={placeholder}

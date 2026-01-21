@@ -1,11 +1,10 @@
-import { Form } from "antd";
+import { Form, type FormItemProps } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import "./formTextArea.scss";
-import type { FormItemInputProps } from "antd/es/form/FormItemInput";
 
 interface IFormTextArea {
   label: string;
-  formItemProps?: FormItemInputProps;
+  formItemProps?: FormItemProps;
   textAreaProps?: any;
   name: string;
   vertical?: boolean;

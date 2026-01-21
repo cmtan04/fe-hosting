@@ -1,12 +1,11 @@
-import { Form } from "antd";
+import { Form, type FormItemProps } from "antd";
 import Search from "antd/es/transfer/search";
 import "./formSearch.scss";
-import type { FormItemInputProps } from "antd/es/form/FormItemInput";
 import type { ReactNode } from "react";
 
 interface IFormSearch {
   label: string;
-  formItemProps?: FormItemInputProps;
+  formItemProps?: FormItemProps;
   searchProps?: any;
   name: string;
   vertical?: boolean;

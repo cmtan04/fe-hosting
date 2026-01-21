@@ -11,11 +11,8 @@
       font-size: 14px;
       line-height: 1.5;
       font-family: $font_family_1;
-
-      &::before {
-        color: $color-red-5;
-        margin-right: 4px;
-      }
+      flex-direction: row-reverse;
+      gap: 4px;
     }
   }
 
