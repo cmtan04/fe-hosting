@@ -1,8 +1,8 @@
 import { Form } from "antd";
-import { FormItemInputProps } from "antd/es/form/FormItemInput";
 import Password from "antd/es/input/Password";
-import { ReactNode } from "react";
 import "./formPassword.scss";
+import type { ReactNode } from "react";
+import type { FormItemInputProps } from "antd/es/form/FormItemInput";
 
 interface IFormPassword {
   label: string;

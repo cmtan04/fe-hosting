@@ -1,7 +1,7 @@
-import { Form, Input, InputProps } from "antd";
-import { FormItemInputProps } from "antd/es/form/FormItemInput";
-import { ReactNode } from "react";
+import type { FormItemInputProps } from "antd/es/form/FormItemInput";
 import "./formInput.scss";
+import { Form, Input, type InputProps } from "antd";
+import type { ReactNode } from "react";
 
 interface IFormInput {
   label: string;

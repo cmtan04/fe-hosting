@@ -1,8 +1,8 @@
 import { Form } from "antd";
-import { FormItemInputProps } from "antd/es/form/FormItemInput";
 import InputNumber from "antd/es/input-number";
-import { ReactNode } from "react";
 import "./formInputNumber.scss";
+import type { FormItemInputProps } from "antd/es/form/FormItemInput";
+import type { ReactNode } from "react";
 
 interface IFormNumber {
   label: string;

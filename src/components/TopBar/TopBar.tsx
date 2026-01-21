@@ -1,8 +1,8 @@
-import { Button, Menu, MenuProps } from "antd";
 import { DashOutlined, DownOutlined } from "@ant-design/icons";
 import bgLogin from "../../assets/bg-login.jpg";
 import { FormSearch } from "../FormSearch/formSearch";
 import "./topbar.scss";
+import { Button, Menu, type MenuProps } from "antd";
 
 interface TopBarProps {
   onSearchSubmit: (value: any) => void;
