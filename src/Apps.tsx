@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { App as AntdApp, ConfigProvider } from "antd";
-import RouterWeb from "./router/routers";
+import RouterWeb from "./router/Routers";
 
 const App = () => {
   const queryClient = new QueryClient({

@@ -1,6 +1,6 @@
 import "../auth.scss";
 import "./signup.scss";
-import bgLogin from "../../../assets/bg-login.jpg";
+import background from "../../../assets/images/auth/authBackGround.jpg";
 import { Button, Form } from "antd";
 import { FormInput } from "../../../components/FormInput/formInput";
 import { FormPassword } from "../../../components/FormPassword/formPassword";
@@ -15,7 +15,7 @@ export const SignUp = () => {
   return (
     <div className="auth">
       <div className="auth__banner">
-        <img src={bgLogin} alt="" />
+        <img src={background} alt="" />
       </div>
       <div className="auth__layout sign_up">
         <Form form={form} onFinish={onSubmit} className="sign_up-form">

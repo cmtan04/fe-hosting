@@ -3,6 +3,7 @@ import { FormInput } from "../../../components/FormInput/formInput";
 import { FormPassword } from "../../../components/FormPassword/formPassword";
 import { useNavigate } from "react-router";
 import { ROUTER_PATH } from "../../../router/Route";
+import background from "../../../assets/images/auth/authBackGround.jpg";
 
 export const SignIn = () => {
   const [form] = Form.useForm();
@@ -13,7 +14,7 @@ export const SignIn = () => {
   return (
     <div className="auth">
       <div className="auth__banner">
-        {/* <img src={bgLogin} alt="" /> */}
+        <img src={background} alt="" />
       </div>
       <div className="auth__layout sign_in">
         <Form form={form} onFinish={onSubmit} className="sign_in-form">
