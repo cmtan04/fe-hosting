@@ -9,7 +9,7 @@ export const ROUTER_NAME = {
   VERIFY_EMAIL: "verify-email",
   //Authen ends
 
-  DASH_BOARD: "dash-board",
+  HOME: "home",
 };
 
 export const ROUTER_PATH = {
@@ -20,5 +20,5 @@ export const ROUTER_PATH = {
   RESET_PASSWORD: `${ROUTER}/${ROUTER_NAME.RESET_PASSWORD}`,
   VERIFY_EMAIL: `${ROUTER}/${ROUTER_NAME.VERIFY_EMAIL}`,
   //Authen ends
-  DASH_BOARD: `${ROUTER}/${ROUTER_NAME.DASH_BOARD}`,
+  HOME: `${ROUTER}/${ROUTER_NAME.HOME}`,
 };

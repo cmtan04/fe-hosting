@@ -15,7 +15,7 @@ export const VerifyEmail = () => {
 
   const onSubmit = () => {
     if (location?.state?.type === AUTH_FLOWTYPE.SIGN_IN) {
-      navigate(ROUTER_PATH.DASH_BOARD);
+      navigate(ROUTER_PATH.HOME);
     } else if (location?.state?.type === AUTH_FLOWTYPE.SIGN_UP) {
       navigate(ROUTER_PATH.SIGN_IN);
     } else {

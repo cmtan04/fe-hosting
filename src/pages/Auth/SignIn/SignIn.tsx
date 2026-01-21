@@ -10,7 +10,7 @@ export const SignIn = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const onSubmit = () => {
-    navigate(ROUTER_PATH.DASH_BOARD);
+    navigate(ROUTER_PATH.HOME);
   };
   return (
     <div className="auth">
