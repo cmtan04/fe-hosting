@@ -1,14 +1,9 @@
 import { DashOutlined, DownOutlined } from "@ant-design/icons";
-import bgLogin from "../../assets/bg-login.jpg";
-import { FormSearch } from "../FormSearch/formSearch";
-import "./topbar.scss";
 import { Button, Menu, type MenuProps } from "antd";
+import "./topbar.scss";
+import background from "../../assets/images/auth/authBackGround.jpg";
 
-interface TopBarProps {
-  onSearchSubmit: (value: any) => void;
-}
-
-export const TopBar = (props: TopBarProps) => {
+export const TopBar = () => {
   const items: MenuProps["items"] = [
     {
       key: "phimle",
@@ -138,20 +133,9 @@ export const TopBar = (props: TopBarProps) => {
     <div className="top__bar">
       <div className="left">
         <div className="top__bar-logo">
-          <img src={bgLogin} alt="Logo" />
+          <img src={background} alt="Logo" />
         </div>
 
-        <div className="top__bar-search">
-          <FormSearch
-            label=""
-            name="search"
-            allowClear
-            onSearch={(value) => {
-              props.onSearchSubmit(value);
-            }}
-            placeholder="Tìm kiếm phim, diễn viên"
-          />
-        </div>
         <div className="top__bar-menu">
           <Menu
             onClick={handleMenuClick}

@@ -17,7 +17,8 @@
     box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12);
     border-radius: 24px;
     width: 600px;
-    height: 60%;
+    height: fit-content;
+    min-height: 60%;
     padding: 24px 32px;
 
     .form {

@@ -35,7 +35,7 @@ export const SignUp = () => {
           <div className="form-row-2">
             <FormInput
               label="Họ tên"
-              name="account"
+              name="name"
               placeholder="Nhập họ tên của bạn"
               vertical={true}
             />

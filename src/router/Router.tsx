@@ -5,10 +5,12 @@ import { ROUTER_PATH } from "./Route";
 import { ForgotPassword } from "../pages/Auth/ForgotPassword/ForgotPassword";
 import { VerifyEmail } from "../pages/Auth/VerifyEmail/VerifyEmail";
 import { ResetPassword } from "../pages/Auth/ResetPassword/ResetPassword";
+import ProtectedRoute from "./ProtectedRoute";
+import { Home } from "../pages/Home/Home";
 
 export const WebRouter = () => (
   <Routes>
-    {/* Login */}
+    {/* Auth */}
     <Route path={ROUTER_PATH.SIGN_IN} element={<SignIn />}></Route>
     <Route path={ROUTER_PATH.SIGN_UP} element={<SignUp />}></Route>
     <Route
@@ -20,5 +22,14 @@ export const WebRouter = () => (
       path={ROUTER_PATH.RESET_PASSWORD}
       element={<ResetPassword />}
     ></Route>
+    {/* Auth */}
+
+    {/* Protected Router */}
+    <Route element={<ProtectedRoute />}>
+      {/* Home */}
+      <Route path={ROUTER_PATH.HOME} element={<Home />}></Route>
+      {/* Home */}
+    </Route>
+    {/* Protected Router */}
   </Routes>
 );
