@@ -1,12 +1,14 @@
-import { Form } from "antd";
+import { Form, type FormItemProps } from "antd";
 import Password from "antd/es/input/Password";
-import "./formPassword.scss";
 import type { ReactNode } from "react";
-import type { FormItemInputProps } from "antd/es/form/FormItemInput";
+import "./formPassword.scss";
+import { useNavigate } from "react-router-dom";
+import { ROUTER_PATH } from "../../router/Route";
 
 interface IFormPassword {
   label: string;
-  formItemProps?: FormItemInputProps;
+  subLabel?: string;
+  formItemProps?: FormItemProps;
   passwordProps?: any;
   name: string;
   vertical?: boolean;
@@ -28,6 +30,7 @@ export const FormPassword = ({
   name,
   vertical = false,
   placeholder,
+  subLabel,
   size = "middle",
   prefix,
   suffix,
@@ -37,27 +40,40 @@ export const FormPassword = ({
   status,
   visibilityToggle = true,
 }: IFormPassword) => {
+  const navigate = useNavigate();
+
   return (
-    <Form.Item
-      label={label}
-      name={name}
-      className={`form-input ${vertical ? "form-input--vertical" : ""}`}
-      {...formItemProps}
-      labelCol={vertical ? { span: 24 } : undefined}
-    >
-      <Password
-        className="form-input__password"
-        placeholder={placeholder}
-        size={size}
-        prefix={prefix}
-        suffix={suffix}
-        disabled={disabled}
-        allowClear={allowClear}
-        bordered={bordered}
-        status={status}
-        visibilityToggle={visibilityToggle}
-        {...passwordProps}
-      />
-    </Form.Item>
+    <div className={`form-input ${vertical ? "form-input--vertical" : ""}`}>
+      <div className="label">
+        <span className="label__right">{label}</span>
+        <span
+          className="label__left"
+          onClick={() => {
+            navigate(ROUTER_PATH.FORGOT_PASSWORD);
+          }}
+        >
+          {subLabel}
+        </span>
+      </div>
+      <Form.Item
+        name={name}
+        {...formItemProps}
+        labelCol={vertical ? { span: 24 } : undefined}
+      >
+        <Password
+          className="form-input__password"
+          placeholder={placeholder}
+          size={size}
+          prefix={prefix}
+          suffix={suffix}
+          disabled={disabled}
+          allowClear={allowClear}
+          bordered={bordered}
+          status={status}
+          visibilityToggle={visibilityToggle}
+          {...passwordProps}
+        />
+      </Form.Item>
+    </div>
   );
 };

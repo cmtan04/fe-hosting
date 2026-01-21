@@ -6,11 +6,21 @@ import { FormInput } from "../../../components/FormInput/formInput";
 import { FormPassword } from "../../../components/FormPassword/formPassword";
 import { ROUTER_PATH } from "../../../router/Route";
 import { useNavigate } from "react-router";
+import { EMAIL_REGEX, PASSWORD_REGEX } from "../../../common/constants/regexs";
+import { AUTH_FLOWTYPE } from "../../../common/constants/constants";
 
 export const SignUp = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const onSubmit = () => {};
+
+  const onSubmit = () => {
+    navigate(ROUTER_PATH.VERIFY_EMAIL, {
+      state: {
+        email: form.getFieldValue("email"),
+        type: AUTH_FLOWTYPE.SIGN_UP,
+      },
+    });
+  };
 
   return (
     <div className="auth">
@@ -26,20 +36,39 @@ export const SignUp = () => {
             <FormInput
               label="Họ tên"
               name="account"
-              placeholder="Nhập họ tên đăng ký"
+              placeholder="Nhập họ tên của bạn"
               vertical={true}
             />
             <FormInput
-              label="Tài khoản"
+              label="Email"
               name="account"
-              placeholder="Nhập tài khoản đăng ký"
+              placeholder="Nhập email của bạn"
               vertical={true}
+              formItemProps={{
+                rules: [
+                  { required: true, message: "Vui lòng nhập email của bạn." },
+                  {
+                    pattern: EMAIL_REGEX,
+                    message: "Vui lòng nhập đúng định dạng email.",
+                  },
+                ],
+              }}
             />
             <FormPassword
               name="password"
               label="Mật khẩu"
               placeholder="Nhập mật khẩu đăng ký"
               vertical={true}
+              formItemProps={{
+                rules: [
+                  { required: true, message: "Vui lòng nhập mật khẩu." },
+                  {
+                    pattern: PASSWORD_REGEX,
+                    message:
+                      "Mật khẩu phải có ít nhất 8 ký tự, 1 chữ in hoa và 1 ký tự đặc biệt.",
+                  },
+                ],
+              }}
             />
           </div>
           <div className="form-row-3">
@@ -54,7 +83,7 @@ export const SignUp = () => {
                 className="sign-up-link"
                 onClick={() => navigate(ROUTER_PATH.SIGN_IN)}
               >
-                Đăng nhập ngay
+                Đăng nhập
               </span>
             </p>
           </div>

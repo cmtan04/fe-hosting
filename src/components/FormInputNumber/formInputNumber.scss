@@ -9,7 +9,8 @@
       color: $color-text-primary;
       font-size: 14px;
       line-height: 1.5;
-
+      flex-direction: row-reverse;
+      gap: 4px;
       &::before {
         color: $color-red-5;
         margin-right: 4px;
