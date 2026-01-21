@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
-import clear from "../assets/svg/icn-clear.svg";
+import clear from "../../src/assets/svg/icn-clear.svg";
 import "../index.scss";
 interface Notification {
   id: string;
