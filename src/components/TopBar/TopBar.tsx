@@ -1,62 +1,75 @@
-import { DownOutlined } from "@ant-design/icons";
 import { Menu, type MenuProps } from "antd";
 import { useNavigate } from "react-router-dom";
-import menu from "../../assets/svg/icn-menu.svg";
 import background from "../../assets/images/auth/authBackGround.jpg";
-import "./topbar.scss";
 import down from "../../assets/svg/icn-down_single.svg";
+import menu from "../../assets/svg/icn-menu.svg";
+import "./topbar.scss";
+import { ROUTER_PATH } from "../../router/Route";
+import { childrenPath } from "../../common/contexts/helper";
 
 export const TopBar = () => {
   const navigate = useNavigate();
 
   const items: MenuProps["items"] = [
     {
-      key: "/home",
+      key: ROUTER_PATH.HOME,
       label: "Trang chủ",
     },
     {
-      key: "/home/rent",
+      key: ROUTER_PATH.RENT,
       label: (
         <span>
           Cho thuê <img src={down} alt="Logo" />
         </span>
       ),
       children: [
-        { key: "/home/rent/room", label: "Phòng trọ" },
-        { key: "/home/rent/apartment", label: "Căn hộ" },
-        { key: "/home/rent/office", label: "Văn phòng" },
-        { key: "/home/rent/house", label: "Nhà nguyên căn" },
-        { key: "/home/rent/location", label: "Địa điểm tổ chức" },
+        { key: childrenPath(ROUTER_PATH.RENT, "room"), label: "Phòng trọ" },
+        { key: childrenPath(ROUTER_PATH.RENT, "room"), label: "Căn hộ" },
+        { key: childrenPath(ROUTER_PATH.RENT, "room"), label: "Văn phòng" },
+        {
+          key: childrenPath(ROUTER_PATH.RENT, "room"),
+          label: "Nhà nguyên căn",
+        },
+        {
+          key: childrenPath(ROUTER_PATH.RENT, "room"),
+          label: "Địa điểm tổ chức",
+        },
       ],
     },
     {
-      key: "/home/location",
+      key: ROUTER_PATH.LOCATION,
       label: (
         <span>
           Khu vực <img src={down} alt="Logo" />
         </span>
       ),
       children: [
-        { key: "/home/location/hcm", label: "TP. Hồ Chí Minh" },
-        { key: "/home/location/hn", label: "Hà Nội" },
-        { key: "/home/location/dn", label: "Đà Nẵng" },
-        { key: "/home/location/bd", label: "Bình Dương" },
+        {
+          key: childrenPath(ROUTER_PATH.LOCATION, "north"),
+          label: "Miền Bắc",
+        },
+        {
+          key: childrenPath(ROUTER_PATH.LOCATION, "middle"),
+          label: "Miền Trung",
+        },
+        { key: childrenPath(ROUTER_PATH.LOCATION, "south"), label: "Miền Nam" },
+        { key: childrenPath(ROUTER_PATH.LOCATION, "easth"), label: "Miền Tây" },
       ],
     },
     {
-      key: "/map",
+      key: ROUTER_PATH.MAP,
       label: "Bản đồ",
     },
     {
-      key: "/support",
+      key: ROUTER_PATH.SUPPORT,
       label: (
         <span>
           Hỗ trợ <img src={down} alt="Logo" />
         </span>
       ),
       children: [
-        { key: "/home/support/chat", label: "Nhắn tin với Bookings" },
-        { key: "/home/support/docs", label: "Hướng dẫn" },
+        { key: ROUTER_PATH.SUPPORT, label: "Nhắn tin với Bookings" },
+        { key: ROUTER_PATH.DOCS, label: "Hướng dẫn" },
       ],
     },
   ];
