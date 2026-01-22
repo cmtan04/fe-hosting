@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import menu from "../../assets/svg/icn-menu.svg";
 import background from "../../assets/images/auth/authBackGround.jpg";
 import "./topbar.scss";
+import down from "../../assets/svg/icn-down_single.svg";
 
 export const TopBar = () => {
   const navigate = useNavigate();
@@ -14,32 +15,32 @@ export const TopBar = () => {
       label: "Trang chủ",
     },
     {
-      key: "/rent",
+      key: "/home/rent",
       label: (
         <span>
-          Cho thuê <DownOutlined />
+          Cho thuê <img src={down} alt="Logo" />
         </span>
       ),
       children: [
-        { key: "/rent/room", label: "Phòng trọ" },
-        { key: "/rent/apartment", label: "Căn hộ" },
-        { key: "/rent/office", label: "Văn phòng" },
-        { key: "/rent/house", label: "Nhà nguyên căn" },
-        { key: "/rent/location", label: "Địa điểm tổ chức" },
+        { key: "/home/rent/room", label: "Phòng trọ" },
+        { key: "/home/rent/apartment", label: "Căn hộ" },
+        { key: "/home/rent/office", label: "Văn phòng" },
+        { key: "/home/rent/house", label: "Nhà nguyên căn" },
+        { key: "/home/rent/location", label: "Địa điểm tổ chức" },
       ],
     },
     {
-      key: "/location",
+      key: "/home/location",
       label: (
         <span>
-          Khu vực <DownOutlined />
+          Khu vực <img src={down} alt="Logo" />
         </span>
       ),
       children: [
-        { key: "/location/hcm", label: "TP. Hồ Chí Minh" },
-        { key: "/location/hn", label: "Hà Nội" },
-        { key: "/location/dn", label: "Đà Nẵng" },
-        { key: "/location/bd", label: "Bình Dương" },
+        { key: "/home/location/hcm", label: "TP. Hồ Chí Minh" },
+        { key: "/home/location/hn", label: "Hà Nội" },
+        { key: "/home/location/dn", label: "Đà Nẵng" },
+        { key: "/home/location/bd", label: "Bình Dương" },
       ],
     },
     {
@@ -48,7 +49,15 @@ export const TopBar = () => {
     },
     {
       key: "/support",
-      label: "Hỗ trợ",
+      label: (
+        <span>
+          Hỗ trợ <img src={down} alt="Logo" />
+        </span>
+      ),
+      children: [
+        { key: "/home/support/chat", label: "Nhắn tin với Bookings" },
+        { key: "/home/support/docs", label: "Hướng dẫn" },
+      ],
     },
   ];
 
