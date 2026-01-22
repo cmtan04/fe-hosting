@@ -78,6 +78,8 @@ export const TopBar = () => {
     navigate(e.key);
   };
 
+  const handleMyLocationClick = () => {};
+
   return (
     <div className="top__bar">
       <div className="left">
@@ -96,7 +98,7 @@ export const TopBar = () => {
         </div>
       </div>
       <div className="right">
-        <div className="top__bar-host">
+        <div className="top__bar-host" onClick={() => handleMyLocationClick()}>
           <span>Địa điểm của tôi</span>
         </div>
         <div className="top__bar-account">
