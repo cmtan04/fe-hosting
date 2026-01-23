@@ -1,1 +1,81 @@
 @import "../../../color.scss";
+
+.home_page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100dvh;
+  overflow: auto;
+  &-row {
+    &-1 {
+      position: relative;
+      height: 50%;
+      overflow: hidden;
+      padding: 0 5%;
+      .row {
+        &__background {
+          position: absolute;
+          top: 0px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 0;
+        }
+
+        &__content {
+          position: relative;
+          z-index: 3;
+          width: 50%;
+          height: fit-content;
+          padding: 4% 6%;
+
+          &-title {
+            font-weight: 600;
+            color: $text_color_2;
+            font-size: 32px;
+            line-height: 1.5;
+            font-family: $font_family_1;
+          }
+
+          &-description {
+            font-weight: 400;
+            color: $text_color_2;
+            font-size: 14px;
+            line-height: 1.5;
+            font-family: $font_family_1;
+          }
+
+          &-search {
+            margin-top: 32px;
+            padding: 0 18% 0 0;
+          }
+        }
+      }
+    }
+
+    &-2 {
+      position: relative;
+      width: 100%;
+      height: 50%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      .row {
+        &__background {
+          position: absolute;
+          top: 0px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 0;
+        }
+        &__content {
+          position: relative;
+          z-index: 3;
+          width: 50%;
+          height: fit-content;
+          padding: 4% 6%;
+        }
+      }
+    }
+  }
+}

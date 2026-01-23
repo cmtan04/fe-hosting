@@ -3,16 +3,16 @@ import { useNavigate } from "react-router-dom";
 import background from "../../assets/images/auth/authBackGround.jpg";
 import down from "../../assets/svg/icn-down_single.svg";
 import menu from "../../assets/svg/icn-menu.svg";
-import "./topbar.scss";
-import { ROUTER_PATH } from "../../router/Route";
 import { childrenPath } from "../../common/contexts/helper";
+import { ROUTER_PATH } from "../../router/Route";
+import "./topbar.scss";
 
 export const TopBar = () => {
   const navigate = useNavigate();
 
   const items: MenuProps["items"] = [
     {
-      key: ROUTER_PATH.HOME,
+      key: ROUTER_PATH.HOME_PAGE,
       label: "Trang chủ",
     },
     {

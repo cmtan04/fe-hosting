@@ -7,6 +7,7 @@ import { VerifyEmail } from "../pages/Auth/VerifyEmail/VerifyEmail";
 import { ResetPassword } from "../pages/Auth/ResetPassword/ResetPassword";
 import ProtectedRoute from "./ProtectedRoute";
 import { Home } from "../pages/Home/Home";
+import { HomePage } from "../pages/Home/HomePage/HomePage";
 
 export const WebRouter = () => (
   <Routes>
@@ -27,7 +28,9 @@ export const WebRouter = () => (
     {/* Protected Router */}
     <Route element={<ProtectedRoute />}>
       {/* Home */}
-      <Route path={ROUTER_PATH.HOME} element={<Home />}></Route>
+      <Route path={ROUTER_PATH.HOME} element={<Home />}>
+        <Route path={ROUTER_PATH.HOME_PAGE} element={<HomePage />}></Route>
+      </Route>
       {/* Home */}
     </Route>
     {/* Protected Router */}
