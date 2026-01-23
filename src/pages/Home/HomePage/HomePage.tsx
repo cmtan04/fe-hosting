@@ -1,9 +1,8 @@
-import "./homePage.scss";
-import "../home.scss";
 import section1Back from "../../../assets/images/home/home-background2.jpg";
-import { FormSearch } from "../../../components/FormSearch/formSearch";
 import type { SuggestProps } from "../../../common/types/home";
-
+import { FormSearch } from "../../../components/FormSearch/formSearch";
+import "../home.scss";
+import "./homePage.scss";
 export const HomePage = () => {
   const suggestItem: SuggestProps[] = [
     {
@@ -46,7 +45,7 @@ export const HomePage = () => {
   return (
     <div className="home_page">
       <div className="home_page-row-1">
-        <img src={section1Back} alt="Logo" className="row__background" />
+        {/* <img src={frame1} alt="Logo" className="row__background" /> */}
         <div className="row__content">
           <h1 className="row__content-title">
             Tìm không gian phù hợp cho mọi nhu cầu của bạn
