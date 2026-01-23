@@ -45,7 +45,6 @@ export const HomePage = () => {
   return (
     <div className="home_page">
       <div className="home_page-row-1">
-        {/* <img src={frame1} alt="Logo" className="row__background" /> */}
         <div className="row__content">
           <h1 className="row__content-title">
             Tìm không gian phù hợp cho mọi nhu cầu của bạn
@@ -66,7 +65,6 @@ export const HomePage = () => {
         </div>
       </div>
       <div className="home_page-row-2">
-        <img src={section1Back} alt="Logo" className="row__background" />
         <div className="row__content">
           <h1 className="row__content-title">
             Khám phá các loại hình cho thuê phổ biến
