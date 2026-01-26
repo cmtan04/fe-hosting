@@ -3,6 +3,9 @@ import { type HomeCardProps } from "../../../components/HomeCard/HomeCard";
 import { HomeCarousel } from "../../../components/HomeCarousel/HomeCarousel";
 import "../home.scss";
 import "./homePage.scss";
+import homeMap1 from "../../../assets/svg/home/home_map1.svg";
+import homeMap2 from "../../../assets/svg/home/home_map4.svg";
+import homeMap3 from "../../../assets/svg/home/home_map3.svg";
 export const HomePage = () => {
   const sampleHomes: HomeCardProps[] = [
     {
@@ -86,7 +89,7 @@ export const HomePage = () => {
           <div className="row__content-suggest">
             <HomeCarousel
               items={sampleHomes}
-              autoPlay={false}
+              autoPlay={true}
               autoPlaySpeed={3000}
               dots={true}
               slidesToShow={1}
@@ -95,7 +98,7 @@ export const HomePage = () => {
         </div>
       </div>
       <div className="home_page-row-3">
-        <div className="row_content">
+        <div className="row__content">
           <h1 className="row__content-title">
             Khám phá các không gian theo vị trí của bạn.
           </h1>
@@ -105,9 +108,9 @@ export const HomePage = () => {
           </p>
         </div>
         <div className="row__description">
-          <img src="" alt="" />
-          <img src="" alt="" />
-          <img src="" alt="" />
+          <img src={homeMap1} alt="" className="map1" />
+          <img src={homeMap2} alt="" className="map2" />
+          <img src={homeMap3} alt="" className="map3" />
         </div>
       </div>
       <div className="home_page-row-4">
