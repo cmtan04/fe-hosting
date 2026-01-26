@@ -6,6 +6,11 @@ import "./homePage.scss";
 import homeMap1 from "../../../assets/svg/home/home_map1.svg";
 import homeMap2 from "../../../assets/svg/home/home_map4.svg";
 import homeMap3 from "../../../assets/svg/home/home_map3.svg";
+import call from "../../../assets/lotties/home/call.json";
+import docs from "../../../assets/lotties/home/docs.json";
+import find from "../../../assets/lotties/home/find.json";
+import search from "../../../assets/lotties/home/search.json";
+import Lottie from "lottie-react";
 export const HomePage = () => {
   const sampleHomes: HomeCardProps[] = [
     {
@@ -47,6 +52,37 @@ export const HomePage = () => {
       description: "Chung cư full nội thất, tiện ích 5 sao",
       address: "555 Đường Võ Văn Tần, Quận 3, TP.HCM",
       rating: 4.8,
+    },
+  ];
+
+  const supportSteps = [
+    {
+      id: 1,
+      title: "Tìm kiếm & chọn chỗ ở",
+      description:
+        "Tìm kiếm chỗ ở phù hợp theo khu vực, loại hình, mức giá hoặc xem trực tiếp trên bản đồ.",
+      icon: search,
+    },
+    {
+      id: 2,
+      title: "Liên hệ & đặt lịch",
+      description:
+        "Nhắn tin trực tiếp với chủ nhà và đặt lịch xem phòng nhanh chóng trên hệ thống.",
+      icon: call,
+    },
+    {
+      id: 3,
+      title: "Hỗ trợ trong quá trình thuê",
+      description:
+        "Đội ngũ hỗ trợ sẵn sàng xử lý các vấn đề phát sinh trong quá trình thuê.",
+      icon: find,
+    },
+    {
+      id: 4,
+      title: "Hướng dẫn & chăm sóc sau thuê",
+      description:
+        "Cung cấp tài liệu hướng dẫn và hỗ trợ lâu dài sau khi hoàn tất thuê.",
+      icon: docs,
     },
   ];
 
@@ -138,29 +174,22 @@ export const HomePage = () => {
           </div>
         </div>
       </div>
-      <div className="home_page-row-2">
+      <div className="home_page-row-5">
         <div className="row__content">
-          <h1 className="row__content-title">
-            Khám phá các loại hình cho thuê phổ biến
-          </h1>
-          <div className="row__action">
-            <div className="row__action-left">
-              <p className="row__content-description">
-                Chúng tôi cung cấp đa dạng loại hình không gian cho thuê, đáp
-                ứng nhu cầu sinh hoạt, làm việc và tổ chức sự kiện của cá nhân
-                cũng như doanh nghiệp.
-              </p>
+          <h1 className="row__content-title">Hỗ trợ & Đồng hành cùng bạn</h1>
+          <p className="row__content-description">
+            Chúng tôi luôn sẵn sàng hỗ trợ trong suốt quá trình tìm và thuê chỗ
+            ở.
+          </p>
+        </div>
+        <div className="row__description">
+          {supportSteps.map((step, index) => (
+            <div key={index} className="row__description-item">
+              <Lottie className="lottie-icon" animationData={step.icon} />
+              <h3 className="row__description-title">{step.title}</h3>
+              <p className="row__description-description">{step.description}</p>
             </div>
-          </div>
-          <div className="row__content-suggest">
-            <HomeCarousel
-              items={sampleHomes}
-              autoPlay={true}
-              autoPlaySpeed={3000}
-              dots={true}
-              slidesToShow={1}
-            />
-          </div>
+          ))}
         </div>
       </div>
     </div>

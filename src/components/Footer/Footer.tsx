@@ -23,6 +23,36 @@ export const Footer = () => {
           <li className="footer__col-menu-item">Hỗ trợ</li>
         </ul>
       </div>
+      <div className="footer__col">
+        <h3 className="footer__col-title">Về chúng tôi</h3>
+        <ul className="footer__col-menu">
+          <li className="footer__col-menu-item">Trang chủ</li>
+          <li className="footer__col-menu-item">Cho thuê</li>
+          <li className="footer__col-menu-item">Khu vực</li>
+          <li className="footer__col-menu-item">Bản đồ</li>
+          <li className="footer__col-menu-item">Hỗ trợ</li>
+        </ul>
+      </div>
+      <div className="footer__col">
+        <h3 className="footer__col-title">Về chúng tôi</h3>
+        <ul className="footer__col-menu">
+          <li className="footer__col-menu-item">Trang chủ</li>
+          <li className="footer__col-menu-item">Cho thuê</li>
+          <li className="footer__col-menu-item">Khu vực</li>
+          <li className="footer__col-menu-item">Bản đồ</li>
+          <li className="footer__col-menu-item">Hỗ trợ</li>
+        </ul>
+      </div>
+      <div className="footer__col">
+        <h3 className="footer__col-title">Về chúng tôi</h3>
+        <ul className="footer__col-menu">
+          <li className="footer__col-menu-item">Trang chủ</li>
+          <li className="footer__col-menu-item">Cho thuê</li>
+          <li className="footer__col-menu-item">Khu vực</li>
+          <li className="footer__col-menu-item">Bản đồ</li>
+          <li className="footer__col-menu-item">Hỗ trợ</li>
+        </ul>
+      </div>
     </div>
   );
 };
