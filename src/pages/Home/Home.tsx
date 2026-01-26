@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import "./home.scss";
 import { TopBar } from "../../components/TopBar/TopBar";
+import { Footer } from "../../components/Footer/Footer";
 
 export const Home = () => {
   return (
@@ -11,7 +12,9 @@ export const Home = () => {
       <div className="home__body">
         <Outlet />
       </div>
-      <div className="home__footer"></div>
+      <div className="home__footer">
+        <Footer />
+      </div>
     </div>
   );
 };
