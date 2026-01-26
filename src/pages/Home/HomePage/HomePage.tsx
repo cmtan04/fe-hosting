@@ -186,8 +186,12 @@ export const HomePage = () => {
           {supportSteps.map((step, index) => (
             <div key={index} className="row__description-item">
               <Lottie className="lottie-icon" animationData={step.icon} />
-              <h3 className="row__description-title">{step.title}</h3>
-              <p className="row__description-description">{step.description}</p>
+              <div className="div">
+                <h3 className="row__description-title">{step.title}</h3>
+                <p className="row__description-description">
+                  {step.description}
+                </p>
+              </div>
             </div>
           ))}
         </div>
