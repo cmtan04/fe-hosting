@@ -8,10 +8,12 @@
   width: 100%;
   height: 50px;
   padding: 8px 0px;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: $white_color;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  border-bottom: 1px solid $secondary_color;
+
   .left {
     display: flex;
     flex-direction: row;
@@ -27,42 +29,39 @@
     justify-content: center;
     align-items: center;
     padding: 0px 32px;
-
-    button {
-      border-radius: 32px;
-      text-align: left;
-      font-size: 14px;
-      font-weight: 500;
-      font-family: $font_family_1;
-    }
+    gap: 12px;
   }
+
   &-logo {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    position: relative;
+    gap: 12px;
     img {
       width: 45px;
       height: 45px;
       border-radius: 8px;
     }
-  }
 
-  &-search {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+    span {
+      font-weight: 500;
+      color: $color-text-primary;
+      font-size: 22px;
+      line-height: 1.5;
+      font-family: $font_family_1;
+    }
 
-    .form-input {
-      margin-bottom: 0px;
-
-      .ant-form-item-control-input-content {
-        .ant-input-affix-wrapper {
-          width: 450px;
-          height: 45px !important;
-        }
-      }
+    &::after {
+      content: "";
+      position: absolute;
+      right: -24px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 100%;
+      background-color: $text_color_1;
     }
   }
 
@@ -79,14 +78,14 @@
         text-align: center;
         font-size: 16px;
         font-weight: 600;
-        color: $white_color !important;
+        color: $text_color_1 !important;
         font-family: $font_family_1;
 
         &:hover {
-          color: #e50914 !important;
+          color: $text_color_3 !important;
 
           &::after {
-            border-bottom-color: #e50914 !important;
+            border-bottom-color: $text_color_3 !important;
           }
         }
 
@@ -101,22 +100,22 @@
           text-align: center;
           font-size: 16px;
           font-weight: 600;
-          color: $white_color !important;
+          color: $text_color_1 !important;
           font-family: $font_family_1;
 
           &:hover {
-            color: #e50914 !important;
+            color: $text_color_3 !important;
           }
 
           .anticon {
-            color: $white_color !important;
+            color: $text_color_1 !important;
             font-size: 12px;
           }
         }
 
         &:hover {
           &::after {
-            border-bottom-color: #e50914 !important;
+            border-bottom-color: $text_color_3 !important;
           }
         }
 
@@ -127,45 +126,96 @@
 
         &-selected {
           .ant-menu-submenu-title {
-            color: #e50914 !important;
+            color: $text_color_3 !important;
           }
 
           &::after {
-            border-bottom-color: #e50914 !important;
+            border-bottom-color: $text_color_3 !important;
           }
         }
 
         &-open {
           .ant-menu-submenu-title {
-            color: #e50914 !important;
+            color: $text_color_3 !important;
           }
 
           &::after {
-            border-bottom-color: #e50914 !important;
+            border-bottom-color: $text_color_3 !important;
           }
         }
       }
     }
   }
+
+  &-host {
+    width: fit-content;
+    height: 40px !important;
+    border: 2px solid $text_color_1;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    padding: 0px 8px;
+
+    span {
+      font-weight: 500;
+      color: $color-text-primary;
+      font-size: 14px;
+      line-height: 1.5;
+      font-family: $font_family_1;
+    }
+  }
+
+  &-account {
+    width: 80px;
+    height: 40px !important;
+    border: 2px solid $text_color_1;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    .avartar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+
+    .menu {
+      width: 25px;
+      height: 25px;
+    }
+  }
 }
 
+// Drop down menu
 .ant-menu-submenu-popup {
   .ant-menu {
-    background-color: rgba(0, 0, 0, 0.95) !important;
+    background-color: $background-color-1 !important;
     border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
-
+    box-shadow: 0 2px 8px $background-color-1;
+    padding: 8px !important;
+    gap: 8px !important;
     .ant-menu-item {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
       text-align: left;
       font-size: 14px;
       font-weight: 500;
-      color: $white_color !important;
+      color: $text_color_1 !important;
       font-family: $font_family_1;
       padding: 8px 16px;
 
       &:hover {
-        color: #e50914 !important;
-        background-color: rgba(229, 9, 20, 0.1) !important;
+        color: $text_color_4 !important;
+        background-color: $background-color-1 !important;
 
         &::after {
           border-bottom: none !important;
@@ -173,8 +223,8 @@
       }
 
       &-selected {
-        background-color: rgba(229, 9, 20, 0.2) !important;
-        color: #e50914 !important;
+        background-color: $background-color-1 !important;
+        color: $text_color_1 !important;
       }
 
       &::after {

@@ -1,157 +1,93 @@
-import { DashOutlined, DownOutlined } from "@ant-design/icons";
-import bgLogin from "../../assets/bg-login.jpg";
-import { FormSearch } from "../FormSearch/formSearch";
+import { Menu, type MenuProps } from "antd";
+import { useNavigate } from "react-router-dom";
+import background from "../../assets/images/auth/authBackGround.jpg";
+import down from "../../assets/svg/icn-down_single.svg";
+import menu from "../../assets/svg/icn-menu.svg";
+import { childrenPath } from "../../common/contexts/helper";
+import { ROUTER_PATH } from "../../router/Route";
 import "./topbar.scss";
-import { Button, Menu, type MenuProps } from "antd";
 
-interface TopBarProps {
-  onSearchSubmit: (value: any) => void;
-}
+export const TopBar = () => {
+  const navigate = useNavigate();
 
-export const TopBar = (props: TopBarProps) => {
   const items: MenuProps["items"] = [
     {
-      key: "phimle",
-      label: "Phim lẻ",
+      key: ROUTER_PATH.HOME_PAGE,
+      label: "Trang chủ",
     },
     {
-      key: "phimbo",
-      label: "Phim bộ",
-    },
-    {
-      key: "theloai",
+      key: ROUTER_PATH.RENT,
       label: (
         <span>
-          Thể loại <DownOutlined />
+          Cho thuê <img src={down} alt="Logo" />
         </span>
       ),
       children: [
+        { key: childrenPath(ROUTER_PATH.RENT, "room"), label: "Phòng trọ" },
+        { key: childrenPath(ROUTER_PATH.RENT, "room"), label: "Căn hộ" },
+        { key: childrenPath(ROUTER_PATH.RENT, "room"), label: "Văn phòng" },
         {
-          key: "hanh-dong",
-          label: "Hành động",
+          key: childrenPath(ROUTER_PATH.RENT, "room"),
+          label: "Nhà nguyên căn",
         },
         {
-          key: "tinh-cam",
-          label: "Tình cảm",
-        },
-        {
-          key: "hai-huoc",
-          label: "Hài hước",
-        },
-        {
-          key: "kinh-di",
-          label: "Kinh dị",
-        },
-        {
-          key: "vien-tuong",
-          label: "Viễn tưởng",
-        },
-        {
-          key: "tam-ly",
-          label: "Tâm lý",
-        },
-        {
-          key: "hinh-su",
-          label: "Hình sự",
-        },
-        {
-          key: "phieu-luu",
-          label: "Phiêu lưu",
+          key: childrenPath(ROUTER_PATH.RENT, "room"),
+          label: "Địa điểm tổ chức",
         },
       ],
     },
     {
-      key: "quocgia",
+      key: ROUTER_PATH.LOCATION,
       label: (
         <span>
-          Quốc gia <DownOutlined />
+          Khu vực <img src={down} alt="Logo" />
         </span>
       ),
       children: [
         {
-          key: "viet-nam",
-          label: "Việt Nam",
+          key: childrenPath(ROUTER_PATH.LOCATION, "north"),
+          label: "Miền Bắc",
         },
         {
-          key: "han-quoc",
-          label: "Hàn Quốc",
+          key: childrenPath(ROUTER_PATH.LOCATION, "middle"),
+          label: "Miền Trung",
         },
-        {
-          key: "trung-quoc",
-          label: "Trung Quốc",
-        },
-        {
-          key: "nhat-ban",
-          label: "Nhật Bản",
-        },
-        {
-          key: "thai-lan",
-          label: "Thái Lan",
-        },
-        {
-          key: "my",
-          label: "Mỹ",
-        },
-        {
-          key: "anh",
-          label: "Anh",
-        },
-        {
-          key: "phap",
-          label: "Pháp",
-        },
+        { key: childrenPath(ROUTER_PATH.LOCATION, "south"), label: "Miền Nam" },
+        { key: childrenPath(ROUTER_PATH.LOCATION, "easth"), label: "Miền Tây" },
       ],
     },
     {
-      key: "them",
+      key: ROUTER_PATH.MAP,
+      label: "Bản đồ",
+    },
+    {
+      key: ROUTER_PATH.SUPPORT,
       label: (
         <span>
-          <DashOutlined />
+          Hỗ trợ <img src={down} alt="Logo" />
         </span>
       ),
       children: [
-        {
-          key: "phim-chieu-rap",
-          label: "Phim chiếu rạp",
-        },
-        {
-          key: "phim-sap-chieu",
-          label: "Phim sắp chiếu",
-        },
-        {
-          key: "top-phim",
-          label: "Top phim",
-        },
-        {
-          key: "phim-de-cu",
-          label: "Phim đề cử",
-        },
+        { key: ROUTER_PATH.SUPPORT, label: "Nhắn tin với Bookings" },
+        { key: ROUTER_PATH.DOCS, label: "Hướng dẫn" },
       ],
     },
   ];
 
   const handleMenuClick: MenuProps["onClick"] = (e) => {
-    console.log("Menu clicked:", e.key);
+    navigate(e.key);
   };
+
+  const handleMyLocationClick = () => {};
 
   return (
     <div className="top__bar">
       <div className="left">
         <div className="top__bar-logo">
-          <img src={bgLogin} alt="Logo" />
+          <img src={background} alt="Logo" />
+          <span className="title">Hostings</span>
         </div>
 
-        <div className="top__bar-search">
-          <FormSearch
-            label=""
-            name="search"
-            allowClear
-            onSearch={(value) => {
-              props.onSearchSubmit(value);
-            }}
-            placeholder="Tìm kiếm phim, diễn viên"
-          />
-        </div>
         <div className="top__bar-menu">
           <Menu
             onClick={handleMenuClick}
@@ -162,8 +98,12 @@ export const TopBar = (props: TopBarProps) => {
         </div>
       </div>
       <div className="right">
+        <div className="top__bar-host" onClick={() => handleMyLocationClick()}>
+          <span>Địa điểm của tôi</span>
+        </div>
         <div className="top__bar-account">
-          <Button className="label">Thành viên</Button>
+          <img src={background} alt="" className="avartar" />
+          <img src={menu} alt="" className="menu" />
         </div>
       </div>
     </div>
