@@ -12,9 +12,7 @@ export const Home = () => {
       <div className="home__body">
         <Outlet />
       </div>
-      <div className="home__footer">
-        <Footer />
-      </div>
+      <div className="home__footer">{/* <Footer /> */}</div>
     </div>
   );
 };
