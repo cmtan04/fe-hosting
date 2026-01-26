@@ -1,5 +1,5 @@
 import { Menu, type MenuProps } from "antd";
-import { useNavigate } from "react-router-dom";
+import { href, useNavigate } from "react-router-dom";
 import background from "../../assets/images/auth/authBackGround.jpg";
 import down from "../../assets/svg/icn-down_single.svg";
 import menu from "../../assets/svg/icn-menu.svg";
@@ -10,34 +10,51 @@ import "./topbar.scss";
 export const TopBar = () => {
   const navigate = useNavigate();
 
-  const items: MenuProps["items"] = [
+  const items = [
     {
-      key: ROUTER_PATH.HOME_PAGE,
+      key: 1,
+      href: ROUTER_PATH.HOME,
       label: "Trang chủ",
     },
     {
-      key: ROUTER_PATH.RENT,
+      key: 2,
+      href: ROUTER_PATH.RENT,
       label: (
         <span>
           Cho thuê <img src={down} alt="Logo" />
         </span>
       ),
       children: [
-        { key: childrenPath(ROUTER_PATH.RENT, "room"), label: "Phòng trọ" },
-        { key: childrenPath(ROUTER_PATH.RENT, "room"), label: "Căn hộ" },
-        { key: childrenPath(ROUTER_PATH.RENT, "room"), label: "Văn phòng" },
         {
-          key: childrenPath(ROUTER_PATH.RENT, "room"),
+          key: 21,
+          href: childrenPath(ROUTER_PATH.RENT, "room"),
+          label: "Phòng trọ",
+        },
+        {
+          key: 22,
+          href: childrenPath(ROUTER_PATH.RENT, "room"),
+          label: "Căn hộ",
+        },
+        {
+          key: 23,
+          href: childrenPath(ROUTER_PATH.RENT, "room"),
+          label: "Văn phòng",
+        },
+        {
+          key: 24,
+          href: childrenPath(ROUTER_PATH.RENT, "room"),
           label: "Nhà nguyên căn",
         },
         {
-          key: childrenPath(ROUTER_PATH.RENT, "room"),
+          key: 25,
+          href: childrenPath(ROUTER_PATH.RENT, "room"),
           label: "Địa điểm tổ chức",
         },
       ],
     },
     {
-      key: ROUTER_PATH.LOCATION,
+      key: 3,
+      href: ROUTER_PATH.LOCATION,
       label: (
         <span>
           Khu vực <img src={down} alt="Logo" />
@@ -45,37 +62,45 @@ export const TopBar = () => {
       ),
       children: [
         {
-          key: childrenPath(ROUTER_PATH.LOCATION, "north"),
+          key: 31,
+          href: childrenPath(ROUTER_PATH.LOCATION, "north"),
           label: "Miền Bắc",
         },
         {
-          key: childrenPath(ROUTER_PATH.LOCATION, "middle"),
+          key: 32,
+          href: childrenPath(ROUTER_PATH.LOCATION, "middle"),
           label: "Miền Trung",
         },
-        { key: childrenPath(ROUTER_PATH.LOCATION, "south"), label: "Miền Nam" },
-        { key: childrenPath(ROUTER_PATH.LOCATION, "easth"), label: "Miền Tây" },
+        {
+          key: 33,
+          href: childrenPath(ROUTER_PATH.LOCATION, "south"),
+          label: "Miền Nam",
+        },
+        {
+          key: 34,
+          href: childrenPath(ROUTER_PATH.LOCATION, "easth"),
+          label: "Miền Tây",
+        },
       ],
     },
     {
-      key: ROUTER_PATH.MAP,
+      key: 4,
+      href: ROUTER_PATH.MAP,
       label: "Bản đồ",
     },
     {
-      key: ROUTER_PATH.SUPPORT,
-      label: (
-        <span>
-          Hỗ trợ <img src={down} alt="Logo" />
-        </span>
-      ),
+      key: 5,
+      href: ROUTER_PATH.SUPPORT,
+      label: <span>Hỗ trợ</span>,
       children: [
-        { key: ROUTER_PATH.SUPPORT, label: "Nhắn tin với Bookings" },
-        { key: ROUTER_PATH.DOCS, label: "Hướng dẫn" },
+        { key: 51, href: ROUTER_PATH.SUPPORT, label: "Nhắn tin với Bookings" },
+        { key: 52, href: ROUTER_PATH.DOCS, label: "Hướng dẫn" },
       ],
     },
   ];
 
-  const handleMenuClick: MenuProps["onClick"] = (e) => {
-    navigate(e.key);
+  const handleMenuClick = (e: any) => {
+    navigate(e.href);
   };
 
   const handleMyLocationClick = () => {};
@@ -92,7 +117,7 @@ export const TopBar = () => {
           <Menu
             onClick={handleMenuClick}
             mode="horizontal"
-            items={items}
+            items={items as any}
             className="top__bar-menu-list"
           />
         </div>

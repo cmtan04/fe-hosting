@@ -11,7 +11,6 @@ export const ROUTER_NAME = {
 
   // Home
   HOME: "home",
-  HOME_PAGE: "home-page",
   RENT: "rent/:rent?",
   LOCATION: "location/:location?",
   MAP: "map",
@@ -30,7 +29,6 @@ export const ROUTER_PATH = {
   //Authen ends
   //Home
   HOME: `${ROUTER}/${ROUTER_NAME.HOME}`,
-  HOME_PAGE: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.HOME_PAGE}`,
   RENT: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.RENT}`,
   LOCATION: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.LOCATION}`,
   MAP: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.MAP}`,

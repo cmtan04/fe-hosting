@@ -29,7 +29,7 @@ export const WebRouter = () => (
     <Route element={<ProtectedRoute />}>
       {/* Home */}
       <Route path={ROUTER_PATH.HOME} element={<Home />}>
-        <Route path={ROUTER_PATH.HOME_PAGE} element={<HomePage />}></Route>
+        <Route path={ROUTER_PATH.HOME} element={<HomePage />}></Route>
       </Route>
       {/* Home */}
     </Route>
