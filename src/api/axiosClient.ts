@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ROUTER_PATH } from "../router/Route";
 
-const BASE_URL = process.env.API_URL ?? "http://localhost:3000/";
+const BASE_URL = process.env.REACT_APP_API_URL ?? "http://localhost:8000/";
 
 const axiosClient = axios.create({
   baseURL: BASE_URL,

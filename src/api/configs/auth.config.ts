@@ -62,6 +62,6 @@ export const resendOtp = async (
 export const verifyOtp = async (
   payload: VerifyEmailPayloadDto,
 ): Promise<VerifyEmailResponseDto> => {
-  const response = await axiosClient.put(AuthEndPoints.VERIFY_OTP, payload);
+  const response = await axiosClient.post(AuthEndPoints.VERIFY_OTP, payload);
   return response.data;
 };

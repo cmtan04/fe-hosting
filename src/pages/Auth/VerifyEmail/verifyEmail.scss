@@ -108,6 +108,13 @@
           font-size: 12px;
           line-height: 1.5;
           font-family: $font_family_1;
+          margin: 0px !important;
+          text-align: center;
+
+          cursor: pointer;
+          &:hover {
+            text-decoration: underline;
+          }
         }
 
         .button-submit {
