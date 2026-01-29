@@ -6,11 +6,55 @@ import { ROUTER_PATH } from "../../../router/Route";
 import background from "../../../assets/images/auth/authBackGround.jpg";
 import "./signin.scss";
 import { EMAIL_REGEX, PASSWORD_REGEX } from "../../../common/constants/regexs";
+import { useLoading } from "../../../providers/loadingProvider";
+import { useNotification } from "../../../providers/notificationProvider";
+import { useMutation } from "@tanstack/react-query";
+import type { SignInPayloadDto } from "../../../api/dtos/auth.dto";
+import { signIn } from "../../../api/configs/auth.config";
+import {
+  DEFAULT_MESSAGE,
+  NOTI_ERROR,
+  NOTI_SUCCESS,
+} from "../../../common/constants/constants";
+import { isAxiosError } from "axios";
 export const SignIn = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const { setLoading } = useLoading();
+  const { showNotification } = useNotification();
+
+  const signInMutation = useMutation({
+    mutationFn: (payload: SignInPayloadDto) => signIn(payload),
+    onSuccess: (data) => {
+      showNotification(data.message, NOTI_SUCCESS);
+      navigate(ROUTER_PATH.HOME);
+    },
+    onError: (error) => {
+      let message = DEFAULT_MESSAGE;
+      if (isAxiosError(error)) {
+        const apiMessage = error.response?.data?.message;
+        if (typeof apiMessage === "string") {
+          message = apiMessage;
+        } else if (Array.isArray(apiMessage) && apiMessage[0]) {
+          message = apiMessage[0];
+        }
+      }
+      showNotification(message, NOTI_ERROR);
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
   const onSubmit = () => {
-    navigate(ROUTER_PATH.HOME);
+    const payload: SignInPayloadDto = {
+      email: form.getFieldValue("email"),
+      password: form.getFieldValue("password"),
+    };
+
+    signInMutation.mutate(payload);
   };
   return (
     <div className="auth">
