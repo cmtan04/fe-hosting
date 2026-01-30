@@ -39,6 +39,7 @@
     align-items: center;
     position: relative;
     gap: 12px;
+
     img {
       width: 45px;
       height: 45px;
@@ -202,6 +203,7 @@
     box-shadow: 0 2px 8px $background-color-1;
     padding: 8px !important;
     gap: 8px !important;
+
     .ant-menu-item {
       display: flex;
       flex-direction: row;
@@ -231,5 +233,15 @@
         border-bottom: none !important;
       }
     }
+  }
+}
+
+//Link style reset
+a {
+  text-decoration: none;
+  color: $text_color_1 !important;
+
+  &:hover {
+    color: $text_color_4 !important;
   }
 }

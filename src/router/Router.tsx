@@ -8,6 +8,10 @@ import { ResetPassword } from "../pages/Auth/ResetPassword/ResetPassword";
 import ProtectedRoute from "./ProtectedRoute";
 import { Home } from "../pages/Home/Home";
 import { HomePage } from "../pages/Home/HomePage/HomePage";
+import { Filter } from "../pages/Filter/Filter";
+import { Rent } from "../pages/Rent/Upload/Rent";
+import { RentPage } from "../pages/Rent/RentPage/RentPage"
+import { Location } from "../pages/Location/Location";
 
 export const WebRouter = () => (
   <Routes>
@@ -30,6 +34,10 @@ export const WebRouter = () => (
       {/* Home */}
       <Route path={ROUTER_PATH.HOME} element={<Home />}>
         <Route path={ROUTER_PATH.HOME} element={<HomePage />}></Route>
+        <Route path={ROUTER_PATH.FILTER} element={<Filter />}></Route>
+        <Route path={ROUTER_PATH.MYLOCATION} element={<Rent />}></Route>
+        <Route path={ROUTER_PATH.RENT} element={<RentPage />}> </Route >
+        <Route path={ROUTER_PATH.LOCATION} element={<Location />}></Route>
       </Route>
       {/* Home */}
     </Route>

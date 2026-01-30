@@ -14,7 +14,7 @@ interface IFormTextArea {
   maxLength?: number;
   disabled?: boolean;
   readOnly?: boolean;
-  bordered?: boolean;
+  variant?: "outlined" | "borderless" | "filled";
   status?: "error" | "warning";
 }
 
@@ -30,7 +30,7 @@ export const FormTextArea = ({
   maxLength,
   disabled = false,
   readOnly = false,
-  bordered = true,
+  variant = "outlined",
   status,
 }: IFormTextArea) => {
   return (
@@ -49,7 +49,7 @@ export const FormTextArea = ({
         maxLength={maxLength}
         disabled={disabled}
         readOnly={readOnly}
-        bordered={bordered}
+        variant={variant}
         status={status}
         {...textAreaProps}
       />

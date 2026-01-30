@@ -19,7 +19,7 @@ interface IFormInput {
   maxLength?: number;
   showCount?: boolean;
   allowClear?: boolean;
-  bordered?: boolean;
+  variant?: "outlined" | "borderless" | "filled";
   status?: "error" | "warning";
 }
 
@@ -39,7 +39,7 @@ export const FormInput = ({
   maxLength,
   showCount = false,
   allowClear = true,
-  bordered = true,
+  variant = "outlined",
   status,
 }: IFormInput) => {
   return (
@@ -62,7 +62,7 @@ export const FormInput = ({
         maxLength={maxLength}
         showCount={showCount}
         allowClear={allowClear}
-        bordered={bordered}
+        variant={variant}
         status={status}
         {...inputProps}
       />

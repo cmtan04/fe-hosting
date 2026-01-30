@@ -11,12 +11,17 @@ export const ROUTER_NAME = {
 
   // Home
   HOME: "home",
-  RENT: "rent/:rent?",
-  LOCATION: "location/:location?",
+  RENT: "rent",
+  LOCATION: "location",
   MAP: "map",
   SUPPORT: "support",
   DOCS: "docs",
+  MYLOCATION: "my-location",
+
+  //Rent
+  UPLOAD: "upload",
   // Home
+  FILTER: "filter",
 };
 
 export const ROUTER_PATH = {
@@ -34,5 +39,6 @@ export const ROUTER_PATH = {
   MAP: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.MAP}`,
   SUPPORT: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.SUPPORT}`,
   DOCS: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.DOCS}`,
-  //Home
+  FILTER: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.FILTER}`,
+  MYLOCATION: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.MYLOCATION}`,
 };
