@@ -12,6 +12,7 @@ import { Filter } from "../pages/Filter/Filter";
 import { Rent } from "../pages/Rent/Upload/Rent";
 import { RentPage } from "../pages/Rent/RentPage/RentPage"
 import { Location } from "../pages/Location/Location";
+import { RoomDetailPage } from "../pages/RoomDetail/RoomDetailPage";
 
 export const WebRouter = () => (
   <Routes>
@@ -38,6 +39,7 @@ export const WebRouter = () => (
         <Route path={ROUTER_PATH.MYLOCATION} element={<Rent />}></Route>
         <Route path={ROUTER_PATH.RENT} element={<RentPage />}> </Route >
         <Route path={ROUTER_PATH.LOCATION} element={<Location />}></Route>
+        <Route path={ROUTER_PATH.ROOMDETAIL} element={<RoomDetailPage />}></Route>
       </Route>
       {/* Home */}
     </Route>

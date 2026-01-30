@@ -1,7 +1,15 @@
+@import '../../color.scss';
+
+* {
+    font-family: $font_family_1 !important;
+}
+
 .room-list {
     padding: 20px;
     background-color: #f5f5f5;
     min-height: 100vh;
+
+
 
     &__title {
         text-align: center;

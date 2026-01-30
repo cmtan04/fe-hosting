@@ -1,90 +1,19 @@
-import { useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Card, Row, Col, Image, Typography, Space, Tag } from "antd";
 import { EnvironmentOutlined, DollarOutlined, UserOutlined } from "@ant-design/icons";
+import { ROUTER_PATH } from "../../router/Route";
+import { items } from "../../assets/data/mockData";
 import "./RoomList.scss";
 
-interface RoomListProps {
-    id: string;
-    rentType: string;
-    location: string;
-    address: string;
-    price: number;
-    ownerName: string;
-    ownerId: string;
-    title: string;
-    description: string;
-    mainImage?: string;
-}
 
-const items: RoomListProps[] = [
-    {
-        id: "1",
-        rentType: "motel",
-        location: "north",
-        address: "123 Main St, Hanoi",
-        price: 300,
-        ownerName: "Nguyen Van A",
-        ownerId: "owner1",
-        title: "Phòng trọ tiện nghi tại Hà Nội",
-        description: "Phòng trọ đầy đủ tiện nghi, gần trung tâm thành phố.",
-        mainImage: "https://picsum.photos/1200",
-    },
-    {
-        id: "2",
-        rentType: "apartment",
-        location: "south",
-        address: "456 Beach Rd, Ho Chi Minh City",
-        price: 800,
-        ownerName: "Tran Thi B",
-        ownerId: "owner2",
-        title: "Căn hộ cao cấp view biển",
-        description: "Căn hộ 2 phòng ngủ với view biển tuyệt đẹp, đầy đủ nội thất.",
-        mainImage: "https://picsum.photos/1200",
-    },
-    {
-        id: "3",
-        rentType: "office",
-        location: "central",
-        address: "789 Business Ave, Da Nang",
-        price: 1500,
-        ownerName: "Le Van C",
-        ownerId: "owner3",
-        title: "Văn phòng cho thuê tại Đà Nẵng",
-        description: "Văn phòng hiện đại, phù hợp cho startup và doanh nghiệp nhỏ.",
-        mainImage: "https://picsum.photos/1200",
-    },
-    {
-        id: "4",
-        rentType: "full-house",
-        location: "west",
-        address: "321 Rural Ln, Can Tho",
-        price: 1200,
-        ownerName: "Pham Thi D",
-        ownerId: "owner4",
-        title: "Nhà nguyên căn vườn tại Cần Thơ",
-        description: "Nhà vườn rộng rãi, yên tĩnh, phù hợp cho gia đình.",
-        mainImage: "https://picsum.photos/1200",
-    },
-    {
-        id: "5",
-        rentType: "venue",
-        location: "north",
-        address: "555 Event St, Hanoi",
-        price: 2000,
-        ownerName: "Hoang Van E",
-        ownerId: "owner5",
-        title: "Địa điểm tổ chức sự kiện tại Hà Nội",
-        description: "Không gian rộng lớn cho tiệc cưới, hội nghị và sự kiện.",
-        mainImage: "https://picsum.photos/1200",
-    },
-];
 
 
 
 export const RoomList = () => {
-    const handleRoomClick = (roomId: string) => {
+    const navigate = useNavigate();
+    const handleRoomClick = (item: any) => {
         // Logic to navigate to room detail page
-        alert(`Navigate to room detail page with ID: ${roomId}`);
+        navigate(`${ROUTER_PATH.ROOMDETAIL.replace(":roomId", item.id)}`);
     };
     const [searchParams] = useSearchParams();
     const rentType = searchParams.get("rent");
@@ -113,7 +42,7 @@ export const RoomList = () => {
                         <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
                             <Card
                                 hoverable
-                                onClick={() => handleRoomClick(item.id)}
+                                onClick={() => handleRoomClick(item)}
                                 cover={
                                     <Image
                                         alt={item.title}
@@ -162,7 +91,8 @@ export const RoomList = () => {
                         </Col>
                     ))}
                 </Row>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }
