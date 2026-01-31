@@ -1,6 +1,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { App as AntdApp, ConfigProvider } from "antd";
 import RouterWeb from "./router/Routers";
+import { LoadingProvider } from "./providers/loadingProvider";
+import { NotificationProvider } from "./providers/notificationProvider";
 
 const App = () => {
   const queryClient = new QueryClient({
@@ -19,9 +21,13 @@ const App = () => {
           },
         }}
       >
-        <AntdApp>
-          <RouterWeb />
-        </AntdApp>
+        <LoadingProvider>
+          <NotificationProvider>
+            <AntdApp>
+              <RouterWeb />
+            </AntdApp>
+          </NotificationProvider>
+        </LoadingProvider>
       </ConfigProvider>
     </QueryClientProvider>
   );
