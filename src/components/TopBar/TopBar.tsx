@@ -31,9 +31,9 @@ export const TopBar = () => {
     {
       key: 2,
       label: (
-        <Link to={ROUTER_PATH.RENT}>
+        <span>
           Cho thuê <img src={down} alt="Logo" />
-        </Link>
+        </span>
       ),
       children: [
         {
@@ -41,7 +41,7 @@ export const TopBar = () => {
           value: "motel",
           label: <Link to={{
             pathname: ROUTER_PATH.RENT,
-            search: `?${createSearchParams({ rent: 'motel' }).toString()}`,
+            search: `?${createSearchParams({ rent: 'motel', page: "1" }).toString()}`,
           }}>Phòng trọ</Link>
         },
         {
@@ -49,7 +49,7 @@ export const TopBar = () => {
           value: "apartment",
           label: <Link to={{
             pathname: ROUTER_PATH.RENT,
-            search: `?${createSearchParams({ rent: 'apartment' }).toString()}`,
+            search: `?${createSearchParams({ rent: 'apartment', page: "1" }).toString()}`,
           }}>Căn hộ</Link>
         },
         {
@@ -57,7 +57,7 @@ export const TopBar = () => {
           value: "office",
           label: <Link to={{
             pathname: ROUTER_PATH.RENT,
-            search: `?${createSearchParams({ rent: 'office' }).toString()}`,
+            search: `?${createSearchParams({ rent: 'office', page: "1" }).toString()}`,
           }}>Văn phòng</Link>
         },
         {
@@ -65,7 +65,7 @@ export const TopBar = () => {
           value: "full-house",
           label: <Link to={{
             pathname: ROUTER_PATH.RENT,
-            search: `?${createSearchParams({ rent: 'full-house' }).toString()}`,
+            search: `?${createSearchParams({ rent: 'full-house', page: "1" }).toString()}`,
           }}>Nhà nguyên căn</Link>
         },
         {
@@ -73,7 +73,7 @@ export const TopBar = () => {
           value: "venue",
           label: <Link to={{
             pathname: ROUTER_PATH.RENT,
-            search: `?${createSearchParams({ rent: 'venue' }).toString()}`,
+            search: `?${createSearchParams({ rent: 'venue', page: "1" }).toString()}`,
           }}>Địa điểm tổ chức sự kiện</Link>
         },
       ],
@@ -81,9 +81,9 @@ export const TopBar = () => {
     {
       key: 3,
       label: (
-        <Link to={ROUTER_PATH.LOCATION}>
+        <span>
           Khu vực <img src={down} alt="Logo" />
-        </Link>
+        </span>
       ),
       children: [
         {
@@ -91,7 +91,7 @@ export const TopBar = () => {
           value: "north",
           label: <Link to={{
             pathname: ROUTER_PATH.LOCATION,
-            search: `?${createSearchParams({ location: 'north' }).toString()}`,
+            search: `?${createSearchParams({ location: 'north', page: "1" }).toString()}`,
           }}>Miền Bắc</Link>,
         },
         {
@@ -99,7 +99,7 @@ export const TopBar = () => {
           value: "central",
           label: <Link to={{
             pathname: ROUTER_PATH.LOCATION,
-            search: `?${createSearchParams({ location: 'central' }).toString()}`,
+            search: `?${createSearchParams({ location: 'central', page: "1" }).toString()}`,
           }}>Miền Trung</Link>,
         },
         {
@@ -107,7 +107,7 @@ export const TopBar = () => {
           value: "south",
           label: <Link to={{
             pathname: ROUTER_PATH.LOCATION,
-            search: `?${createSearchParams({ location: 'south' }).toString()}`,
+            search: `?${createSearchParams({ location: 'south', page: "1" }).toString()}`,
           }}>Miền Nam</Link>,
         },
         {
@@ -115,7 +115,7 @@ export const TopBar = () => {
           value: "west",
           label: <Link to={{
             pathname: ROUTER_PATH.LOCATION,
-            search: `?${createSearchParams({ location: 'west' }).toString()}`,
+            search: `?${createSearchParams({ location: 'west', page: "1" }).toString()}`,
           }}>Miền Tây</Link>,
         },
       ],
