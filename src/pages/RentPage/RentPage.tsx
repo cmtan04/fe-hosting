@@ -1,0 +1,22 @@
+import { Banner } from "../../components/Banner/Banner";
+import { RoomList } from "../../components/RoomList/RoomList";
+import { roomTypeProps } from "../../assets/data/mockData";
+import { useSearchParams } from "react-router-dom";
+import "./RentPage.scss";
+
+export const RentPage = () => {
+    const [searchParams] = useSearchParams();
+    const rent = searchParams.get("rent");
+    console.log("rent param:", rent);
+    const props = roomTypeProps.find(item => item.id === rent);
+    console.log("props:", props);
+
+    return (
+        <div>
+            <Banner
+                {...props}
+            ></Banner>
+            <RoomList></RoomList>
+        </div>
+    );
+};

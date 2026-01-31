@@ -29,15 +29,21 @@ interface UserProps {
     address?: string;
 }
 
-// interface LocationProps {
-//     id: string;
-//     name: string;
-//     region: string;
-//     description: string;
-//     image: string;
-//     popular: boolean;
-//     roomCount?: number;
-// }
+interface RoomTypeProps {
+    id: string;
+    name: string;
+    title: string;
+    description: string;
+    image?: string;
+}
+
+interface LocationProps {
+    id: string;
+    name: string;
+    title: string;
+    description: string;
+    image?: string;
+}
 
 export const items: RoomListProps[] = [
     {
@@ -487,6 +493,75 @@ export const sortOptions = [
     { id: "rating-desc", label: "Đánh giá cao", field: "rating", order: "desc" },
     { id: "area-desc", label: "Diện tích lớn", field: "area", order: "desc" },
     { id: "newest", label: "Mới nhất", field: "id", order: "desc" },
+];
+
+export const roomTypeProps: RoomTypeProps[] = [
+    {
+        id: "motel",
+        name: "Phòng trọ",
+        title: "Phòng trọ tiện nghi, giá rẻ cho sinh viên và người lao động",
+        description: "Khám phá các phòng trọ giá rẻ, lý tưởng cho sinh viên và người lao động với đầy đủ tiện nghi cơ bản như máy lạnh, wifi tốc độ cao, và an ninh 24/7. Vị trí thuận tiện gần trường học, chợ búa, và phương tiện công cộng, giúp bạn tiết kiệm thời gian di chuyển và tập trung vào công việc hoặc học tập.",
+        image: "https://picsum.photos/1200/800?random=motel1",
+    },
+    {
+        id: "apartment",
+        name: "Căn hộ",
+        title: "Căn hộ hiện đại với view đẹp và tiện ích cao cấp",
+        description: "Trải nghiệm cuộc sống đẳng cấp với các căn hộ hiện đại, được trang bị nội thất cao cấp, view panorama tuyệt đẹp, và tiện ích sang trọng như hồ bơi, gym, và dịch vụ quản lý chuyên nghiệp. Phù hợp cho những ai tìm kiếm không gian sống thoải mái, riêng tư, và gần các trung tâm thương mại, văn phòng.",
+        image: "https://picsum.photos/1200/800?random=apartment1",
+    },
+    {
+        id: "office",
+        name: "Văn phòng",
+        title: "Văn phòng chuyên nghiệp cho doanh nghiệp và freelancer",
+        description: "Thuê văn phòng hiện đại với thiết kế chuyên nghiệp, đầy đủ tiện ích như wifi siêu tốc, phòng họp, và khu vực nghỉ ngơi. Lý tưởng cho doanh nghiệp nhỏ, startup, hoặc freelancer cần không gian làm việc tập trung, sáng tạo, và kết nối mạng lưới kinh doanh rộng lớn.",
+        image: "https://picsum.photos/1200/800?random=office1",
+    },
+    {
+        id: "full-house",
+        name: "Nhà nguyên căn",
+        title: "Nhà nguyên căn rộng rãi cho gia đình và nhóm lớn",
+        description: "Thuê nhà nguyên căn rộng rãi với nhiều phòng ngủ, sân vườn thoáng đãng, và tiện ích gia đình như bếp đầy đủ, máy giặt, và chỗ đậu xe an toàn. Hoàn hảo cho gia đình đông người, nhóm bạn, hoặc những ai muốn không gian sống tự do, yên bình, và gần các khu vui chơi, trường học.",
+        image: "https://picsum.photos/1200/800?random=house1",
+    },
+    {
+        id: "venue",
+        name: "Địa điểm tổ chức",
+        title: "Địa điểm tổ chức sự kiện sang trọng cho tiệc cưới và hội nghị",
+        description: "Đặt địa điểm tổ chức sự kiện đẳng cấp với không gian rộng lớn, trang trí sang trọng, và dịch vụ hậu cần hoàn hảo cho tiệc cưới, hội nghị, hoặc sự kiện đặc biệt. Bao gồm âm thanh, ánh sáng chuyên nghiệp, và đội ngũ hỗ trợ tận tình, đảm bảo sự kiện của bạn trở nên khó quên.",
+        image: "https://picsum.photos/1200/800?random=venue1",
+    },
+];
+
+export const locationProps: LocationProps[] = [
+    {
+        id: "north",
+        name: "Miền Bắc",
+        title: "Miền Bắc: Văn hóa đặc sắc với Hà Nội cổ kính và Sapa mù sương",
+        description: "Khám phá miền Bắc với văn hóa đặc sắc, thủ đô Hà Nội cổ kính, và các điểm du lịch nổi tiếng như Sapa mù sương, vịnh Hạ Long hùng vĩ. Phù hợp cho những ai yêu thích lịch sử, ẩm thực truyền thống, và khí hậu mát mẻ, lý tưởng cho việc thuê phòng nghỉ dưỡng hoặc làm việc dài hạn.",
+        image: "https://picsum.photos/1200/800?random=north1",
+    },
+    {
+        id: "central",
+        name: "Miền Trung",
+        title: "Miền Trung: Biển xanh với Đà Nẵng hiện đại và Hội An cổ xưa",
+        description: "Trải nghiệm miền Trung với biển xanh ngát, thành phố Đà Nẵng hiện đại, và phố cổ Hội An lãng mạn. Nơi lý tưởng cho du lịch biển, nghỉ dưỡng, hoặc thuê văn phòng gần các khu công nghiệp. Khám phá nền ẩm thực đặc trưng và văn hóa đa dạng, phù hợp cho cả gia đình và doanh nghiệp.",
+        image: "https://picsum.photos/1200/800?random=central1",
+    },
+    {
+        id: "south",
+        name: "Miền Nam",
+        title: "Miền Nam: Phát triển năng động với TP.HCM sôi động",
+        description: "Đặt chân đến miền Nam phát triển năng động với TP.HCM sôi động, trung tâm kinh tế của Việt Nam. Phù hợp cho thuê căn hộ cao cấp, văn phòng hiện đại, hoặc địa điểm tổ chức sự kiện. Khám phá văn hóa sông nước, chợ nổi, và cuộc sống đô thị nhịp nhàng, lý tưởng cho những ai tìm kiếm cơ hội kinh doanh và giải trí.",
+        image: "https://picsum.photos/1200/800?random=south1",
+    },
+    {
+        id: "west",
+        name: "Miền Tây",
+        title: "Miền Tây: Đồng bằng sông nước với trái cây đặc sản",
+        description: "Thưởng thức miền Tây với đồng bằng sông Cửu Long xanh mát, văn hóa sông nước độc đáo, và trái cây đặc sản tươi ngon. Nơi yên bình cho thuê nhà vườn, resort, hoặc không gian tổ chức sự kiện ngoài trời. Phù hợp cho gia đình muốn nghỉ dưỡng, hoặc doanh nghiệp tìm kiếm không gian sáng tạo và gần gũi với thiên nhiên.",
+        image: "https://picsum.photos/1200/800?random=west1",
+    },
 ];
 
 // export const locations: LocationProps[] = [

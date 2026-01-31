@@ -28,10 +28,6 @@ export const RoomList = () => {
 
     return (
         <div className="room-list">
-            <Typography.Title level={2} className="room-list__title">
-                Danh sách phòng cho thuê
-            </Typography.Title>
-
             {filteredItems.length === 0 ? (
                 <div className="room-list__empty">
                     Không tìm thấy phòng nào phù hợp.
