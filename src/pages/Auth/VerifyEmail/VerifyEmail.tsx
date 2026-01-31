@@ -46,6 +46,7 @@ export const VerifyEmail = () => {
       }
     },
     onError: (error) => {
+      console.log("object");
       let message = DEFAULT_MESSAGE;
       if (isAxiosError(error)) {
         const apiMessage = error.response?.data?.message;
