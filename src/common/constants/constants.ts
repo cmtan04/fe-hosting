@@ -15,3 +15,5 @@ export const RENTER_STEP = {
   FILL_OWNER: 4,
   CONFIRM: 5,
 };
+
+export const DATE_FORMAT = "YYYY/MM/DD";

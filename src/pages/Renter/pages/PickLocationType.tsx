@@ -7,11 +7,16 @@ import { LocationTypeCard } from "../components/locationTypeCard";
 import { usePagination } from "../../../common/hooks/usePagination";
 import { Pagination } from "../../../components/PaginationCommon/paginationCommon";
 import { Button } from "antd";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { useLoading } from "../../../providers/loadingProvider";
+import icnClear from "../../../assets/svg/icn-clear.svg";
+import { useNavigate } from "react-router-dom";
+import { ROUTER_PATH } from "../../../router/Route";
 export const PickLocationType = (props: RenterProps) => {
+  const { setLoading } = useLoading();
+  const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState<string>();
-  const { data: typeList } = useQuery({
+  const { data: typeList, isLoading } = useQuery({
     queryKey: [LocationEndpoint.GET_ALL_LOCATION_TYPE],
     queryFn: () => getAllLocationType(),
   });
@@ -22,6 +27,10 @@ export const PickLocationType = (props: RenterProps) => {
       itemsPerPage: 6,
     });
 
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
+
   const handlerChoseType = () => {
     props.onSubmit(activeItem);
   };
@@ -31,9 +40,15 @@ export const PickLocationType = (props: RenterProps) => {
       <div className="renter_location-type-header">
         <h1 className="header-title">Không gian của bạn</h1>
         <p className="header-subTitle">
-          Vui lòng cung cấp phân loại mà không gian mà bạn cung cấp. Điều này
+          Vui lòng cung cấp phân loại mà không gian mà bạn mang tới. Điều này
           giúp mọi người tìm kiếm không gian của bạn dễ dàng hơn.
         </p>
+        <img
+          src={icnClear}
+          className="header-close"
+          alt="X"
+          onClick={() => navigate(ROUTER_PATH.HOME)}
+        />
       </div>
 
       <div className="renter_location-type-body">
