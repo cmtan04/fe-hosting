@@ -7,8 +7,10 @@ import { LocationTypeCard } from "../components/locationTypeCard";
 import { usePagination } from "../../../common/hooks/usePagination";
 import { Pagination } from "../../../components/PaginationCommon/paginationCommon";
 import { Button } from "antd";
+import { useState } from "react";
 
 export const PickLocationType = (props: RenterProps) => {
+  const [activeItem, setActiveItem] = useState<string>();
   const { data: typeList } = useQuery({
     queryKey: [LocationEndpoint.GET_ALL_LOCATION_TYPE],
     queryFn: () => getAllLocationType(),
@@ -19,6 +21,10 @@ export const PickLocationType = (props: RenterProps) => {
       items: typeList,
       itemsPerPage: 6,
     });
+
+  const handlerChoseType = () => {
+    props.onSubmit(activeItem);
+  };
 
   return (
     <div className="renter_location-type">
@@ -32,7 +38,11 @@ export const PickLocationType = (props: RenterProps) => {
 
       <div className="renter_location-type-body">
         {currentItems?.map((item, index) => (
-          <div className="item" key={item.id || index}>
+          <div
+            className={`item ${item.typeCode === activeItem && "active"}`}
+            key={item.id || index}
+            onClick={() => setActiveItem(item.typeCode)}
+          >
             <LocationTypeCard
               typeName={item.typeName}
               typeDescription={item.typeDescription}
@@ -48,7 +58,11 @@ export const PickLocationType = (props: RenterProps) => {
         onPageChange={handlePageChange}
       />
       <div className="renter_location-type-footer">
-        <Button htmlType="button" className="button-submit">
+        <Button
+          htmlType="button"
+          className="button-submit"
+          onClick={() => handlerChoseType()}
+        >
           Tiếp tục
         </Button>
       </div>

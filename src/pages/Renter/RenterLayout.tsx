@@ -20,7 +20,9 @@ export const RenterLayout = () => {
         <PickLocationType
           step={step}
           data={data}
-          onSubmit={() => {}}
+          onSubmit={(value: string) => {
+            console.log("value:", value);
+          }}
           onCancel={() => {}}
         />
       </div>
