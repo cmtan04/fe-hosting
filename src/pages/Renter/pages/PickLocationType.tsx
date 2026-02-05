@@ -42,6 +42,11 @@ export const PickLocationType = (props: RenterProps) => {
           </div>
         ))}
       </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
       <div className="renter_location-type-footer">
         <Button htmlType="button" className="button-submit">
           Tiếp tục
