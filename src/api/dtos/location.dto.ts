@@ -12,7 +12,6 @@ export interface ServicePayloadDto {
 }
 
 export interface LocationAddressUpdateDto {
-  addressCode: string;
   addressName: string;
   fullAddress: string;
   addressWard: string;

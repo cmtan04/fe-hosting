@@ -3,11 +3,26 @@ import { FormInput } from "../../../components/FormInput/formInput";
 import { FormTextArea } from "../../../components/FormTextArea/formTextArea";
 import type { RenterProps } from "../RenterLayout";
 import { DATE_FORMAT } from "../../../common/constants/constants";
+import dayjs from "dayjs";
 
 export const FillInformation = (props: RenterProps) => {
   const [form] = Form.useForm();
 
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    const payload = {
+      locationName: form.getFieldValue("locationName"),
+      minTimeLimit: dayjs(form.getFieldValue("minTimeLimit")).format(
+        DATE_FORMAT,
+      ),
+      maxTimeLimit: dayjs(form.getFieldValue("maxTimeLimit")).format(
+        DATE_FORMAT,
+      ),
+      locationDescription: form.getFieldValue("locationDescription"),
+      locationNote: form.getFieldValue("locationNote"),
+    };
+
+    props.onSubmit(payload);
+  };
   return (
     <div className="renter__fillInformation">
       <div className="renter__fillInformation-header">
@@ -25,7 +40,7 @@ export const FillInformation = (props: RenterProps) => {
         >
           <FormInput
             label="Tên địa điểm"
-            name="string"
+            name="locationName"
             placeholder="Nhập tên địa điểm"
             vertical={true}
             formItemProps={{
@@ -36,9 +51,9 @@ export const FillInformation = (props: RenterProps) => {
           />
 
           <FormTextArea
-            label="Ghi chú"
-            name="string"
-            placeholder="Nhập ghi chú"
+            label="Mô tả"
+            name="locationDescription"
+            placeholder="Nhập mô tả"
             vertical={true}
             formItemProps={{
               rules: [
@@ -48,9 +63,9 @@ export const FillInformation = (props: RenterProps) => {
           />
 
           <FormTextArea
-            label="Note"
-            name="string"
-            placeholder="Nhập note"
+            label="Ghi chú"
+            name="locationNote"
+            placeholder="Nhập ghi chú"
             vertical={true}
             formItemProps={{
               rules: [
