@@ -44,6 +44,7 @@ export const VerifyEmail = () => {
       } else {
         showNotification(DEFAULT_MESSAGE, NOTI_ERROR);
       }
+      localStorage.setItem("token", data.access_token);
     },
     onError: (error) => {
       console.log("object");

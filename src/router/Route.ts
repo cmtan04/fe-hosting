@@ -24,6 +24,8 @@ export const ROUTER_NAME = {
   UPLOAD: "upload",
   // Home
   FILTER: "filter",
+  //Renter
+  RENTER: "renter",
 };
 
 export const ROUTER_PATH = {
@@ -44,4 +46,6 @@ export const ROUTER_PATH = {
   FILTER: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.FILTER}`,
   MYLOCATION: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.MYLOCATION}`,
   ROOMDETAIL: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.ROOMDETAIL}/:roomId`,
+  //Renter
+  RENTER: `${ROUTER}/${ROUTER_NAME.RENTER}`,
 };

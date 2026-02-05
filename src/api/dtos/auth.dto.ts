@@ -6,6 +6,7 @@ export interface SignUpPayloadDto {
 
 export interface SignUpResponseDto {
   message: string;
+  access_token: string;
 }
 
 export interface SignInPayloadDto {
@@ -49,4 +50,5 @@ export interface VerifyEmailPayloadDto {
 
 export interface VerifyEmailResponseDto {
   isVerify: boolean;
+  access_token: string;
 }

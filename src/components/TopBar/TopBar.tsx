@@ -18,8 +18,6 @@ import "./topbar.scss";
 //   return pathname;
 // };
 
-
-
 export const TopBar = () => {
   const navigate = useNavigate();
 
@@ -39,42 +37,72 @@ export const TopBar = () => {
         {
           key: 21,
           value: "motel",
-          label: <Link to={{
-            pathname: ROUTER_PATH.RENT,
-            search: `?${createSearchParams({ rent: 'motel', page: "1" }).toString()}`,
-          }}>Phòng trọ</Link>
+          label: (
+            <Link
+              to={{
+                pathname: ROUTER_PATH.RENT,
+                search: `?${createSearchParams({ rent: "motel", page: "1" }).toString()}`,
+              }}
+            >
+              Phòng trọ
+            </Link>
+          ),
         },
         {
           key: 22,
           value: "apartment",
-          label: <Link to={{
-            pathname: ROUTER_PATH.RENT,
-            search: `?${createSearchParams({ rent: 'apartment', page: "1" }).toString()}`,
-          }}>Căn hộ</Link>
+          label: (
+            <Link
+              to={{
+                pathname: ROUTER_PATH.RENT,
+                search: `?${createSearchParams({ rent: "apartment", page: "1" }).toString()}`,
+              }}
+            >
+              Căn hộ
+            </Link>
+          ),
         },
         {
           key: 23,
           value: "office",
-          label: <Link to={{
-            pathname: ROUTER_PATH.RENT,
-            search: `?${createSearchParams({ rent: 'office', page: "1" }).toString()}`,
-          }}>Văn phòng</Link>
+          label: (
+            <Link
+              to={{
+                pathname: ROUTER_PATH.RENT,
+                search: `?${createSearchParams({ rent: "office", page: "1" }).toString()}`,
+              }}
+            >
+              Văn phòng
+            </Link>
+          ),
         },
         {
           key: 24,
           value: "full-house",
-          label: <Link to={{
-            pathname: ROUTER_PATH.RENT,
-            search: `?${createSearchParams({ rent: 'full-house', page: "1" }).toString()}`,
-          }}>Nhà nguyên căn</Link>
+          label: (
+            <Link
+              to={{
+                pathname: ROUTER_PATH.RENT,
+                search: `?${createSearchParams({ rent: "full-house", page: "1" }).toString()}`,
+              }}
+            >
+              Nhà nguyên căn
+            </Link>
+          ),
         },
         {
           key: 25,
           value: "venue",
-          label: <Link to={{
-            pathname: ROUTER_PATH.RENT,
-            search: `?${createSearchParams({ rent: 'venue', page: "1" }).toString()}`,
-          }}>Địa điểm tổ chức sự kiện</Link>
+          label: (
+            <Link
+              to={{
+                pathname: ROUTER_PATH.RENT,
+                search: `?${createSearchParams({ rent: "venue", page: "1" }).toString()}`,
+              }}
+            >
+              Địa điểm tổ chức sự kiện
+            </Link>
+          ),
         },
       ],
     },
@@ -89,34 +117,58 @@ export const TopBar = () => {
         {
           key: 31,
           value: "north",
-          label: <Link to={{
-            pathname: ROUTER_PATH.LOCATION,
-            search: `?${createSearchParams({ location: 'north', page: "1" }).toString()}`,
-          }}>Miền Bắc</Link>,
+          label: (
+            <Link
+              to={{
+                pathname: ROUTER_PATH.LOCATION,
+                search: `?${createSearchParams({ location: "north", page: "1" }).toString()}`,
+              }}
+            >
+              Miền Bắc
+            </Link>
+          ),
         },
         {
           key: 32,
           value: "central",
-          label: <Link to={{
-            pathname: ROUTER_PATH.LOCATION,
-            search: `?${createSearchParams({ location: 'central', page: "1" }).toString()}`,
-          }}>Miền Trung</Link>,
+          label: (
+            <Link
+              to={{
+                pathname: ROUTER_PATH.LOCATION,
+                search: `?${createSearchParams({ location: "central", page: "1" }).toString()}`,
+              }}
+            >
+              Miền Trung
+            </Link>
+          ),
         },
         {
           key: 33,
           value: "south",
-          label: <Link to={{
-            pathname: ROUTER_PATH.LOCATION,
-            search: `?${createSearchParams({ location: 'south', page: "1" }).toString()}`,
-          }}>Miền Nam</Link>,
+          label: (
+            <Link
+              to={{
+                pathname: ROUTER_PATH.LOCATION,
+                search: `?${createSearchParams({ location: "south", page: "1" }).toString()}`,
+              }}
+            >
+              Miền Nam
+            </Link>
+          ),
         },
         {
           key: 34,
           value: "west",
-          label: <Link to={{
-            pathname: ROUTER_PATH.LOCATION,
-            search: `?${createSearchParams({ location: 'west', page: "1" }).toString()}`,
-          }}>Miền Tây</Link>,
+          label: (
+            <Link
+              to={{
+                pathname: ROUTER_PATH.LOCATION,
+                search: `?${createSearchParams({ location: "west", page: "1" }).toString()}`,
+              }}
+            >
+              Miền Tây
+            </Link>
+          ),
         },
       ],
     },
@@ -128,7 +180,10 @@ export const TopBar = () => {
       key: 5,
       label: <span>Hỗ trợ</span>,
       children: [
-        { key: 51, label: <Link to={ROUTER_PATH.SUPPORT}>Nhắn tin với Bookings</Link> },
+        {
+          key: 51,
+          label: <Link to={ROUTER_PATH.SUPPORT}>Nhắn tin với Bookings</Link>,
+        },
         { key: 52, label: <Link to={ROUTER_PATH.DOCS}>Hướng dẫn</Link> },
       ],
     },
@@ -152,7 +207,9 @@ export const TopBar = () => {
       </div>
       <div className="right">
         <div className="top__bar-host">
-          <span><Link to={ROUTER_PATH.MYLOCATION}>Địa điểm của tôi</Link></span>
+          <span>
+            <Link to={ROUTER_PATH.RENTER}>Địa điểm của tôi</Link>
+          </span>
         </div>
         <div className="top__bar-account">
           <img src={background} alt="" className="avartar" />

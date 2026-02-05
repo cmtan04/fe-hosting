@@ -28,6 +28,7 @@ export const SignIn = () => {
     onSuccess: (data) => {
       showNotification(data.message, NOTI_SUCCESS);
       navigate(ROUTER_PATH.HOME);
+      localStorage.setItem("token", data.access_token);
     },
     onError: (error) => {
       let message = DEFAULT_MESSAGE;

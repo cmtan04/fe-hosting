@@ -1,5 +1,9 @@
 @import "./color.scss";
 
+* {
+  margin: 0px !important;
+}
+
 .notification-container {
   position: fixed;
   top: 1rem;
