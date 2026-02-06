@@ -17,6 +17,10 @@ export const FillAddress = (props: RenterProps) => {
 
   const handleMapClick = (data: any) => {
     setLocation(data);
+    form.setFieldValue("fullAddress", data.fullAddressText);
+  };
+
+  const onSubmit = () => {
     const payload = {
       addressName: form.getFieldValue("addressName"),
       fullAddress: location.fullAddressText,
@@ -32,12 +36,11 @@ export const FillAddress = (props: RenterProps) => {
       addressDescription: form.getFieldValue("addressDescription"),
       addressNote: form.getFieldValue("addressNote"),
     };
+
     props.onSubmit(payload);
   };
-
-  const onSubmit = () => {};
   return (
-    <div className="renter__fillAdress">
+    <div className="renter__fillAddress">
       <div className="renter__fillAddress-header">
         <h1 className="header-title">Thông tin địa chỉ không gian của bạn</h1>
         <p className="header-subTitle">
@@ -45,7 +48,7 @@ export const FillAddress = (props: RenterProps) => {
           Điều này giúp mọi người tìm kiếm không gian của bạn dễ dàng hơn.
         </p>
       </div>
-      <Row className="renter__fillAddress-body">
+      <Row gutter={[24, 24]} className="renter__fillAddress-body">
         <Col className="body__col-left" span={12}>
           <MapViewCommon
             data={location}
