@@ -2,9 +2,38 @@ import { Button, Col, Form, Row } from "antd";
 import type { RenterProps } from "../RenterLayout";
 import "../renterLayout.scss";
 import { FormInput } from "../../../components/FormInput/formInput";
+import { MapViewCommon } from "../../../components/MapViewCommon";
+import { useState } from "react";
+import { FormTextArea } from "../../../components/FormTextArea/formTextArea";
 
 export const FillAddress = (props: RenterProps) => {
   const [form] = Form.useForm();
+
+  const [location, setLocation] = useState({
+    lat: 21.0285,
+    long: 105.8542,
+    fullAddressText: "Hà Nội, Việt Nam",
+  });
+
+  const handleMapClick = (data: any) => {
+    setLocation(data);
+    const payload = {
+      addressName: form.getFieldValue("addressName"),
+      fullAddress: location.fullAddressText,
+      addressWard: form.getFieldValue("addressWard"),
+      addressDistrict: form.getFieldValue("addressDistrict"),
+      addressCity: form.getFieldValue("addressCity"),
+      addressProvince: form.getFieldValue("addressProvince"),
+      addressCountry: form.getFieldValue("addressCountry"),
+      addRessPortal: form.getFieldValue("addRessPortal"),
+      addressLat: location.lat,
+      addressLong: location.long,
+      addressRegion: form.getFieldValue("addressRegion"),
+      addressDescription: form.getFieldValue("addressDescription"),
+      addressNote: form.getFieldValue("addressNote"),
+    };
+    props.onSubmit(payload);
+  };
 
   const onSubmit = () => {};
   return (
@@ -17,7 +46,13 @@ export const FillAddress = (props: RenterProps) => {
         </p>
       </div>
       <Row className="renter__fillAddress-body">
-        <Col className="body__col-left" span={12}></Col>
+        <Col className="body__col-left" span={12}>
+          <MapViewCommon
+            data={location}
+            hasInputSearch={true}
+            onMapClick={handleMapClick}
+          />
+        </Col>
         <Col className="body__col-right" span={12}>
           <Form
             form={form}
@@ -165,6 +200,75 @@ export const FillAddress = (props: RenterProps) => {
               </Col>
             </Row>
 
+            <Row gutter={[16, 16]} className="form-row">
+              <Col span={12}>
+                <FormInput
+                  label="Phường / Xã"
+                  name="addressWard"
+                  placeholder="Nhập phường / xã."
+                  vertical={true}
+                  formItemProps={{
+                    rules: [
+                      {
+                        required: true,
+                        message: "Trường này là trường bắt buộc.",
+                      },
+                    ],
+                  }}
+                />
+              </Col>
+              <Col span={12}>
+                <FormInput
+                  label="Quốc gia"
+                  name="addressCountry"
+                  placeholder="Nhập quốc giá"
+                  vertical={true}
+                  formItemProps={{
+                    rules: [
+                      {
+                        required: true,
+                        message: "Trường này là trường bắt buộc.",
+                      },
+                    ],
+                  }}
+                />
+              </Col>
+            </Row>
+
+            <Row gutter={[16, 16]} className="form-row">
+              <Col span={12}>
+                <FormTextArea
+                  label="Mô tả"
+                  name="addressDescription"
+                  placeholder="Nhập mô tả"
+                  vertical={true}
+                  formItemProps={{
+                    rules: [
+                      {
+                        required: false,
+                        message: "Trường này là trường bắt buộc.",
+                      },
+                    ],
+                  }}
+                />
+              </Col>
+              <Col span={12}>
+                <FormTextArea
+                  label="Ghi chú"
+                  name="addressNote"
+                  placeholder="Nhập ghi chú"
+                  vertical={true}
+                  formItemProps={{
+                    rules: [
+                      {
+                        required: false,
+                        message: "Trường này là trường bắt buộc.",
+                      },
+                    ],
+                  }}
+                />
+              </Col>
+            </Row>
             <div className="form-action">
               <Button
                 htmlType="button"
