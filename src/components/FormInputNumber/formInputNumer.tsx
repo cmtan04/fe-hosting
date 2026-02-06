@@ -15,7 +15,7 @@ interface IFormNumber {
   prefix?: ReactNode;
   suffix?: ReactNode;
   disabled?: boolean;
-  bordered?: boolean;
+  variant?: "outlined" | "borderless" | "filled";
   status?: "error" | "warning";
   min?: number;
   max?: number;
@@ -36,7 +36,7 @@ export const FormNumber = ({
   prefix,
   suffix,
   disabled = false,
-  bordered = true,
+  variant = "outlined",
   status,
   min,
   max,
@@ -60,7 +60,7 @@ export const FormNumber = ({
         prefix={prefix}
         suffix={suffix}
         disabled={disabled}
-        bordered={bordered}
+        variant={variant}
         status={status}
         min={min}
         max={max}

@@ -1,5 +1,12 @@
+import { useMutation } from "@tanstack/react-query";
 import { Button, Form } from "antd";
+import { isAxiosError } from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
+import { resendOtp, verifyOtp } from "../../../api/configs/auth.config";
+import type {
+  SendOtpPayloadDto,
+  VerifyEmailPayloadDto,
+} from "../../../api/dtos/auth.dto";
 import background from "../../../assets/images/auth/authBackGround.jpg";
 import back from "../../../assets/svg/icn-back_black.svg";
 import {
@@ -9,18 +16,11 @@ import {
   NOTI_SUCCESS,
 } from "../../../common/constants/constants";
 import OTPInput from "../../../components/FormOtp/formOtp";
+import { useLoading } from "../../../providers/loadingProvider";
+import { useNotification } from "../../../providers/notificationProvider";
 import { ROUTER_PATH } from "../../../router/Route";
 import "../auth.scss";
 import "./verifyEmail.scss";
-import { useLoading } from "../../../providers/loadingProvider";
-import { useNotification } from "../../../providers/notificationProvider";
-import { useMutation } from "@tanstack/react-query";
-import type {
-  SendOtpPayloadDto,
-  VerifyEmailPayloadDto,
-} from "../../../api/dtos/auth.dto";
-import { resendOtp, verifyOtp } from "../../../api/configs/auth.config";
-import { isAxiosError } from "axios";
 
 export const VerifyEmail = () => {
   const [form] = Form.useForm();
@@ -44,6 +44,7 @@ export const VerifyEmail = () => {
       } else {
         showNotification(DEFAULT_MESSAGE, NOTI_ERROR);
       }
+      localStorage.setItem("token", data.access_token);
     },
     onError: (error) => {
       console.log("object");
@@ -70,7 +71,7 @@ export const VerifyEmail = () => {
     mutationFn: (payload: SendOtpPayloadDto) => resendOtp(payload),
     onSuccess: (data) => {
       showNotification(data.message, NOTI_SUCCESS);
-      navigate(ROUTER_PATH.HOME);
+      form.resetFields();
     },
     onError: (error) => {
       let message = DEFAULT_MESSAGE;
@@ -121,7 +122,7 @@ export const VerifyEmail = () => {
               src={back}
               alt=""
               onClick={() => {
-                navigate(ROUTER_PATH.FORGOT_PASSWORD);
+                navigate(-1);
               }}
             />
             <p className="title">Xác nhận Email</p>

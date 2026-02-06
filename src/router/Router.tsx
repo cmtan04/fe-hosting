@@ -8,6 +8,11 @@ import { ResetPassword } from "../pages/Auth/ResetPassword/ResetPassword";
 import ProtectedRoute from "./ProtectedRoute";
 import { Home } from "../pages/Home/Home";
 import { HomePage } from "../pages/Home/HomePage/HomePage";
+import { Filter } from "../pages/Filter/Filter";
+import { RentPage } from "../pages/RentPage/RentPage";
+import { Location } from "../pages/Location/Location";
+import { RoomDetailPage } from "../pages/RoomDetail/RoomDetailPage";
+import { RenterLayout } from "../pages/Renter/RenterLayout";
 
 export const WebRouter = () => (
   <Routes>
@@ -30,8 +35,20 @@ export const WebRouter = () => (
       {/* Home */}
       <Route path={ROUTER_PATH.HOME} element={<Home />}>
         <Route path={ROUTER_PATH.HOME} element={<HomePage />}></Route>
+        <Route path={ROUTER_PATH.FILTER} element={<Filter />}></Route>
+        <Route path={ROUTER_PATH.RENT} element={<RentPage />}>
+          {" "}
+        </Route>
+        <Route path={ROUTER_PATH.LOCATION} element={<Location />}></Route>
+        <Route
+          path={ROUTER_PATH.ROOMDETAIL}
+          element={<RoomDetailPage />}
+        ></Route>
       </Route>
       {/* Home */}
+      {/* RENTER */}
+      <Route path={ROUTER_PATH.RENTER} element={<RenterLayout />} />
+      {/* RENTER */}
     </Route>
     {/* Protected Router */}
   </Routes>

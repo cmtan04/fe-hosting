@@ -41,21 +41,24 @@ export const forgotPassword = async (
 export const resetPassword = async (
   payload: ResetPasswordPayloadDto,
 ): Promise<ResetPasswordResponseDto> => {
-  const response = await axiosClient.put(AuthEndPoints.RESET_PASSWORD, payload);
+  const response = await axiosClient.post(
+    AuthEndPoints.RESET_PASSWORD,
+    payload,
+  );
   return response.data;
 };
 
 export const sendOtp = async (
   payload: SendOtpPayloadDto,
 ): Promise<SendOtpResponseDto> => {
-  const response = await axiosClient.put(AuthEndPoints.SEND_OTP, payload);
+  const response = await axiosClient.post(AuthEndPoints.SEND_OTP, payload);
   return response.data;
 };
 
 export const resendOtp = async (
   payload: SendOtpPayloadDto,
 ): Promise<SendOtpResponseDto> => {
-  const response = await axiosClient.put(AuthEndPoints.RESEND_OTP, payload);
+  const response = await axiosClient.post(AuthEndPoints.RESEND_OTP, payload);
   return response.data;
 };
 

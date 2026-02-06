@@ -9,8 +9,9 @@
       color: $color-text-primary;
       font-size: 14px;
       line-height: 1.5;
-      flex-direction: row-reverse;
+      flex-direction: row;
       gap: 4px;
+
       &::before {
         color: $color-red-5;
         margin-right: 4px;
@@ -66,7 +67,7 @@
     }
 
     // Character count (showCount)
-    + .ant-input-data-count {
+    +.ant-input-data-count {
       color: $color-gray-6;
       font-size: 12px;
       margin-top: 4px;
