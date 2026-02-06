@@ -3,7 +3,7 @@ import type { RenterProps } from "../RenterLayout";
 import "../renterLayout.scss";
 import { LocationEndpoint } from "../../../api/endpoints/location.endpoint";
 import { getAllLocationType } from "../../../api/configs/location.config";
-import { LocationTypeCard } from "../components/locationTypeCard";
+import { LocationTypeCard } from "../components/LocationTypeCard/locationTypeCard";
 import { usePagination } from "../../../common/hooks/usePagination";
 import { Pagination } from "../../../components/PaginationCommon/paginationCommon";
 import { Button } from "antd";
@@ -16,6 +16,7 @@ export const PickLocationType = (props: RenterProps) => {
   const { setLoading } = useLoading();
   const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState<string>();
+
   const { data: typeList, isLoading } = useQuery({
     queryKey: [LocationEndpoint.GET_ALL_LOCATION_TYPE],
     queryFn: () => getAllLocationType(),

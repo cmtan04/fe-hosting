@@ -5,6 +5,7 @@ import "./renterLayout.scss";
 import type { LocationDto } from "../../api/dtos/location.dto";
 import { FillInformation } from "./pages/FillInformation";
 import { FillAddress } from "./pages/FillAddress";
+import { FillOwner } from "./pages/FillOwner";
 
 export interface RenterProps {
   step: number;
@@ -14,7 +15,7 @@ export interface RenterProps {
 }
 
 export const RenterLayout = () => {
-  const [step, setStep] = useState<number>(RENTER_STEP.PICK_TYPE);
+  const [step, setStep] = useState<number>(RENTER_STEP.FILL_OWNER);
   const [data, setData] = useState<LocationDto>();
 
   if (step === RENTER_STEP.PICK_TYPE) {
@@ -69,18 +70,56 @@ export const RenterLayout = () => {
         <FillAddress
           step={step}
           data={data}
-          onSubmit={(value: string) => {
+          onSubmit={(value: any) => {
             setData(
               (prev) =>
                 ({
                   ...prev,
-                  typeCode: value,
+                  locationAddress: [
+                    {
+                      addressName: value.addressName,
+                      fullAddress: value.fullAddress,
+                      addressWard: value.addressWard,
+                      addressDistrict: value.addressDistrict,
+                      addressCity: value.addressCity,
+                      addressProvince: value.addressProvince,
+                      addressCountry: value.addressCountry,
+                      addRessPortal: value.addRessPortal,
+                      addressLat: value.addressLat,
+                      addressLong: value.addressLong,
+                      addressRegion: value.addressRegion,
+                      addressDescription: value.addressDescription,
+                      addressNote: value.addressNote,
+                    },
+                  ],
                 }) as LocationDto,
             );
             setStep(RENTER_STEP.FILL_OWNER);
           }}
           onCancel={() => {
             setStep(RENTER_STEP.FILL_ADDRESS);
+          }}
+        />
+      </div>
+    );
+  } else if (step === RENTER_STEP.FILL_OWNER) {
+    return (
+      <div className="renter">
+        <FillOwner
+          step={step}
+          data={data}
+          onSubmit={(value: any) => {
+            setData(
+              (prev) =>
+                ({
+                  ...prev,
+                  locationAddress: [{}],
+                }) as LocationDto,
+            );
+            setStep(RENTER_STEP.CONFIRM);
+          }}
+          onCancel={() => {
+            setStep(RENTER_STEP.FILL_OWNER);
           }}
         />
       </div>
