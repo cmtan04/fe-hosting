@@ -1,8 +1,7 @@
 import { Button, Form, Select } from "antd";
-import { FormInput } from "../../../components/FormInput/formInput";
+import React from "react";
 import { FormNumber } from "../../../components/FormInputNumber/formInputNumer";
 import "./Filter.scss";
-import React from "react";
 
 const { Option } = Select;
 

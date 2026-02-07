@@ -1,18 +1,18 @@
 import { Route, Routes } from "react-router-dom";
+import { ForgotPassword } from "../pages/Auth/ForgotPassword/ForgotPassword";
+import { ResetPassword } from "../pages/Auth/ResetPassword/ResetPassword";
 import { SignIn } from "../pages/Auth/SignIn/SignIn";
 import { SignUp } from "../pages/Auth/SignUp/SignUp";
-import { ROUTER_PATH } from "./Route";
-import { ForgotPassword } from "../pages/Auth/ForgotPassword/ForgotPassword";
 import { VerifyEmail } from "../pages/Auth/VerifyEmail/VerifyEmail";
-import { ResetPassword } from "../pages/Auth/ResetPassword/ResetPassword";
-import ProtectedRoute from "./ProtectedRoute";
+import { Filter } from "../pages/Home/Filter/Filter";
 import { Home } from "../pages/Home/Home";
 import { HomePage } from "../pages/Home/HomePage/HomePage";
-import { Filter } from "../pages/Home/Filter/Filter";
+import { Location } from "../pages/Home/Location/Location";
 import { RentPage } from "../pages/Home/RentPage/RentPage";
-import { Location } from "../pages/Location/Location";
 import { RoomDetailPage } from "../pages/Home/RoomDetail/RoomDetailPage";
 import { RenterLayout } from "../pages/Renter/RenterLayout";
+import ProtectedRoute from "./ProtectedRoute";
+import { ROUTER_PATH } from "./Route";
 
 export const WebRouter = () => (
   <Routes>
