@@ -11,7 +11,6 @@ import {
   useMapEvents,
 } from "react-leaflet";
 
-// Fix icon mặc định của Leaflet
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import "./style.scss";

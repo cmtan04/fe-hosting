@@ -7,7 +7,6 @@
   justify-content: center;
   width: 100%;
   height: 100dvh;
-  padding: 35dvh 0px;
   &_location {
     &-type {
       width: 60%;
@@ -67,7 +66,7 @@
         align-items: center;
 
         .button-submit {
-          width: 350px;
+          width: 50%;
           height: 50px;
           background-color: $primary_color;
           color: $white_color;
@@ -104,7 +103,7 @@
         align-items: center;
         padding: 0px 50px;
         .button-submit {
-          width: 350px;
+          width: 50%;
           height: 50px;
           background-color: $primary_color;
           color: $white_color;
@@ -120,7 +119,7 @@
         }
 
         .button-cancel {
-          width: 350px;
+          width: 50%;
           height: 50px;
           background-color: $white_color;
           color: $primary_color;
@@ -231,6 +230,9 @@
         &-left {
           width: 100%;
           height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         &-right {
@@ -243,7 +245,7 @@
             padding: 24px 0px;
 
             .button-submit {
-              width: 350px;
+              width: 50%;
               height: 50px;
               background-color: $primary_color;
               color: $white_color;
@@ -259,7 +261,7 @@
             }
 
             .button-cancel {
-              width: 350px;
+              width: 50%;
               height: 50px;
               background-color: $white_color;
               color: $primary_color;
@@ -279,11 +281,148 @@
     }
   }
 
+  &__fillOwner {
+    width: 60%;
+    height: fit-content;
+    border-radius: 24px;
+    padding: 24px 32px;
+    box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12);
+
+    &-header {
+      padding-bottom: 20px;
+      border-bottom: 1px solid #00293a;
+      & .header {
+        &-title {
+          font-size: 32px;
+          font-weight: bold;
+          color: $primary-color;
+          font-family: $font_family_1 !important;
+        }
+
+        &-subTitle {
+          font-size: 14px;
+          font-weight: 400;
+          color: $primary-color;
+          font-family: $font_family_1 !important;
+        }
+      }
+    }
+
+    &-body {
+      & .body {
+        &__section {
+          &-1 {
+            padding: 0px 32px;
+            .section {
+              &__user {
+                &-avartar {
+                  min-width: 100%;
+                  min-height: 100%;
+                  border-left: 8px solid #faad14;
+                  object-fit: cover;
+                  border-radius: 0px 24px 24px 0px;
+                }
+              }
+            }
+          }
+          &-2-content {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 12px;
+            padding: 0px 24px;
+            &-title {
+              font-size: 22px;
+              font-weight: 500;
+              color: $primary-color;
+              font-family: $font_family_1 !important;
+            }
+          }
+        }
+      }
+    }
+
+    &-footer {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 24px 0px;
+      margin-top: 32px;
+
+      .button-submit {
+        width: 50%;
+        height: 50px;
+        background-color: $primary_color;
+        color: $white_color;
+        font-family: $font_family_1;
+        border: none;
+        font-weight: bold;
+        border-radius: 24px;
+        &:hover {
+          background-color: darken($primary_color, 10%);
+          color: $white_color;
+          border: 1px solid darken($primary_color, 10%) !important;
+        }
+      }
+
+      .button-cancel {
+        width: 50%;
+        height: 50px;
+        background-color: $white_color;
+        color: $primary_color;
+        font-family: $font_family_1;
+        border: 1px solid $primary_color;
+        font-weight: bold;
+        border-radius: 24px;
+        &:hover {
+          background-color: $white_color;
+          color: $primary_color;
+          border: 1px solid darken($primary_color, 10%) !important;
+        }
+      }
+    }
+  }
+
   &__serviceTag {
-    width: 150px;
-    height: 40px;
+    width: 200px;
+    height: 60px;
     padding: 8px 12px;
     border: 1px solid $secondary_color;
+    cursor: pointer;
+    border-radius: 20px;
+
+    &.active {
+      border: 4px solid $primary-color;
+    }
+    .ant-col {
+      max-height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      p {
+        margin: 0px !important;
+      }
+
+      &-16 {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    &-icon {
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .service-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: $primary-color;
+      font-family: $font_family_1 !important;
+    }
   }
 
   & .type {

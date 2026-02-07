@@ -1,10 +1,12 @@
 import { Col, Row } from "antd";
 import "../../renterLayout.scss";
+import { formatMoney } from "../../../../common/contexts/format";
 
 interface ServiceTagProps {
   icon: string;
   name: string;
   description: string;
+  price: string;
   active: boolean;
 }
 
@@ -20,6 +22,7 @@ export const ServiceTag = (props: ServiceTagProps) => {
       </Col>
       <Col span={16}>
         <p className="service-name">{props.name}</p>
+        <p className="service-name">{formatMoney(props.price)}</p>
       </Col>
     </Row>
   );

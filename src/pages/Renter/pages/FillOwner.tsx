@@ -1,4 +1,4 @@
-import { Col, Form, Row } from "antd";
+import { Button, Col, Form, Row } from "antd";
 import type { RenterProps } from "../RenterLayout";
 import { FormInput } from "../../../components/FormInput/formInput";
 import { UserEndpoint } from "../../../api/endpoints/user.endpoint";
@@ -49,7 +49,7 @@ export const FillOwner = (props: RenterProps) => {
           không gian của bạn dễ dàng hơn.
         </p>
       </div>
-      <div className="renter__fillAddress-body">
+      <div className="renter__fillOwner-body">
         <div className="body__section-1">
           <Row gutter={[16, 16]}>
             <h1 className="section-title">Thông tin cá nhân</h1>
@@ -60,6 +60,10 @@ export const FillOwner = (props: RenterProps) => {
                 src={user?.avatarUrl}
                 alt="Ảnh đại diện"
                 className="section__user-avartar"
+                onError={(e) => {
+                  e.currentTarget.style.backgroundColor = "#e5e5e5";
+                  e.currentTarget.style.objectFit = "contain";
+                }}
               />
             </Col>
             <Col span={16}>
@@ -137,21 +141,65 @@ export const FillOwner = (props: RenterProps) => {
         </div>
         <div className="body__section-2">
           <Row gutter={[16, 16]}>
-            <h1 className="section-title">Các dịch vụ mà bạn cung cấp</h1>
+            <h1 className="section-title">
+              Các dịch vụ mà bạn có thể cung cấp
+            </h1>
           </Row>
-          <Row gutter={[16, 16]} className="body__section-content">
-            {service?.map((item) => (
-              <div>
-                <ServiceTag
-                  icon={item.serviceLogo}
-                  name={item.serviceName}
-                  description={item.serviceDescription}
-                  active
-                />
-              </div>
-            ))}
-          </Row>
+          <div className="wrapper">
+            <h1 className="body__section-2-content-title">Dịch vụ miễn phí</h1>
+            <Row gutter={[16, 16]} className="body__section-2-content">
+              {service
+                ?.filter((item) => Number(item.servicePrice) === 0)
+                .map((item) => (
+                  <div key={item.serviceCode}>
+                    <ServiceTag
+                      icon={item.serviceLogo}
+                      name={item.serviceName}
+                      price={item.servicePrice}
+                      description={item.serviceDescription}
+                      active
+                    />
+                  </div>
+                ))}
+            </Row>
+          </div>
+
+          <div className="wrapper">
+            <h1 className="body__section-2-content-title">Dịch vụ mất phí</h1>
+            <Row gutter={[16, 16]} className="body__section-2-content">
+              {service
+                ?.filter((item) => Number(item.servicePrice) > 0)
+                .map((item) => (
+                  <div key={item.serviceCode}>
+                    <ServiceTag
+                      icon={item.serviceLogo}
+                      name={item.serviceName}
+                      price={item.servicePrice}
+                      description={item.serviceDescription}
+                      active
+                    />
+                  </div>
+                ))}
+            </Row>
+          </div>
         </div>
+      </div>
+
+      <div className="renter__fillOwner-footer">
+        <Button
+          htmlType="button"
+          onClick={props.onCancel}
+          className="button-cancel"
+        >
+          Hủy
+        </Button>
+        <Button
+          htmlType="button"
+          className="button-submit"
+          onClick={() => onSubmit()}
+        >
+          Tiếp tục
+        </Button>
       </div>
     </div>
   );
