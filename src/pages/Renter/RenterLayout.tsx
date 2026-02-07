@@ -129,7 +129,7 @@ export const RenterLayout = () => {
               (prev) =>
                 ({
                   ...prev,
-                  locationAddress: [{}],
+                  serviceCode: [{}],
                 }) as LocationDto,
             );
             setStep(RENTER_STEP.CONFIRM);
@@ -151,7 +151,6 @@ export const RenterLayout = () => {
               (prev) =>
                 ({
                   ...prev,
-                  locationAddress: [{}],
                 }) as LocationDto,
             );
             setStep(RENTER_STEP.SUCCESS);
