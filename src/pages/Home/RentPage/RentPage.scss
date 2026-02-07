@@ -1,0 +1,39 @@
+@import "../../../color.scss";
+
+.banner {
+  width: 100%;
+  height: 50%;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  &__content {
+    position: relative;
+    z-index: 3;
+    width: 50%;
+    height: fit-content;
+    padding: 4% 6%;
+
+    &-title {
+      font-weight: 600;
+      color: $text_color_2;
+      font-size: 32px;
+      line-height: 1.5;
+      font-family: $font_family_1;
+    }
+
+    &-description {
+      font-weight: 400;
+      color: $text_color_2;
+      font-size: 14px;
+      line-height: 1.5;
+      font-family: $font_family_1;
+    }
+
+    &-search {
+      margin-top: 32px;
+      padding: 0 18% 0 0;
+    }
+  }
+}

@@ -6,17 +6,28 @@ import type { LocationDto } from "../../api/dtos/location.dto";
 import { FillInformation } from "./pages/FillInformation";
 import { FillAddress } from "./pages/FillAddress";
 import { FillOwner } from "./pages/FillOwner";
+import { ConfirmInformation } from "./pages/ConfirmInformation";
+import { LocationCreateSucees } from "./pages/LocationCreateSuccess";
 
 export interface RenterProps {
   step: number;
-  data: any;
+  data: LocationDto;
   onSubmit: (e: any) => void;
   onCancel: () => void;
 }
 
 export const RenterLayout = () => {
-  const [step, setStep] = useState<number>(RENTER_STEP.FILL_OWNER);
-  const [data, setData] = useState<LocationDto>();
+  const [step, setStep] = useState<number>(RENTER_STEP.CONFIRM);
+  const [data, setData] = useState<LocationDto>({
+    typeCode: "",
+    serviceCode: [],
+    locationAddress: [],
+    locationName: "",
+    locationPriceStart: 0,
+    locationPriceEnd: 0,
+    locationPriceAfterDeal: 0,
+    locationStatus: 0,
+  });
 
   if (step === RENTER_STEP.PICK_TYPE) {
     return (
@@ -54,6 +65,9 @@ export const RenterLayout = () => {
                   maxTimeLimit: value.maxTimeLimit,
                   locationDescription: value.locationDescription,
                   locationNote: value.locationNote,
+                  locationPriceStart: value.locationPriceStart,
+                  locationPriceEnd: value.locationPriceEnd,
+                  locationPriceAfterDeal: value.locationPriceAfterDeal,
                 }) as LocationDto,
             );
             setStep(RENTER_STEP.FILL_ADDRESS);
@@ -97,7 +111,7 @@ export const RenterLayout = () => {
             setStep(RENTER_STEP.FILL_OWNER);
           }}
           onCancel={() => {
-            setStep(RENTER_STEP.FILL_ADDRESS);
+            setStep(RENTER_STEP.FILL_INFORMATION);
           }}
         />
       </div>
@@ -106,6 +120,50 @@ export const RenterLayout = () => {
     return (
       <div className="renter">
         <FillOwner
+          step={step}
+          data={data}
+          onSubmit={(value: any) => {
+            setData(
+              (prev) =>
+                ({
+                  ...prev,
+                  locationAddress: [{}],
+                }) as LocationDto,
+            );
+            setStep(RENTER_STEP.CONFIRM);
+          }}
+          onCancel={() => {
+            setStep(RENTER_STEP.FILL_ADDRESS);
+          }}
+        />
+      </div>
+    );
+  } else if (step === RENTER_STEP.CONFIRM) {
+    return (
+      <div className="renter">
+        <ConfirmInformation
+          step={step}
+          data={data}
+          onSubmit={(value: any) => {
+            setData(
+              (prev) =>
+                ({
+                  ...prev,
+                  locationAddress: [{}],
+                }) as LocationDto,
+            );
+            setStep(RENTER_STEP.SUCCESS);
+          }}
+          onCancel={() => {
+            setStep(RENTER_STEP.FILL_OWNER);
+          }}
+        />
+      </div>
+    );
+  } else if (step === RENTER_STEP.SUCCESS) {
+    return (
+      <div className="renter">
+        <LocationCreateSucees
           step={step}
           data={data}
           onSubmit={(value: any) => {

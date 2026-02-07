@@ -34,8 +34,11 @@ export interface LocationDto {
   serviceCode: ServicePayloadDto[];
   locationAddress: LocationAddressUpdateDto[];
   locationName: string;
-  minTimeLimit?: number;
-  maxTimeLimit?: number;
+  locationPriceStart: number;
+  locationPriceEnd: number;
+  locationPriceAfterDeal: number;
+  minTimeLimit?: string;
+  maxTimeLimit?: string;
   hasRent?: number;
   userRentCd?: string;
   locationDescription?: string;
