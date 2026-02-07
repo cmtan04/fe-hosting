@@ -284,8 +284,6 @@
     }
   }
 
-  &__fillOwner {
-    width: 60%;
   &__confirm {
     width: 80%;
     height: fit-content;
@@ -313,19 +311,6 @@
       }
     }
 
-    &-body {
-      & .body {
-        &__section {
-          &-1 {
-            padding: 0px 32px;
-            .section {
-              &__user {
-                &-avartar {
-                  min-width: 100%;
-                  min-height: 100%;
-                  border-left: 8px solid #faad14;
-                  object-fit: cover;
-                  border-radius: 0px 24px 24px 0px;
     &-form {
       display: flex;
       flex-direction: column;
@@ -390,60 +375,6 @@
               }
             }
           }
-          &-2-content {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 12px;
-            padding: 0px 24px;
-            &-title {
-              font-size: 22px;
-              font-weight: 500;
-              color: $primary-color;
-              font-family: $font_family_1 !important;
-            }
-          }
-        }
-      }
-    }
-
-    &-footer {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 24px 0px;
-      margin-top: 32px;
-
-      .button-submit {
-        width: 50%;
-        height: 50px;
-        background-color: $primary_color;
-        color: $white_color;
-        font-family: $font_family_1;
-        border: none;
-        font-weight: bold;
-        border-radius: 24px;
-        &:hover {
-          background-color: darken($primary_color, 10%);
-          color: $white_color;
-          border: 1px solid darken($primary_color, 10%) !important;
-        }
-      }
-
-      .button-cancel {
-        width: 50%;
-        height: 50px;
-        background-color: $white_color;
-        color: $primary_color;
-        font-family: $font_family_1;
-        border: 1px solid $primary_color;
-        font-weight: bold;
-        border-radius: 24px;
-        &:hover {
-          background-color: $white_color;
-          color: $primary_color;
-          border: 1px solid darken($primary_color, 10%) !important;
           .ant-col {
             &-18 {
               p {
