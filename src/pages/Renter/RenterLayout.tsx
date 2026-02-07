@@ -29,6 +29,8 @@ export const RenterLayout = () => {
     locationStatus: 0,
   });
 
+  console.log(data);
+
   if (step === RENTER_STEP.PICK_TYPE) {
     return (
       <div className="renter">

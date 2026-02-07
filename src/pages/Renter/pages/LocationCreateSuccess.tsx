@@ -23,7 +23,7 @@ export const LocationCreateSucees = (props: RenterProps) => {
           navigate(ROUTER_PATH.HOME);
         }}
       >
-        Hoàn tất
+        Đi tới không gian của tôi.
       </Button>
     </div>
   );

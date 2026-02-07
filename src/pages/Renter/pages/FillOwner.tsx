@@ -39,7 +39,9 @@ export const FillOwner = (props: RenterProps) => {
     }
   }, [user, form]);
 
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    props.onSubmit(props.data);
+  };
   return (
     <div className="renter__fillOwner">
       <div className="renter__fillOwner-header">
