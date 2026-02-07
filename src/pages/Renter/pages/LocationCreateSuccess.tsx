@@ -8,6 +8,13 @@ export const LocationCreateSucees = (props: RenterProps) => {
   const navigate = useNavigate();
   return (
     <div className="renter__success">
+      <div className="renter__success-header">
+        <h1 className="header-title">Tạo địa điểm cho thuê thành công</h1>
+        <p className="header-subTitle">
+          Giờ đây địa điểm của bạn đã có thể được mọi người tiếp cận và biết
+          đến.
+        </p>
+      </div>
       <Lottie className="lottie-icon" animationData={succesCheck} />
       <Button
         htmlType="button"
