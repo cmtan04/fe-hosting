@@ -20,6 +20,7 @@ export const RenterLayout = () => {
   const [step, setStep] = useState<number>(RENTER_STEP.PICK_TYPE);
   const [data, setData] = useState<LocationDto>({
     typeCode: "",
+    locationLogo: "",
     serviceCode: [],
     locationAddress: [],
     locationName: "",

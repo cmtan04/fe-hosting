@@ -34,6 +34,7 @@ export interface LocationDto {
   serviceCode: ServicePayloadDto[];
   locationAddress: LocationAddressUpdateDto[];
   locationName: string;
+  locationLogo: string;
   locationPriceStart: number;
   locationPriceEnd: number;
   locationPriceAfterDeal: number;
