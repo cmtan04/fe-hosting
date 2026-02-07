@@ -31,7 +31,9 @@ export const ConfirmInformation = (props: RenterProps) => {
     setLoading(isLoading);
   }, [isLoading]);
 
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    props.onSubmit(props.data);
+  };
   return (
     <div className="renter__confirm">
       <div className="renter__confirm-header">

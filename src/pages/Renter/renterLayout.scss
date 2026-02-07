@@ -437,6 +437,14 @@
     }
   }
 
+  &__success {
+    width: 50%;
+    height: fit-content;
+    border-radius: 24px;
+    padding: 24px 32px;
+    box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12);
+  }
+
   &__serviceTag {
     width: 150px;
     height: 40px;

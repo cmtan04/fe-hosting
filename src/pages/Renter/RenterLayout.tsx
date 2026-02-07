@@ -7,6 +7,7 @@ import { FillInformation } from "./pages/FillInformation";
 import { FillAddress } from "./pages/FillAddress";
 import { FillOwner } from "./pages/FillOwner";
 import { ConfirmInformation } from "./pages/ConfirmInformation";
+import { LocationCreateSucees } from "./pages/LocationCreateSuccess";
 
 export interface RenterProps {
   step: number;
@@ -151,10 +152,32 @@ export const RenterLayout = () => {
                   locationAddress: [{}],
                 }) as LocationDto,
             );
+            setStep(RENTER_STEP.SUCCESS);
+          }}
+          onCancel={() => {
+            setStep(RENTER_STEP.FILL_OWNER);
+          }}
+        />
+      </div>
+    );
+  } else if (step === RENTER_STEP.SUCCESS) {
+    return (
+      <div className="renter">
+        <LocationCreateSucees
+          step={step}
+          data={data}
+          onSubmit={(value: any) => {
+            setData(
+              (prev) =>
+                ({
+                  ...prev,
+                  locationAddress: [{}],
+                }) as LocationDto,
+            );
             setStep(RENTER_STEP.CONFIRM);
           }}
           onCancel={() => {
-            setStep(RENTER_STEP.FILL_ADDRESS);
+            setStep(RENTER_STEP.FILL_OWNER);
           }}
         />
       </div>

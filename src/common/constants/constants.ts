@@ -14,6 +14,7 @@ export const RENTER_STEP = {
   FILL_ADDRESS: 3,
   FILL_OWNER: 4,
   CONFIRM: 5,
+  SUCCESS: 6,
 };
 
 export const DATE_FORMAT = "YYYY/MM/DD";

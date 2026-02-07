@@ -8,10 +8,10 @@ import { ResetPassword } from "../pages/Auth/ResetPassword/ResetPassword";
 import ProtectedRoute from "./ProtectedRoute";
 import { Home } from "../pages/Home/Home";
 import { HomePage } from "../pages/Home/HomePage/HomePage";
-import { Filter } from "../pages/Filter/Filter";
-import { RentPage } from "../pages/RentPage/RentPage";
+import { Filter } from "../pages/Home/Filter/Filter";
+import { RentPage } from "../pages/Home/RentPage/RentPage";
 import { Location } from "../pages/Location/Location";
-import { RoomDetailPage } from "../pages/RoomDetail/RoomDetailPage";
+import { RoomDetailPage } from "../pages/Home/RoomDetail/RoomDetailPage";
 import { RenterLayout } from "../pages/Renter/RenterLayout";
 
 export const WebRouter = () => (
