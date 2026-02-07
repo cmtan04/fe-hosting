@@ -19,6 +19,9 @@ export const FillInformation = (props: RenterProps) => {
       ),
       locationDescription: form.getFieldValue("locationDescription"),
       locationNote: form.getFieldValue("locationNote"),
+      locationPriceStart: form.getFieldValue("locationPriceStart"),
+      locationPriceEnd: form.getFieldValue("locationPriceStart"),
+      locationPriceAfterDeal: form.getFieldValue("locationPriceStart"),
     };
 
     props.onSubmit(payload);
@@ -42,6 +45,18 @@ export const FillInformation = (props: RenterProps) => {
             label="Tên địa điểm"
             name="locationName"
             placeholder="Nhập tên địa điểm"
+            vertical={true}
+            formItemProps={{
+              rules: [
+                { required: true, message: "Trường này là trường bắt buộc." },
+              ],
+            }}
+          />
+
+          <FormInput
+            label="Giá cho thuê"
+            name="locationPriceAfterDeal"
+            placeholder="Nhập mức giá mong muốn"
             vertical={true}
             formItemProps={{
               rules: [

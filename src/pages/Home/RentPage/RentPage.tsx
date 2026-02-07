@@ -1,6 +1,6 @@
-import { Banner } from "../../components/Banner/Banner";
-import { RoomList } from "../../components/RoomList/RoomList";
-import { roomTypeProps } from "../../assets/data/mockData";
+import { Banner } from "../../../components/Banner/Banner";
+import { RoomList } from "../../../components/RoomList/RoomList";
+import { roomTypeProps } from "../../../assets/data/mockData";
 import { useSearchParams } from "react-router-dom";
 import "./RentPage.scss";
 

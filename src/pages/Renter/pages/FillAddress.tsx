@@ -204,27 +204,11 @@ export const FillAddress = (props: RenterProps) => {
             </Row>
 
             <Row gutter={[16, 16]} className="form-row">
-              <Col span={12}>
+              <Col span={24}>
                 <FormInput
-                  label="Phường / Xã"
-                  name="addressWard"
-                  placeholder="Nhập phường / xã."
-                  vertical={true}
-                  formItemProps={{
-                    rules: [
-                      {
-                        required: true,
-                        message: "Trường này là trường bắt buộc.",
-                      },
-                    ],
-                  }}
-                />
-              </Col>
-              <Col span={12}>
-                <FormInput
-                  label="Quốc gia"
-                  name="addressCountry"
-                  placeholder="Nhập quốc giá"
+                  label="Vùng"
+                  name="addressRegion"
+                  placeholder="Nhập vùng"
                   vertical={true}
                   formItemProps={{
                     rules: [
@@ -239,7 +223,7 @@ export const FillAddress = (props: RenterProps) => {
             </Row>
 
             <Row gutter={[16, 16]} className="form-row">
-              <Col span={12}>
+              <Col span={24}>
                 <FormTextArea
                   label="Mô tả"
                   name="addressDescription"
@@ -255,7 +239,10 @@ export const FillAddress = (props: RenterProps) => {
                   }}
                 />
               </Col>
-              <Col span={12}>
+            </Row>
+
+            <Row gutter={[16, 16]} className="form-row">
+              <Col span={24}>
                 <FormTextArea
                   label="Ghi chú"
                   name="addressNote"
@@ -272,6 +259,7 @@ export const FillAddress = (props: RenterProps) => {
                 />
               </Col>
             </Row>
+
             <div className="form-action">
               <Button
                 htmlType="button"
