@@ -131,6 +131,8 @@ export const ProfileInformation = () => {
           </div>
         </Col>
       </Col>
+
+      <Col className="profile__information-body"></Col>
     </div>
   );
 };
