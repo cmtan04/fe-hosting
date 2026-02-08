@@ -99,7 +99,7 @@ export const ConfirmInformation = (props: RenterProps) => {
 
       addressName: addressData?.addressName,
       fullAddress: addressData?.fullAddress,
-      addRessPortal: addressData?.addRessPortal,
+      addressPortal: addressData?.addressPortal,
       addressDistrict: addressData?.addressDistrict,
       addressCity: addressData?.addressCity,
       addressProvince: addressData?.addressProvince,
@@ -274,7 +274,7 @@ export const ConfirmInformation = (props: RenterProps) => {
               <FormInput
                 disabled
                 label="Mã bưu chính"
-                name="addRessPortal"
+                name="addressPortal"
                 placeholder="Nhập mã bưu chính."
                 vertical={true}
               />

@@ -19,7 +19,7 @@ export interface LocationAddressUpdateDto {
   addressCity: string;
   addressProvince: string;
   addressCountry: string;
-  addRessPortal: string;
+  addressPortal: string;
   addressLat: string;
   addressLong: string;
   addressRegion: string;
