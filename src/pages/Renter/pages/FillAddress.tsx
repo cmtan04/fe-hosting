@@ -114,7 +114,25 @@ export const FillAddress = (props: RenterProps) => {
                   }}
                 />
               </Col>
+              <Col span={12}>
+                <FormInput
+                  label="Phường / Xã"
+                  name="addressWard"
+                  placeholder="Nhập phường / xã."
+                  vertical={true}
+                  formItemProps={{
+                    rules: [
+                      {
+                        required: true,
+                        message: "Trường này là trường bắt buộc.",
+                      },
+                    ],
+                  }}
+                />
+              </Col>
+            </Row>
 
+            <Row gutter={[16, 16]} className="form-row">
               <Col span={12}>
                 <FormInput
                   label="Quận / Huyện"
@@ -131,9 +149,6 @@ export const FillAddress = (props: RenterProps) => {
                   }}
                 />
               </Col>
-            </Row>
-
-            <Row gutter={[16, 16]} className="form-row">
               <Col span={12}>
                 <FormInput
                   label="Thành phố"
@@ -150,30 +165,14 @@ export const FillAddress = (props: RenterProps) => {
                   }}
                 />
               </Col>
-              <Col span={12}>
-                <FormInput
-                  label="Tỉnh"
-                  name="addressProvince"
-                  placeholder="Nhập tỉnh"
-                  vertical={true}
-                  formItemProps={{
-                    rules: [
-                      {
-                        required: true,
-                        message: "Trường này là trường bắt buộc.",
-                      },
-                    ],
-                  }}
-                />
-              </Col>
             </Row>
 
             <Row gutter={[16, 16]} className="form-row">
               <Col span={12}>
                 <FormInput
-                  label="Phường / Xã"
-                  name="addressWard"
-                  placeholder="Nhập phường / xã."
+                  label="Tỉnh"
+                  name="addressProvince"
+                  placeholder="Nhập tỉnh"
                   vertical={true}
                   formItemProps={{
                     rules: [

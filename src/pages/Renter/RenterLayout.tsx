@@ -30,7 +30,7 @@ export const RenterLayout = () => {
     locationStatus: 0,
   });
 
-  console.log(data);
+  console.log("data", data);
 
   if (step === RENTER_STEP.PICK_TYPE) {
     return (
@@ -64,6 +64,7 @@ export const RenterLayout = () => {
                 ({
                   ...prev,
                   locationName: value.locationName,
+                  locationLogo: value.locationLogo,
                   minTimeLimit: value.minTimeLimit,
                   maxTimeLimit: value.maxTimeLimit,
                   locationDescription: value.locationDescription,
@@ -130,7 +131,7 @@ export const RenterLayout = () => {
               (prev) =>
                 ({
                   ...prev,
-                  serviceCode: [{}],
+                  serviceCode: value,
                 }) as LocationDto,
             );
             setStep(RENTER_STEP.CONFIRM);

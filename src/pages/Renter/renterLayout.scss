@@ -766,15 +766,16 @@
       color: $primary-color;
       font-family: $font_family_1 !important;
 
-      white-space: nowrap;
+      max-width: 100%;
       overflow: hidden;
+      white-space: nowrap;
       text-overflow: ellipsis;
     }
   }
 
   & .type {
     &__card {
-      width: 200px;
+      width: auto;
       height: fit-content;
       min-height: 350px;
       border-radius: 24px;
