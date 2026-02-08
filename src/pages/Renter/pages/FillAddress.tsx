@@ -1,44 +1,60 @@
 import { Button, Col, Form, Row } from "antd";
+import { useState } from "react";
+import { FormInput } from "../../../components/FormInput/formInput";
+import { FormTextArea } from "../../../components/FormTextArea/formTextArea";
+import { MapViewCommon } from "../../../components/MapViewCommon";
+
 import type { RenterProps } from "../RenterLayout";
 import "../renterLayout.scss";
-import { FormInput } from "../../../components/FormInput/formInput";
-import { MapViewCommon } from "../../../components/MapViewCommon";
-import { useState } from "react";
-import { FormTextArea } from "../../../components/FormTextArea/formTextArea";
+import {
+  MapAddressMapper,
+  type MapAddressDto,
+} from "../../../api/dtos/map.dto";
 
 export const FillAddress = (props: RenterProps) => {
   const [form] = Form.useForm();
 
-  const [location, setLocation] = useState({
-    lat: 21.0285,
-    long: 105.8542,
-    fullAddressText: "Hà Nội, Việt Nam",
-  });
+  const [location, setLocation] = useState<MapAddressDto>(
+    MapAddressMapper.createEmpty(21.0285, 105.8542),
+  );
 
-  const handleMapClick = (data: any) => {
+  const handleMapClick = (data: MapAddressDto) => {
     setLocation(data);
-    form.setFieldValue("fullAddress", data.fullAddressText);
+
+    form.setFieldsValue({
+      fullAddress: data.fullAddress,
+      addressWard: data.addressWard,
+      addressDistrict: data.addressDistrict,
+      addressCity: data.addressCity,
+      addressProvince: data.addressProvince,
+      addressCountry: data.addressCountry,
+      addressPostal: data.addressPostal,
+      addressRegion: data.addressRegion,
+    });
   };
 
   const onSubmit = () => {
+    const formValues = form.getFieldsValue();
+
     const payload = {
-      addressName: form.getFieldValue("addressName"),
-      fullAddress: location.fullAddressText,
-      addressWard: form.getFieldValue("addressWard"),
-      addressDistrict: form.getFieldValue("addressDistrict"),
-      addressCity: form.getFieldValue("addressCity"),
-      addressProvince: form.getFieldValue("addressProvince"),
-      addressCountry: form.getFieldValue("addressCountry"),
-      addRessPortal: form.getFieldValue("addRessPortal"),
+      addressName: formValues.addressName,
+      fullAddress: location.fullAddress,
+      addressWard: formValues.addressWard || location.addressWard,
+      addressDistrict: formValues.addressDistrict || location.addressDistrict,
+      addressCity: formValues.addressCity || location.addressCity,
+      addressProvince: formValues.addressProvince || location.addressProvince,
+      addressCountry: formValues.addressCountry || location.addressCountry,
+      addressPostal: formValues.addressPostal || location.addressPostal,
       addressLat: location.lat,
       addressLong: location.long,
-      addressRegion: form.getFieldValue("addressRegion"),
-      addressDescription: form.getFieldValue("addressDescription"),
-      addressNote: form.getFieldValue("addressNote"),
+      addressRegion: formValues.addressRegion || location.addressRegion,
+      addressDescription: formValues.addressDescription,
+      addressNote: formValues.addressNote,
     };
 
     props.onSubmit(payload);
   };
+
   return (
     <div className="renter__fillAddress">
       <div className="renter__fillAddress-header">
@@ -101,7 +117,7 @@ export const FillAddress = (props: RenterProps) => {
               <Col span={12}>
                 <FormInput
                   label="Mã bưu chính"
-                  name="addRessPortal"
+                  name="addressPostal"
                   placeholder="Nhập mã bưu chính."
                   vertical={true}
                   formItemProps={{

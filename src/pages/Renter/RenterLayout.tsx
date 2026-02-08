@@ -17,7 +17,7 @@ export interface RenterProps {
 }
 
 export const RenterLayout = () => {
-  const [step, setStep] = useState<number>(RENTER_STEP.PICK_TYPE);
+  const [step, setStep] = useState<number>(RENTER_STEP.FILL_ADDRESS);
   const [data, setData] = useState<LocationDto>({
     typeCode: "",
     locationLogo: "",
