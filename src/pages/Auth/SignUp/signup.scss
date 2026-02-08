@@ -20,7 +20,9 @@
     height: fit-content;
     min-height: 60%;
     padding: 24px 32px;
-
+    @media (max-width: 1080px) {
+      width: 100% !important;
+    }
     .form {
       &-row {
         &-1 {
@@ -37,6 +39,16 @@
           align-items: center;
           input {
             width: 450px;
+          }
+
+          @media (max-width: 1080px) {
+            width: 100% !important;
+            .form-input {
+              width: 100%;
+            }
+            input {
+              width: 100%;
+            }
           }
         }
 
