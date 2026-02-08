@@ -17,3 +17,7 @@ export const formatMoney = (value: string) => {
   const number = Number(value.replace(/,/g, ""));
   return number.toLocaleString("en-US");
 };
+
+export const formatCurrencyVND = (amount: number) => {
+  return new Intl.NumberFormat("vi-VN").format(amount) + " đ";
+};
