@@ -44,7 +44,7 @@ export const FillAddress = (props: RenterProps) => {
       addressCity: formValues.addressCity || location.addressCity,
       addressProvince: formValues.addressProvince || location.addressProvince,
       addressCountry: formValues.addressCountry || location.addressCountry,
-      addressPostal: formValues.addressPostal || location.addressPostal,
+      addressPortal: formValues.addressPortal || location.addressPostal,
       addressLat: location.lat,
       addressLong: location.long,
       addressRegion: formValues.addressRegion || location.addressRegion,

@@ -13,6 +13,9 @@ import { RoomDetailPage } from "../pages/Home/RoomDetail/RoomDetailPage";
 import { RenterLayout } from "../pages/Renter/RenterLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import { ROUTER_PATH } from "./Route";
+import { Profile } from "../pages/Profile/pages";
+import { ProfileInformation } from "../pages/Profile/pages/ProfileInformation";
+import { ProfileLocation } from "../pages/Profile/pages/ProfileLocation";
 
 export const WebRouter = () => (
   <Routes>
@@ -46,6 +49,18 @@ export const WebRouter = () => (
         ></Route>
       </Route>
       {/* Home */}
+      {/* PROFILE */}
+      <Route path={ROUTER_PATH.PROFILE} element={<Profile />}>
+        <Route
+          path={ROUTER_PATH.PROFILE_INFORMATION}
+          element={<ProfileInformation />}
+        ></Route>
+        <Route
+          path={ROUTER_PATH.PROFILE_LOCATION}
+          element={<ProfileLocation />}
+        ></Route>
+      </Route>
+      {/* PROFILE */}
       {/* RENTER */}
       <Route path={ROUTER_PATH.RENTER} element={<RenterLayout />} />
       {/* RENTER */}

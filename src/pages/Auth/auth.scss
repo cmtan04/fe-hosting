@@ -28,7 +28,10 @@
     align-items: center;
     justify-content: flex-start;
     padding: 120px 40px 0px 40px;
-
     box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12);
+    @media (max-width: 1080px) {
+      width: 100%;
+      padding: 120px 0px 0px 0px;
+    }
   }
 }

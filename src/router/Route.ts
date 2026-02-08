@@ -26,6 +26,10 @@ export const ROUTER_NAME = {
   FILTER: "filter",
   //Renter
   RENTER: "renter",
+  //Profile
+  PROFILE: "profile",
+  PROFILE_INFORMATION: "profile-information",
+  PROFILE_LOCATION: "profile-location",
 };
 
 export const ROUTER_PATH = {
@@ -48,4 +52,8 @@ export const ROUTER_PATH = {
   ROOMDETAIL: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.ROOMDETAIL}/:roomId`,
   //Renter
   RENTER: `${ROUTER}/${ROUTER_NAME.RENTER}`,
+  //Profile
+  PROFILE: `${ROUTER}/${ROUTER_NAME.PROFILE}`,
+  PROFILE_INFORMATION: `${ROUTER}/${ROUTER_NAME.PROFILE}/${ROUTER_NAME.PROFILE_INFORMATION}`,
+  PROFILE_LOCATION: `${ROUTER}/${ROUTER_NAME.PROFILE}/${ROUTER_NAME.PROFILE_LOCATION}`,
 };

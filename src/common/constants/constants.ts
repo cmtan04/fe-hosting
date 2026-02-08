@@ -18,3 +18,9 @@ export const RENTER_STEP = {
 };
 
 export const DATE_FORMAT = "YYYY/MM/DD";
+
+export const USER_ROLE = {
+  ADMIN: 0,
+  OWNER: 1,
+  USER: 2,
+};
