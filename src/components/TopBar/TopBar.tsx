@@ -1,25 +1,18 @@
-import { Menu, type MenuProps } from "antd";
-import { Link, useNavigate, createSearchParams, href } from "react-router-dom";
+import { Menu } from "antd";
+import { createSearchParams, Link } from "react-router-dom";
 import background from "../../assets/images/auth/authBackGround.jpg";
 import down from "../../assets/svg/icn-down_single.svg";
 import menu from "../../assets/svg/icn-menu.svg";
-import { childrenPath } from "../../common/contexts/helper";
+import { USER_ROLE } from "../../common/constants/constants";
 import { ROUTER_PATH } from "../../router/Route";
 import "./topbar.scss";
-// interface FilterProps {
-//   pathname: string;
-//   search?: any;
-// }
-
-// const buildPathWithSearch = ({ pathname, search }: FilterProps) => {
-//   if (search) {
-//     return `${pathname}?${createSearchParams(search)}`;
-//   }
-//   return pathname;
-// };
+import { useState } from "react";
 
 export const TopBar = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const [showProfile, setShowProfile] = useState<boolean>();
+
+  const userRole = localStorage.getItem("userRole");
 
   const items = [
     {
@@ -189,6 +182,10 @@ export const TopBar = () => {
     },
   ];
 
+  const profileItems = [
+    { key: 1, icon: "", label: "Thông tin cá nhân", href: ROUTER_PATH.HOME },
+  ];
+
   return (
     <div className="top__bar">
       <div className="left">
@@ -208,13 +205,24 @@ export const TopBar = () => {
       <div className="right">
         <div className="top__bar-host">
           <span>
-            <Link to={ROUTER_PATH.RENTER}>Địa điểm của tôi</Link>
+            {Number(userRole) === USER_ROLE.OWNER ? (
+              <Link to={ROUTER_PATH.RENTER}>Địa điểm của tôi</Link>
+            ) : (
+              <Link to={ROUTER_PATH.RENTER}>Cho thuê địa điểm</Link>
+            )}
           </span>
         </div>
-        <div className="top__bar-account">
+        <div
+          className="top__bar-account"
+          onClick={() => {
+            setShowProfile(!showProfile);
+          }}
+        >
           <img src={background} alt="" className="avartar" />
           <img src={menu} alt="" className="menu" />
         </div>
+
+        {showProfile && <div className="profile__dropdown"></div>}
       </div>
     </div>
   );
