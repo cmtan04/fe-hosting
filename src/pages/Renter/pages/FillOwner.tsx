@@ -4,15 +4,20 @@ import { FormInput } from "../../../components/FormInput/formInput";
 import { UserEndpoint } from "../../../api/endpoints/user.endpoint";
 import { useQuery } from "@tanstack/react-query";
 import { getUserPRofile } from "../../../api/configs/user.config";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLoading } from "../../../providers/loadingProvider";
 import { ServiceEndpoint } from "../../../api/endpoints/service.endpoint";
 import { getAllService } from "../../../api/configs/service.config";
 import { ServiceTag } from "../components/ServiceTag/intex";
+import type { ServicePayloadDto } from "../../../api/dtos/location.dto";
 
 export const FillOwner = (props: RenterProps) => {
   const [form] = Form.useForm();
   const { setLoading } = useLoading();
+
+  const [selectedServices, setSelectedServices] = useState<string[]>(
+    props.data?.serviceCode?.map((s) => s.serviceCode) || [],
+  );
 
   const { data: user, isLoading } = useQuery({
     queryKey: [UserEndpoint.GET_USER_INFORMATION],
@@ -39,9 +44,42 @@ export const FillOwner = (props: RenterProps) => {
     }
   }, [user, form]);
 
-  const onSubmit = () => {
-    props.onSubmit(props.data);
+  useEffect(() => {
+    if (props.data?.serviceCode) {
+      setSelectedServices(props.data.serviceCode.map((s) => s.serviceCode));
+    }
+  }, [props.data?.serviceCode]);
+
+  const handleServiceClick = (serviceCode: string) => {
+    setSelectedServices((prev) => {
+      const isSelected = prev.includes(serviceCode);
+      let newSelected: string[];
+
+      if (isSelected) {
+        newSelected = prev.filter((code) => code !== serviceCode);
+      } else {
+        newSelected = [...prev, serviceCode];
+      }
+
+      props.data.serviceCode = newSelected.map((code) => ({
+        serviceCode: code,
+      }));
+
+      return newSelected;
+    });
   };
+
+  const isServiceSelected = (serviceCode: string) => {
+    return selectedServices.includes(serviceCode);
+  };
+
+  const onSubmit = () => {
+    const payload: ServicePayloadDto[] = selectedServices.map((code) => ({
+      serviceCode: code,
+    }));
+    props.onSubmit(payload);
+  };
+
   return (
     <div className="renter__fillOwner">
       <div className="renter__fillOwner-header">
@@ -153,13 +191,17 @@ export const FillOwner = (props: RenterProps) => {
               {service
                 ?.filter((item) => Number(item.servicePrice) === 0)
                 .map((item) => (
-                  <div key={item.serviceCode}>
+                  <div
+                    key={item.serviceCode}
+                    onClick={() => handleServiceClick(item.serviceCode)}
+                    style={{ cursor: "pointer" }}
+                  >
                     <ServiceTag
                       icon={item.serviceLogo}
                       name={item.serviceName}
                       price={item.servicePrice}
                       description={item.serviceDescription}
-                      active
+                      active={isServiceSelected(item.serviceCode)}
                     />
                   </div>
                 ))}
@@ -172,13 +214,17 @@ export const FillOwner = (props: RenterProps) => {
               {service
                 ?.filter((item) => Number(item.servicePrice) > 0)
                 .map((item) => (
-                  <div key={item.serviceCode}>
+                  <div
+                    key={item.serviceCode}
+                    onClick={() => handleServiceClick(item.serviceCode)}
+                    style={{ cursor: "pointer" }}
+                  >
                     <ServiceTag
                       icon={item.serviceLogo}
                       name={item.serviceName}
                       price={item.servicePrice}
                       description={item.serviceDescription}
-                      active
+                      active={isServiceSelected(item.serviceCode)}
                     />
                   </div>
                 ))}

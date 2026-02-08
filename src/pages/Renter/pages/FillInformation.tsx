@@ -2,15 +2,69 @@ import { Button, Checkbox, Col, DatePicker, Form, Row } from "antd";
 import { FormInput } from "../../../components/FormInput/formInput";
 import { FormTextArea } from "../../../components/FormTextArea/formTextArea";
 import type { RenterProps } from "../RenterLayout";
-import { DATE_FORMAT } from "../../../common/constants/constants";
+import {
+  DATE_FORMAT,
+  DEFAULT_MESSAGE,
+  NOTI_ERROR,
+  NOTI_SUCCESS,
+} from "../../../common/constants/constants";
 import dayjs from "dayjs";
+import { useRef, useState } from "react";
+import { useLoading } from "../../../providers/loadingProvider";
+import { useMutation } from "@tanstack/react-query";
+import { uploadImage } from "../../../api/configs/common.config";
+import { useNotification } from "../../../providers/notificationProvider";
+import { isAxiosError } from "axios";
 
 export const FillInformation = (props: RenterProps) => {
   const [form] = Form.useForm();
+  const { setLoading } = useLoading();
+  const { showNotification } = useNotification();
+  const [url, setUrl] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const uploadMutation = useMutation({
+    mutationFn: (payload: FormData) => uploadImage(payload),
+    onSuccess: (data) => {
+      setUrl(data.imageUrl);
+      showNotification(data.message, NOTI_SUCCESS);
+    },
+    onError: (error) => {
+      let message = DEFAULT_MESSAGE;
+      if (isAxiosError(error)) {
+        const apiMessage = error.response?.data?.message;
+        if (typeof apiMessage === "string") {
+          message = apiMessage;
+        } else if (Array.isArray(apiMessage) && apiMessage[0]) {
+          message = apiMessage[0];
+        }
+      }
+      showNotification(message, NOTI_ERROR);
+      setUrl("");
+    },
+
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      return;
+    }
+    const formData = new FormData();
+    formData.append("file", file);
+    uploadMutation.mutate(formData);
+  };
 
   const onSubmit = () => {
     const payload = {
       locationName: form.getFieldValue("locationName"),
+      locationLogo: url,
       minTimeLimit: dayjs(form.getFieldValue("minTimeLimit")).format(
         DATE_FORMAT,
       ),
@@ -21,7 +75,7 @@ export const FillInformation = (props: RenterProps) => {
       locationNote: form.getFieldValue("locationNote"),
       locationPriceStart: form.getFieldValue("locationPriceStart"),
       locationPriceEnd: form.getFieldValue("locationPriceStart"),
-      locationPriceAfterDeal: form.getFieldValue("locationPriceStart"),
+      locationPriceAfterDeal: form.getFieldValue("locationPriceAfterDeal"),
     };
 
     props.onSubmit(payload);
@@ -41,29 +95,73 @@ export const FillInformation = (props: RenterProps) => {
           onFinish={onSubmit}
           className="renter__fillInformation-form"
         >
-          <FormInput
-            label="Tên địa điểm"
-            name="locationName"
-            placeholder="Nhập tên địa điểm"
-            vertical={true}
-            formItemProps={{
-              rules: [
-                { required: true, message: "Trường này là trường bắt buộc." },
-              ],
-            }}
-          />
+          <Row gutter={[16, 16]}>
+            <Col span={12} className="upload-wrapper">
+              <figure className="renter__fillInformation-upload">
+                {url ? <img crossOrigin="anonymous" src={url} alt="" /> : <></>}
+              </figure>
+              <label
+                htmlFor="upload"
+                className="renter__fillInformation-upload-btn-upload"
+              >
+                <input
+                  id="upload"
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                />
 
-          <FormInput
-            label="Giá cho thuê"
-            name="locationPriceAfterDeal"
-            placeholder="Nhập mức giá mong muốn"
-            vertical={true}
-            formItemProps={{
-              rules: [
-                { required: true, message: "Trường này là trường bắt buộc." },
-              ],
-            }}
-          />
+                <span>Tải ảnh lên</span>
+              </label>
+            </Col>
+            <Col span={12} className="input-wrapper">
+              <FormInput
+                label="Tên địa điểm"
+                name="locationName"
+                placeholder="Nhập tên địa điểm"
+                vertical={true}
+                formItemProps={{
+                  rules: [
+                    {
+                      required: true,
+                      message: "Trường này là trường bắt buộc.",
+                    },
+                  ],
+                }}
+              />
+
+              <FormInput
+                label="Giá thấp nhât"
+                name="locationPriceStart"
+                placeholder="Nhập mức giá mong muốn"
+                vertical={true}
+                formItemProps={{
+                  rules: [
+                    {
+                      required: true,
+                      message: "Trường này là trường bắt buộc.",
+                    },
+                  ],
+                }}
+              />
+
+              <FormInput
+                label="Giá cho thuê"
+                name="locationPriceAfterDeal"
+                placeholder="Nhập mức giá mong muốn"
+                vertical={true}
+                formItemProps={{
+                  rules: [
+                    {
+                      required: true,
+                      message: "Trường này là trường bắt buộc.",
+                    },
+                  ],
+                }}
+              />
+            </Col>
+          </Row>
 
           <FormTextArea
             label="Mô tả"
@@ -76,7 +174,6 @@ export const FillInformation = (props: RenterProps) => {
               ],
             }}
           />
-
           <FormTextArea
             label="Ghi chú"
             name="locationNote"
@@ -88,7 +185,6 @@ export const FillInformation = (props: RenterProps) => {
               ],
             }}
           />
-
           <Form.Item
             name="hasLimit"
             valuePropName="checked"
@@ -96,7 +192,6 @@ export const FillInformation = (props: RenterProps) => {
           >
             <Checkbox>Giới hạn thời gian thuê</Checkbox>
           </Form.Item>
-
           <Form.Item
             noStyle
             shouldUpdate={(prevValues, currentValues) =>

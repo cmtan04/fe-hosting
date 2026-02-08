@@ -14,6 +14,11 @@ import {
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import "./style.scss";
+import {
+  MapAddressMapper,
+  type MapAddressDto,
+  type NominatimResponseDto,
+} from "../../api/dtos/map.dto";
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -24,16 +29,10 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-interface MapViewCommonData {
-  lat: number;
-  long: number;
-  fullAddressText?: string;
-}
-
 interface MapViewCommonProps {
-  data: MapViewCommonData;
+  data: MapAddressDto;
   hasInputSearch?: boolean;
-  onMapClick: (e: MapViewCommonData) => void;
+  onMapClick: (e: MapAddressDto) => void;
 }
 
 function ChangeView({ center }: { center: [number, number] }) {
@@ -47,28 +46,21 @@ function ChangeView({ center }: { center: [number, number] }) {
 function MapClickHandler({
   onMapClick,
 }: {
-  onMapClick: (data: MapViewCommonData) => void;
+  onMapClick: (data: MapAddressDto) => void;
 }) {
   useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng;
 
       fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`,
       )
         .then((res) => res.json())
-        .then((data) => {
-          onMapClick({
-            lat,
-            long: lng,
-            fullAddressText: data.display_name,
-          });
+        .then((data: NominatimResponseDto) => {
+          onMapClick(MapAddressMapper.fromNominatim(data, lat, lng));
         })
         .catch(() => {
-          onMapClick({
-            lat,
-            long: lng,
-          });
+          onMapClick(MapAddressMapper.createEmpty(lat, lng));
         });
     },
   });
@@ -96,22 +88,26 @@ export const MapViewCommon: React.FC<MapViewCommonProps> = ({
 
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchInput)}`,
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          searchInput,
+        )}&addressdetails=1`,
       );
-      const results = await response.json();
+      const results: NominatimResponseDto[] = await response.json();
 
       if (results && results.length > 0) {
-        const { lat, lon, display_name } = results[0];
-        const newLat = parseFloat(lat);
-        const newLng = parseFloat(lon);
+        const result = results[0];
+        if (!result) return;
+        const newLat = parseFloat(result.lat);
+        const newLng = parseFloat(result.lon);
 
         setMarkerPosition([newLat, newLng]);
-        onMapClick({
-          lat: newLat,
-          long: newLng,
-          fullAddressText: display_name,
-        });
-        setSearchInput(display_name);
+        const parsedData = MapAddressMapper.fromNominatim(
+          result,
+          newLat,
+          newLng,
+        );
+        onMapClick(parsedData);
+        setSearchInput(parsedData.fullAddress);
       }
     } catch (error) {
       console.error("Search error:", error);
@@ -124,22 +120,16 @@ export const MapViewCommon: React.FC<MapViewCommonProps> = ({
       const { lat, lng } = marker.getLatLng();
 
       fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`,
       )
         .then((res) => res.json())
-        .then((data) => {
-          onMapClick({
-            lat,
-            long: lng,
-            fullAddressText: data.display_name,
-          });
-          setSearchInput(data.display_name);
+        .then((data: NominatimResponseDto) => {
+          const parsedData = MapAddressMapper.fromNominatim(data, lat, lng);
+          onMapClick(parsedData);
+          setSearchInput(parsedData.fullAddress);
         })
         .catch(() => {
-          onMapClick({
-            lat,
-            long: lng,
-          });
+          onMapClick(MapAddressMapper.createEmpty(lat, lng));
         });
     }
   };
