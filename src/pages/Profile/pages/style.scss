@@ -12,6 +12,24 @@
     height: calc(100% - 67px);
     margin-top: 67px;
     padding: 24px 32px;
+
+    .ant-col {
+      &-6 {
+        width: fit-content !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        flex: 0 0 auto !important;
+        flex-basis: auto !important;
+      }
+      &-18 {
+        flex: 1 !important;
+        width: auto !important;
+        max-width: none !important;
+        padding: 24px 32px;
+        border-radius: 12px;
+        border: 1px solid #d9d9d9;
+      }
+    }
   }
 
   &__sideBar {
