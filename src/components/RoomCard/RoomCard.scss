@@ -1,0 +1,71 @@
+.ant-card {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .ant-card-cover img {
+        transition: transform 0.3s ease;
+    }
+
+    &:hover .ant-card-cover img {
+        transform: scale(1.05);
+    }
+
+    .ant-card-body {
+        padding: 16px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        .ant-card-meta-title {
+            margin-bottom: 8px;
+
+            .ant-typography {
+                font-size: 16px;
+                font-weight: 600;
+                color: #262626;
+            }
+        }
+
+        .ant-card-meta-description {
+            .ant-space {
+                margin-bottom: 8px;
+
+                .anticon {
+                    color: #8c8c8c;
+                }
+
+                .ant-typography {
+                    color: #595959;
+                }
+
+                .ant-typography strong {
+                    color: #1890ff;
+                    font-size: 14px;
+                }
+            }
+
+            .ant-typography {
+                color: #8c8c8c;
+                font-size: 13px;
+                line-height: 1.5;
+            }
+        }
+    }
+}
+
+.ant-tag {
+    margin-right: 4px;
+    border-radius: 4px;
+    font-size: 12px;
+}
