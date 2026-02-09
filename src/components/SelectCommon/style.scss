@@ -33,6 +33,10 @@
     height: 40px;
     line-height: 40px;
 
+    &-input {
+      cursor: pointer;
+    }
+
     .ant-select-selector {
       border-radius: 6px !important;
       border: 1px solid $primary_color !important;

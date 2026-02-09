@@ -1,12 +1,29 @@
-import { Col, Form, Row } from "antd";
+import { Button, Col, Form, Row } from "antd";
 import { FormInput } from "../../../../components/FormInput/formInput";
 import { SelectCommon } from "../../../../components/SelectCommon";
 import type { SelectOptionProps } from "../../../../common/types/common";
+import { LocationEndpoint } from "../../../../api/endpoints/location.endpoint";
+import { useQuery } from "@tanstack/react-query";
+import { getAllLocationType } from "../../../../api/configs/location.config";
+import { useLoading } from "../../../../providers/loadingProvider";
+import { useEffect } from "react";
 
 export const ProfileLocation = () => {
   const [form] = Form.useForm();
+  const { setLoading } = useLoading();
+
+  const { data: typeList, isLoading } = useQuery({
+    queryKey: [LocationEndpoint.GET_ALL_LOCATION_TYPE],
+    queryFn: () => getAllLocationType(),
+  });
+
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
 
   const onSubmitSearch = () => {};
+
+  const addNewLocation = () => {};
 
   const rentOption: SelectOptionProps[] = [
     {
@@ -33,7 +50,7 @@ export const ProfileLocation = () => {
               <Col span={8}>
                 <FormInput
                   label="Tên địa chỉ"
-                  name="phone"
+                  name="locationName"
                   placeholder="Nhập tên địa chỉ"
                   vertical={true}
                   formItemProps={{
@@ -48,7 +65,7 @@ export const ProfileLocation = () => {
               <Col span={8}>
                 <SelectCommon
                   label="Trạng thái"
-                  name="phone"
+                  name="hasRent"
                   placeholder="Trạng thái"
                   options={rentOption}
                   formItemProps={{
@@ -61,10 +78,48 @@ export const ProfileLocation = () => {
                 />
               </Col>
               <Col span={8}>
-                <FormInput
+                <SelectCommon
                   label="Phân loại"
-                  name="phone"
+                  name="hasRent"
                   placeholder="Phân loại"
+                  options={
+                    typeList?.map((item) => ({
+                      key: Number(item.id),
+                      value: item.typeCode,
+                      label: item.typeName,
+                    })) || []
+                  }
+                  formItemProps={{
+                    rules: [
+                      {
+                        required: false,
+                      },
+                    ],
+                  }}
+                />
+              </Col>
+            </Row>
+            <Row gutter={[16, 16]}>
+              <Col span={12}>
+                <FormInput
+                  label="Tên người thuê"
+                  name="locationName"
+                  placeholder="Tên người thuê"
+                  vertical={true}
+                  formItemProps={{
+                    rules: [
+                      {
+                        required: false,
+                      },
+                    ],
+                  }}
+                />
+              </Col>
+              <Col span={12}>
+                <FormInput
+                  label="Email người thuê"
+                  name="locationName"
+                  placeholder="Email người thuê"
                   vertical={true}
                   formItemProps={{
                     rules: [
@@ -76,7 +131,41 @@ export const ProfileLocation = () => {
                 />
               </Col>
             </Row>
+            <Row gutter={[16, 16]}>
+              <Col span={24}>
+                <FormInput
+                  label="Địa chỉ"
+                  name="locationName"
+                  placeholder="Địa chỉ"
+                  vertical={true}
+                  formItemProps={{
+                    rules: [
+                      {
+                        required: false,
+                      },
+                    ],
+                  }}
+                />
+              </Col>
+            </Row>
+            <Row gutter={[16, 16]}>
+              <Button htmlType="submit" className="button-submit">
+                Tìm kiếm
+              </Button>
+            </Row>
           </Form>
+        </div>
+        <div className="profile__location-body-result">
+          <Row gutter={[16, 16]}>
+            <p className="result__count">Tổng số địa điểm: </p>
+            <Button
+              htmlType="button"
+              onClick={() => addNewLocation()}
+              className="button-add"
+            >
+              Thêm mới
+            </Button>
+          </Row>
         </div>
       </div>
     </div>
