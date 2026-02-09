@@ -1,20 +1,33 @@
 import { Button, Col, Form, Row } from "antd";
 import { FormInput } from "../../../../components/FormInput/formInput";
 import { SelectCommon } from "../../../../components/SelectCommon";
-import type { SelectOptionProps } from "../../../../common/types/common";
+import type {
+  SelectOptionProps,
+  TableCommonProps,
+} from "../../../../common/types/common";
 import { LocationEndpoint } from "../../../../api/endpoints/location.endpoint";
 import { useQuery } from "@tanstack/react-query";
-import { getAllLocationType } from "../../../../api/configs/location.config";
+import {
+  getAllLocationType,
+  getLocationByFilter,
+} from "../../../../api/configs/location.config";
 import { useLoading } from "../../../../providers/loadingProvider";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { CommonTable } from "../../../../components/CommonTable";
 
 export const ProfileLocation = () => {
   const [form] = Form.useForm();
   const { setLoading } = useLoading();
+  const [filter, setFilter] = useState();
 
   const { data: typeList, isLoading } = useQuery({
     queryKey: [LocationEndpoint.GET_ALL_LOCATION_TYPE],
     queryFn: () => getAllLocationType(),
+  });
+
+  const { data: locationData, isLoading: locationLoading } = useQuery({
+    queryKey: [LocationEndpoint.GET_LOCATION_BY_FILTER, filter],
+    queryFn: () => getLocationByFilter(filter),
   });
 
   useEffect(() => {
@@ -35,6 +48,55 @@ export const ProfileLocation = () => {
       key: 1,
       value: 1,
       label: "Đã thuê",
+    },
+  ];
+
+  const header: TableCommonProps[] = [
+    {
+      key: 1,
+      label: "Mã địa điểm",
+      value: "locationCode",
+    },
+    {
+      key: 2,
+      label: "Tên địa điểm",
+      value: "locationName",
+    },
+    {
+      key: 3,
+      label: "Giá niêm yết",
+      value: "locationPriceStart",
+    },
+    {
+      key: 4,
+      label: "Giá thuê",
+      value: "locationPriceEnd",
+    },
+    {
+      key: 5,
+      label: "Trạng thái",
+      value: "hasRent",
+      render: (value: number) => {
+        console.log(value);
+        if (value === 0) {
+          return (
+            <div className="status ready">
+              <p>{rentOption.find((item) => item.value === value)?.label}</p>
+            </div>
+          );
+        } else {
+          return (
+            <div className="status rented">
+              <p>{rentOption.find((item) => item.value === value)?.label}</p>
+            </div>
+          );
+        }
+      },
+    },
+    {
+      key: 6,
+      label: "Phân loại",
+      value: "typeName",
     },
   ];
   return (
@@ -148,7 +210,7 @@ export const ProfileLocation = () => {
                 />
               </Col>
             </Row>
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} className="action-row">
               <Button htmlType="submit" className="button-submit">
                 Tìm kiếm
               </Button>
@@ -156,7 +218,7 @@ export const ProfileLocation = () => {
           </Form>
         </div>
         <div className="profile__location-body-result">
-          <Row gutter={[16, 16]}>
+          <Row gutter={[16, 16]} className="header">
             <p className="result__count">Tổng số địa điểm: </p>
             <Button
               htmlType="button"
@@ -165,6 +227,18 @@ export const ProfileLocation = () => {
             >
               Thêm mới
             </Button>
+          </Row>
+
+          <Row gutter={[16, 16]}>
+            <CommonTable
+              header={header}
+              body={locationData as any}
+              className="location__table"
+              hasPagination={true}
+              pageSize={10}
+              filter={filter}
+              loading={locationLoading}
+            />
           </Row>
         </div>
       </div>

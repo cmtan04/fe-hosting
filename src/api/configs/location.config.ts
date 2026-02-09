@@ -9,6 +9,18 @@ export const getAllLocationType = async (): Promise<LocationTypeDto[]> => {
   return response.data;
 };
 
+export const getLocationByFilter = async (
+  filter: any,
+): Promise<LocationDto[]> => {
+  const response = await axiosClient.get(
+    LocationEndpoint.GET_LOCATION_BY_FILTER,
+    {
+      params: filter,
+    },
+  );
+  return response.data;
+};
+
 export const createLocation = async (payload: LocationDto): Promise<any> => {
   const response = await axiosClient.post(
     LocationEndpoint.CREATE_LOCATION,
