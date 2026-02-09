@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { RENTER_STEP } from "../../common/constants/constants";
+import {
+  DEFAULT_MESSAGE,
+  NOTI_ERROR,
+  NOTI_SUCCESS,
+  RENTER_STEP,
+} from "../../common/constants/constants";
 import { PickLocationType } from "./pages/PickLocationType";
 import "./renterLayout.scss";
 import type { LocationDto } from "../../api/dtos/location.dto";
@@ -8,6 +13,11 @@ import { FillAddress } from "./pages/FillAddress";
 import { FillOwner } from "./pages/FillOwner";
 import { ConfirmInformation } from "./pages/ConfirmInformation";
 import { LocationCreateSucees } from "./pages/LocationCreateSuccess";
+import { useMutation } from "@tanstack/react-query";
+import { createLocation } from "../../api/configs/location.config";
+import { useLoading } from "../../providers/loadingProvider";
+import { useNotification } from "../../providers/notificationProvider";
+import { isAxiosError } from "axios";
 
 export interface RenterProps {
   step: number;
@@ -17,6 +27,8 @@ export interface RenterProps {
 }
 
 export const RenterLayout = () => {
+  const { setLoading } = useLoading();
+  const { showNotification } = useNotification();
   const [step, setStep] = useState<number>(RENTER_STEP.PICK_TYPE);
   const [data, setData] = useState<LocationDto>({
     typeCode: "",
@@ -30,7 +42,33 @@ export const RenterLayout = () => {
     locationStatus: 0,
   });
 
-  console.log(data);
+  console.log("data", data);
+
+  const locationMutation = useMutation({
+    mutationFn: (payload: LocationDto) => createLocation(payload),
+    onSuccess: (data) => {
+      setStep(RENTER_STEP.SUCCESS);
+      showNotification(data.message, NOTI_SUCCESS);
+    },
+    onError: (error) => {
+      let message = DEFAULT_MESSAGE;
+      if (isAxiosError(error)) {
+        const apiMessage = error.response?.data?.message;
+        if (typeof apiMessage === "string") {
+          message = apiMessage;
+        } else if (Array.isArray(apiMessage) && apiMessage[0]) {
+          message = apiMessage[0];
+        }
+      }
+      showNotification(message, NOTI_ERROR);
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
 
   if (step === RENTER_STEP.PICK_TYPE) {
     return (
@@ -64,6 +102,7 @@ export const RenterLayout = () => {
                 ({
                   ...prev,
                   locationName: value.locationName,
+                  locationLogo: value.locationLogo,
                   minTimeLimit: value.minTimeLimit,
                   maxTimeLimit: value.maxTimeLimit,
                   locationDescription: value.locationDescription,
@@ -101,7 +140,7 @@ export const RenterLayout = () => {
                       addressCity: value.addressCity,
                       addressProvince: value.addressProvince,
                       addressCountry: value.addressCountry,
-                      addRessPortal: value.addRessPortal,
+                      addressPortal: value.addressPortal,
                       addressLat: value.addressLat,
                       addressLong: value.addressLong,
                       addressRegion: value.addressRegion,
@@ -130,7 +169,7 @@ export const RenterLayout = () => {
               (prev) =>
                 ({
                   ...prev,
-                  serviceCode: [{}],
+                  serviceCode: value,
                 }) as LocationDto,
             );
             setStep(RENTER_STEP.CONFIRM);
@@ -148,13 +187,8 @@ export const RenterLayout = () => {
           step={step}
           data={data}
           onSubmit={(value: any) => {
-            setData(
-              (prev) =>
-                ({
-                  ...prev,
-                }) as LocationDto,
-            );
-            setStep(RENTER_STEP.SUCCESS);
+            setData(value);
+            locationMutation.mutate(value);
           }}
           onCancel={() => {
             setStep(RENTER_STEP.FILL_OWNER);
@@ -168,16 +202,7 @@ export const RenterLayout = () => {
         <LocationCreateSucees
           step={step}
           data={data}
-          onSubmit={(value: any) => {
-            setData(
-              (prev) =>
-                ({
-                  ...prev,
-                  locationAddress: [{}],
-                }) as LocationDto,
-            );
-            setStep(RENTER_STEP.CONFIRM);
-          }}
+          onSubmit={(value: any) => {}}
           onCancel={() => {
             setStep(RENTER_STEP.FILL_OWNER);
           }}

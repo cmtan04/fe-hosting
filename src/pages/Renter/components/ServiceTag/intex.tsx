@@ -20,7 +20,7 @@ export const ServiceTag = (props: ServiceTagProps) => {
       <Col span={8}>
         <img src={props.icon} alt="icon" className="renter__serviceTag-icon" />
       </Col>
-      <Col span={16}>
+      <Col span={16} title={props.name}>
         <p className="service-name">{props.name}</p>
         <p className="service-name">{formatMoney(props.price)}</p>
       </Col>

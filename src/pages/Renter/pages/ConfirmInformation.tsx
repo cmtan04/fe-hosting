@@ -6,9 +6,18 @@ import { DATE_FORMAT } from "../../../common/constants/constants";
 import { useQuery } from "@tanstack/react-query";
 import { LocationEndpoint } from "../../../api/endpoints/location.endpoint";
 import { getAllLocationType } from "../../../api/configs/location.config";
-import { useEffect, useState } from "react";
-import type { LocationTypeDto } from "../../../api/dtos/location.dto";
+import { useEffect, useMemo, useState } from "react";
+import type {
+  LocationAddressUpdateDto,
+  LocationDto,
+  LocationTypeDto,
+} from "../../../api/dtos/location.dto";
 import { useLoading } from "../../../providers/loadingProvider";
+import dayjs from "dayjs";
+import { ServiceEndpoint } from "../../../api/endpoints/service.endpoint";
+import { getAllService } from "../../../api/configs/service.config";
+import { ServiceTag } from "../components/ServiceTag/intex";
+import { formatCurrencyVND } from "../../../common/contexts/format";
 
 export const ConfirmInformation = (props: RenterProps) => {
   const [form] = Form.useForm();
@@ -20,20 +29,129 @@ export const ConfirmInformation = (props: RenterProps) => {
     queryFn: () => getAllLocationType(),
   });
 
-  useEffect(() => {
-    if (typeList) {
-      const type = typeList.find((item) => item.id === props.data.typeCode);
-      setLocationType(type);
-    }
-  }, [typeList]);
+  const { data: service } = useQuery({
+    queryKey: [ServiceEndpoint.GET_ALL_LOCATION_SERVICE],
+    queryFn: () => getAllService(),
+  });
 
   useEffect(() => {
     setLoading(isLoading);
   }, [isLoading]);
 
-  const onSubmit = () => {
-    props.onSubmit(props.data);
+  useEffect(() => {
+    if (!typeList || !props.data?.typeCode) return;
+    const type = typeList.find((item) => item.typeCode === props.data.typeCode);
+    setLocationType(type);
+  }, [typeList, props.data?.typeCode]);
+
+  const { locationPriceAfterDeal, locationPriceEnd } = useMemo(() => {
+    if (!props.data || !props.data.serviceCode) {
+      return { locationPriceAfterDeal: 0, locationPriceEnd: 0 };
+    }
+    const selectedServiceCodes = props.data.serviceCode.map(
+      (item) => item.serviceCode,
+    );
+
+    let totalDiscount = 0;
+    let totalServicePrice = 0;
+
+    selectedServiceCodes.forEach((code) => {
+      const serviceData = service?.find((s) => s.serviceCode === code);
+      if (serviceData) {
+        const price = parseFloat(serviceData.servicePrice);
+        const discountPercent = serviceData.serviceDiscount / 100;
+
+        const discountAmount = price * discountPercent;
+        totalDiscount += discountAmount;
+        totalServicePrice += price;
+      }
+    });
+
+    const priceAfterDeal = Math.round(totalDiscount);
+    const locationStart = Number(props.data.locationPriceStart) || 0;
+    const priceEnd = Math.round(
+      locationStart + totalServicePrice - priceAfterDeal,
+    );
+
+    return {
+      locationPriceAfterDeal: priceAfterDeal,
+      locationPriceEnd: priceEnd,
+    };
+  }, [props.data]);
+
+  useEffect(() => {
+    if (!props.data) return;
+    const addressData: LocationAddressUpdateDto = props.data
+      .locationAddress?.[0] as LocationAddressUpdateDto;
+
+    form.setFieldsValue({
+      locationName: props.data.locationName,
+      locationPriceStart: props.data.locationPriceStart,
+      locationDescription: props.data.locationDescription,
+      locationNote: props.data.locationNote,
+
+      minTimeLimit: props.data.minTimeLimit
+        ? dayjs(props.data.minTimeLimit, DATE_FORMAT)
+        : null,
+      maxTimeLimit: props.data.maxTimeLimit
+        ? dayjs(props.data.maxTimeLimit, DATE_FORMAT)
+        : null,
+
+      addressName: addressData?.addressName,
+      fullAddress: addressData?.fullAddress,
+      addressPortal: addressData?.addressPortal,
+      addressDistrict: addressData?.addressDistrict,
+      addressCity: addressData?.addressCity,
+      addressProvince: addressData?.addressProvince,
+      addressWard: addressData?.addressWard,
+      addressCountry: addressData?.addressCountry,
+      addressRegion: addressData?.addressRegion,
+      addressDescription: addressData?.addressDescription,
+      addressNote: addressData?.addressNote,
+    });
+  }, [props.data, form]);
+
+  const isServiceSelected = (serviceCode: string) => {
+    if (!props.data?.serviceCode) return false;
+    if (Array.isArray(props.data.serviceCode)) {
+      return props.data.serviceCode.some(
+        (item) => item.serviceCode === serviceCode,
+      );
+    }
+    return (props.data.serviceCode as any).serviceCode === serviceCode;
   };
+
+  const onSubmit = () => {
+    const payload: LocationDto = {
+      typeCode: props.data.typeCode,
+      serviceCode: props.data.serviceCode || [],
+      locationAddress: props.data.locationAddress || [],
+      locationName: props.data.locationName,
+      locationLogo: props.data.locationLogo || "",
+      locationPriceStart: Number(props.data.locationPriceStart) || 0,
+      locationPriceEnd: locationPriceEnd,
+      locationPriceAfterDeal: locationPriceAfterDeal,
+      locationStatus: props.data.locationStatus || 0,
+      ...(props.data.minTimeLimit && {
+        minTimeLimit: dayjs(props.data.minTimeLimit).format(DATE_FORMAT),
+      }),
+      ...(props.data.maxTimeLimit && {
+        maxTimeLimit: dayjs(props.data.maxTimeLimit).format(DATE_FORMAT),
+      }),
+      ...(props.data.hasRent !== undefined && { hasRent: props.data.hasRent }),
+      ...(props.data.userRentCd && { userRentCd: props.data.userRentCd }),
+      ...(props.data.locationDescription && {
+        locationDescription: props.data.locationDescription,
+      }),
+      ...(props.data.locationNote && { locationNote: props.data.locationNote }),
+      ...(props.data.locationRate !== undefined && {
+        locationRate: props.data.locationRate,
+      }),
+    };
+
+    props.onSubmit(payload);
+  };
+
   return (
     <div className="renter__confirm">
       <div className="renter__confirm-header">
@@ -47,10 +165,10 @@ export const ConfirmInformation = (props: RenterProps) => {
         <div className="renter__confirm-section row-1">
           <h1 className="renter__confirm-section-title">Thông tin cơ bản</h1>
           <Row gutter={[16, 16]}>
-            <Col span={6}>
+            <Col span={4}>
               <img src={locationType?.typeLogo} alt="Logo" className="logo" />
             </Col>
-            <Col span={18}>
+            <Col span={20}>
               <h1>Loại địa điểm: {locationType?.typeName} </h1>
               <p>Chú thích: {locationType?.typeDescription}</p>
             </Col>
@@ -100,20 +218,14 @@ export const ConfirmInformation = (props: RenterProps) => {
           {props.data.minTimeLimit && props.data.maxTimeLimit && (
             <Row gutter={[16, 16]}>
               <Col span={12}>
-                <Col span={12}>
-                  <Form.Item
-                    name="minTimeLimit"
-                    label="Từ ngày"
-                    vertical={true}
-                  >
-                    <DatePicker
-                      format={DATE_FORMAT}
-                      placeholder="Chọn ngày bắt đầu"
-                      disabled
-                      style={{ width: "100%" }}
-                    />
-                  </Form.Item>
-                </Col>
+                <Form.Item name="minTimeLimit" label="Từ ngày" vertical={true}>
+                  <DatePicker
+                    format={DATE_FORMAT}
+                    placeholder="Chọn ngày bắt đầu"
+                    disabled
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item
@@ -162,7 +274,7 @@ export const ConfirmInformation = (props: RenterProps) => {
               <FormInput
                 disabled
                 label="Mã bưu chính"
-                name="addRessPortal"
+                name="addressPortal"
                 placeholder="Nhập mã bưu chính."
                 vertical={true}
               />
@@ -262,6 +374,75 @@ export const ConfirmInformation = (props: RenterProps) => {
           <h1 className="renter__confirm-section-title">
             Các dịch vụ được cung cấp
           </h1>
+          <div className="wrapper">
+            <h1 className="wrapper__content-title">Dịch vụ miễn phí</h1>
+            <Row gutter={[16, 16]} className="wrapper__content">
+              {service
+                ?.filter((item) => Number(item.servicePrice) === 0)
+                .filter((item) => isServiceSelected(item.serviceCode))
+                .map((item) => (
+                  <div key={item.serviceCode}>
+                    <ServiceTag
+                      icon={item.serviceLogo}
+                      name={item.serviceName}
+                      price={item.servicePrice}
+                      description={item.serviceDescription}
+                      active={true}
+                    />
+                  </div>
+                ))}
+            </Row>
+            {service?.filter(
+              (item) =>
+                Number(item.servicePrice) === 0 &&
+                isServiceSelected(item.serviceCode),
+            ).length === 0 && (
+              <p
+                style={{
+                  color: "#999",
+                  fontStyle: "italic",
+                  marginTop: "16px",
+                }}
+              >
+                Không có dịch vụ miễn phí nào được chọn
+              </p>
+            )}
+          </div>
+
+          <div className="wrapper">
+            <h1 className="wrapper__content-title">Dịch vụ mất phí</h1>
+            <Row gutter={[16, 16]} className="wrapper__content">
+              {service
+                ?.filter((item) => Number(item.servicePrice) > 0)
+                .filter((item) => isServiceSelected(item.serviceCode))
+                .map((item) => (
+                  <div key={item.serviceCode}>
+                    <ServiceTag
+                      icon={item.serviceLogo}
+                      name={item.serviceName}
+                      price={item.servicePrice}
+                      description={item.serviceDescription}
+                      active={true}
+                    />
+                  </div>
+                ))}
+            </Row>
+            {service?.filter(
+              (item) =>
+                Number(item.servicePrice) > 0 &&
+                isServiceSelected(item.serviceCode),
+            ).length === 0 && (
+              <p
+                style={{
+                  color: "#999",
+                  fontStyle: "italic",
+                  marginTop: "16px",
+                }}
+              >
+                Không có dịch vụ mất phí nào được chọn
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="renter__confirm-section row-4">
@@ -269,21 +450,46 @@ export const ConfirmInformation = (props: RenterProps) => {
           <Row gutter={[16, 16]} className="form-row">
             <Col span={18}>
               <p>Tiền thuê địa điểm:</p>
-              <p>Tiền dịch vụ:</p>
-              <p>Các chi phí khác:</p>
             </Col>
             <Col span={6}>
-              <p>{props.data.locationPriceStart}</p>
-              <p>{props.data.locationPriceStart}</p>
-              <p>{props.data.locationPriceStart}</p>
+              <p>{formatCurrencyVND(props.data.locationPriceStart)}</p>
             </Col>
           </Row>
           <Row gutter={[16, 16]} className="form-row">
             <Col span={18}>
+              <p>Chi phí dịch vụ:</p>
+            </Col>
+          </Row>
+
+          {service
+            ?.filter((item) => Number(item.servicePrice) > 0)
+            .filter((item) => isServiceSelected(item.serviceCode))
+            .map((item) => (
+              <Row gutter={[16, 16]} className="form-row service-price">
+                <Col span={18}>
+                  <p>{item.serviceName}</p>
+                </Col>
+                <Col span={6}>
+                  <p>{formatCurrencyVND(Number(item.servicePrice))}</p>
+                </Col>
+              </Row>
+            ))}
+
+          <Row gutter={[16, 16]} className="form-row">
+            <Col span={18}>
+              <p>Giảm giá:</p>
+            </Col>
+            <Col span={6}>
+              <p>{formatCurrencyVND(locationPriceAfterDeal)}</p>
+            </Col>
+          </Row>
+
+          <Row gutter={[16, 16]} className="form-row total-price">
+            <Col span={18}>
               <p>Tổng tiền</p>
             </Col>
             <Col span={6}>
-              <p>{props.data.locationPriceStart}</p>
+              <p>{formatCurrencyVND(locationPriceEnd)}</p>
             </Col>
           </Row>
         </div>
