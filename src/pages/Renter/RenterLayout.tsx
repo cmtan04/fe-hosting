@@ -42,8 +42,6 @@ export const RenterLayout = () => {
     locationStatus: 0,
   });
 
-  console.log("data", data);
-
   const locationMutation = useMutation({
     mutationFn: (payload: LocationDto) => createLocation(payload),
     onSuccess: (data) => {

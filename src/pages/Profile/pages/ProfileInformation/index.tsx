@@ -16,6 +16,8 @@ import {
 import { isAxiosError } from "axios";
 import { useLoading } from "../../../../providers/loadingProvider";
 import { useNotification } from "../../../../providers/notificationProvider";
+import { FormInput } from "../../../../components/FormInput/formInput";
+import { FormTextArea } from "../../../../components/FormTextArea/formTextArea";
 
 export const ProfileInformation = () => {
   const [form] = Form.useForm();
@@ -83,6 +85,10 @@ export const ProfileInformation = () => {
     uploadMutation.mutate(formData);
   };
 
+  console.log("user", user);
+
+  const onSubmit = () => {};
+
   return (
     <div className="profile__information">
       <Col className="profile__information-header">
@@ -134,7 +140,130 @@ export const ProfileInformation = () => {
         </Col>
       </Col>
 
-      <Col className="profile__information-body"></Col>
+      <Col className="profile__information-body">
+        <Form form={form} onFinish={onSubmit}>
+          <Row gutter={[16, 16]}>
+            <Col span={8}>
+              <FormInput
+                label="Tên người dùng"
+                name="username"
+                placeholder="Nhập tên người dùng"
+                vertical={true}
+                formItemProps={{
+                  rules: [
+                    {
+                      required: true,
+                      message: "Trường này là trường bắt buộc.",
+                    },
+                  ],
+                }}
+              />
+            </Col>
+            <Col span={16}>
+              <FormInput
+                label="Tên đầy đủ"
+                name="fullName"
+                placeholder="Nhập tên đầy đủ"
+                vertical={true}
+                formItemProps={{
+                  rules: [
+                    {
+                      required: true,
+                      message: "Trường này là trường bắt buộc.",
+                    },
+                  ],
+                }}
+              />
+            </Col>
+          </Row>
+          <Row gutter={[16, 16]}>
+            <Col span={8}>
+              <FormInput
+                label="Số điện thoại"
+                name="phone"
+                placeholder="Nhập số điện thoại"
+                vertical={true}
+                formItemProps={{
+                  rules: [
+                    {
+                      required: true,
+                      message: "Trường này là trường bắt buộc.",
+                    },
+                  ],
+                }}
+              />
+            </Col>
+            <Col span={8}>
+              <FormInput
+                label="Địa chỉ email"
+                name="email"
+                placeholder="Nhập địa chỉ email"
+                disabled
+                vertical={true}
+                formItemProps={{
+                  rules: [
+                    {
+                      required: true,
+                      message: "Trường này là trường bắt buộc.",
+                    },
+                  ],
+                }}
+              />
+            </Col>
+            <Col span={8}>
+              <FormInput
+                label="Ngày sinh"
+                name="dateOfBirth"
+                placeholder="Nhập ngày sinh"
+                disabled
+                vertical={true}
+                formItemProps={{
+                  rules: [
+                    {
+                      required: true,
+                      message: "Trường này là trường bắt buộc.",
+                    },
+                  ],
+                }}
+              />
+            </Col>
+          </Row>
+
+          <Row gutter={[16, 16]}>
+            <FormTextArea
+              label="Bio"
+              name="bio"
+              placeholder="Nhập bio"
+              vertical={true}
+              formItemProps={{
+                rules: [
+                  {
+                    required: false,
+                    message: "Trường này là trường bắt buộc.",
+                  },
+                ],
+              }}
+            />
+          </Row>
+
+          <Row gutter={[16, 16]}>
+            <FormTextArea
+              label="Địa chỉ"
+              name="fullAddress"
+              placeholder="Nhập địa chỉ"
+              vertical={true}
+              formItemProps={{
+                rules: [
+                  {
+                    required: false,
+                    message: "Trường này là trường bắt buộc.",
+                  },
+                ],
+              }}
+            />
+          </Row>
+        </Form>
+      </Col>
     </div>
   );
 };
