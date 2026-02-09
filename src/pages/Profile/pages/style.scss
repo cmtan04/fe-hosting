@@ -191,8 +191,13 @@
           flex-direction: row;
           gap: 24px;
           &__avatar {
+            min-width: 250px;
+            min-height: auto;
             position: relative;
+
             &-url {
+              width: 250px;
+              height: 250px;
               object-fit: cover;
               border-radius: 50%;
               box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12);

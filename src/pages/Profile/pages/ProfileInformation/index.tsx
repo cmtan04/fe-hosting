@@ -99,8 +99,10 @@ export const ProfileInformation = () => {
           <div className="content">
             <div className="content__avatar">
               <figure style={{ margin: 0 }}>
-                {url && (
+                {url ? (
                   <img className="content__avatar-url" src={url} alt="" />
+                ) : (
+                  <div className="content__avatar-url"></div>
                 )}
               </figure>
               <label htmlFor="upload" className="content__avatar-upload">
