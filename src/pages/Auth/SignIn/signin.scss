@@ -38,6 +38,11 @@
           flex-direction: column;
           justify-content: center;
           align-items: center;
+          max-width: 100%;
+          .form-input {
+            max-width: 100%;
+          }
+
           @media (max-width: 1080px) {
             width: 100% !important;
             .form-input {
