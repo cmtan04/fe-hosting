@@ -361,6 +361,19 @@
             }
           }
         }
+
+        .location__table {
+          .button-infor {
+            border: unset !important;
+            padding: 0 !important;
+            box-shadow: unset;
+            transition: transform 0.3s ease;
+
+            &:hover {
+              transform: scale(1.1);
+            }
+          }
+        }
       }
     }
   }

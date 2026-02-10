@@ -20,7 +20,7 @@ export const LocationCreateSucees = (props: RenterProps) => {
         htmlType="button"
         className="button-submit"
         onClick={() => {
-          navigate(ROUTER_PATH.HOME);
+          navigate(ROUTER_PATH.PROFILE_LOCATION);
         }}
       >
         Đi tới không gian của tôi.

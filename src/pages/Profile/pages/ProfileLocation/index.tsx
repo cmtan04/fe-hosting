@@ -14,11 +14,18 @@ import {
 import { useLoading } from "../../../../providers/loadingProvider";
 import { useEffect, useState } from "react";
 import { CommonTable } from "../../../../components/CommonTable";
+import add from "../../../../assets/svg/profile/add.svg";
+import find from "../../../../assets/svg/profile/find.svg";
+import information from "../../../../assets/svg/profile/information.svg";
+import type { ProfileLocationFilter } from "../../../../common/types/profile";
+import { useNavigate } from "react-router-dom";
+import { ROUTER_PATH } from "../../../../router/Route";
 
 export const ProfileLocation = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
   const { setLoading } = useLoading();
-  const [filter, setFilter] = useState();
+  const [filter, setFilter] = useState<ProfileLocationFilter>();
 
   const { data: typeList, isLoading } = useQuery({
     queryKey: [LocationEndpoint.GET_ALL_LOCATION_TYPE],
@@ -34,9 +41,28 @@ export const ProfileLocation = () => {
     setLoading(isLoading);
   }, [isLoading]);
 
-  const onSubmitSearch = () => {};
+  const onSubmitSearch = () => {
+    setFilter({
+      locationName: form.getFieldValue("locationName"),
+      hasRent: form.getFieldValue("hasRent"),
+      locationType: form.getFieldValue("locationType"),
+      renderName: form.getFieldValue("renderName"),
+      renderEmail: form.getFieldValue("renderEmail"),
+      fullAddress: form.getFieldValue("fullAddress"),
+    });
+  };
 
-  const addNewLocation = () => {};
+  const addNewLocation = () => {
+    navigate(ROUTER_PATH.RENTER);
+  };
+
+  const viewLocation = (value: string) => {
+    navigate(ROUTER_PATH.PROFILE_LOCATION_DETAIL, {
+      state: {
+        locationCode: value,
+      },
+    });
+  };
 
   const rentOption: SelectOptionProps[] = [
     {
@@ -77,7 +103,6 @@ export const ProfileLocation = () => {
       label: "Trạng thái",
       value: "hasRent",
       render: (value: number) => {
-        console.log(value);
         if (value === 0) {
           return (
             <div className="status ready">
@@ -98,7 +123,25 @@ export const ProfileLocation = () => {
       label: "Phân loại",
       value: "typeName",
     },
+    {
+      key: 7,
+      label: "",
+      value: "action",
+      render: (index: any, record: any) => {
+        return (
+          <div className="action-column">
+            <Button
+              htmlType="button"
+              icon={<img src={information} />}
+              onClick={() => viewLocation(record.locationCode)}
+              className="button-infor"
+            />
+          </div>
+        );
+      },
+    },
   ];
+
   return (
     <div className="profile__location">
       <div className="profile__location-header">
@@ -111,9 +154,9 @@ export const ProfileLocation = () => {
             <Row gutter={[16, 16]}>
               <Col span={8}>
                 <FormInput
-                  label="Tên địa chỉ"
+                  label="Tên địa điểm"
                   name="locationName"
-                  placeholder="Nhập tên địa chỉ"
+                  placeholder="Nhập tên địa điểm"
                   vertical={true}
                   formItemProps={{
                     rules: [
@@ -142,7 +185,7 @@ export const ProfileLocation = () => {
               <Col span={8}>
                 <SelectCommon
                   label="Phân loại"
-                  name="hasRent"
+                  name="locationType"
                   placeholder="Phân loại"
                   options={
                     typeList?.map((item) => ({
@@ -165,7 +208,7 @@ export const ProfileLocation = () => {
               <Col span={12}>
                 <FormInput
                   label="Tên người thuê"
-                  name="locationName"
+                  name="renderName"
                   placeholder="Tên người thuê"
                   vertical={true}
                   formItemProps={{
@@ -180,7 +223,7 @@ export const ProfileLocation = () => {
               <Col span={12}>
                 <FormInput
                   label="Email người thuê"
-                  name="locationName"
+                  name="renderEmail"
                   placeholder="Email người thuê"
                   vertical={true}
                   formItemProps={{
@@ -197,7 +240,7 @@ export const ProfileLocation = () => {
               <Col span={24}>
                 <FormInput
                   label="Địa chỉ"
-                  name="locationName"
+                  name="fullAddress"
                   placeholder="Địa chỉ"
                   vertical={true}
                   formItemProps={{
@@ -211,7 +254,11 @@ export const ProfileLocation = () => {
               </Col>
             </Row>
             <Row gutter={[16, 16]} className="action-row">
-              <Button htmlType="submit" className="button-submit">
+              <Button
+                icon={<img src={find} />}
+                htmlType="submit"
+                className="button-submit"
+              >
                 Tìm kiếm
               </Button>
             </Row>
@@ -223,6 +270,7 @@ export const ProfileLocation = () => {
             <Button
               htmlType="button"
               onClick={() => addNewLocation()}
+              icon={<img src={add} />}
               className="button-add"
             >
               Thêm mới

@@ -48,7 +48,7 @@ export const TopBar = () => {
         <div className="top__bar-host">
           <span>
             {Number(userRole) === USER_ROLE.OWNER ? (
-              <Link to={ROUTER_PATH.RENTER}>Địa điểm của tôi</Link>
+              <Link to={ROUTER_PATH.PROFILE_LOCATION}>Địa điểm của tôi</Link>
             ) : (
               <Link to={ROUTER_PATH.RENTER}>Cho thuê địa điểm</Link>
             )}

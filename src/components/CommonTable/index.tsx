@@ -29,7 +29,7 @@ export const CommonTable = ({
   const filteredData = useMemo(() => {
     if (!filter) return body;
 
-    return body.filter((item) => {
+    return body?.filter((item) => {
       return Object.keys(filter).every((key) => {
         if (!filter[key]) return true;
 

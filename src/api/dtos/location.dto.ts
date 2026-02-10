@@ -47,3 +47,67 @@ export interface LocationDto {
   locationStatus: number;
   locationRate?: number;
 }
+
+export interface LocationResponseDto {
+  typeCode: string;
+  locationName: string;
+  locationLogo: string;
+  ownerCode: string;
+  locationCode: string;
+  minTime: string;
+  maxTime: string;
+  locationPriceStart: string;
+  locationPriceEnd: string;
+  locationPriceAfterDeal: string;
+  hasRent: number;
+  renterCode: string | null;
+  locationDescription: string;
+  locationNote: string;
+  locationRate: number;
+
+  typeName: string;
+  typeDescription: string;
+  typeLogo: string;
+  typeBackGround: string;
+
+  ownerEmail: string;
+  ownerAvatar: string | null;
+  ownerCover: string | null;
+  ownerPhone: string | null;
+  ownerAddress: string | null;
+  ownerCity: string | null;
+
+  renterEmail: string | null;
+  renterAvatar: string | null;
+  renterCover: string | null;
+  renterPhone: string | null;
+  renterAddress: string | null;
+  renterCity: string | null;
+
+  ownerName: string;
+  renterName: string | null;
+
+  services: ServiceDto[];
+  address: AddressDto[];
+}
+
+export interface ServiceDto {}
+
+export interface AddressDto {
+  addressCode: string;
+  addressName: string;
+  fullAddress: string;
+  addressWard: string;
+  addressDistrict: string;
+  addressCity: string;
+  addressProvince: string;
+  addressCountry: string;
+  addressPortal: string;
+  addressLat: string;
+  addressLong: string;
+  addressRegion: string;
+  addressStatus: string;
+  addressDescription: string;
+  addressNote: string;
+  addressType: string;
+}
