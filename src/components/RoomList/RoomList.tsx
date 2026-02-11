@@ -4,7 +4,8 @@ import { EnvironmentOutlined, DollarOutlined, UserOutlined, ArrowLeftOutlined, A
 import { ROUTER_PATH } from "../../router/Route";
 import { items } from "../../assets/data/mockData";
 import "./RoomList.scss";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
+import { Pagination } from "../PaginationCommon/paginationCommon";
 
 
 export const RoomList = () => {
@@ -16,6 +17,7 @@ export const RoomList = () => {
     const rentType = searchParams.get("rent");
     const locationType = searchParams.get("location");
     const page = Number(searchParams.get("page")) || 1;
+    const prevPage = useRef<number | null>(null);
 
     // lấy dữ liệu ( sau này sẽ gọi API )
     const totalItems = items.filter(item => {
@@ -53,16 +55,14 @@ export const RoomList = () => {
         const newParams = new URLSearchParams(searchParams);
         newParams.set("page", newPage.toString());
         navigate(`?${newParams.toString()}`);
-        handleScrollToTop();
-    };
 
-    const handlePreviousPage = () => {
-        if (page > 1) updatePage(page - 1);
     };
-
-    const handleNextPage = () => {
-        if (page < totalPage) updatePage(page + 1);
-    };
+    useEffect(() => {
+        if (prevPage.current !== null && prevPage.current !== page) {
+            handleScrollToTop();
+        }
+        prevPage.current = page;
+    }, [page]);
 
     const handleRoomClick = (item: any) => {
         navigate(`${ROUTER_PATH.ROOMDETAIL.replace(":roomId", item.id)}`);
@@ -118,17 +118,11 @@ export const RoomList = () => {
                         ))}
                     </Row>
 
-                    <div className="pagination">
-                        <ArrowLeftOutlined
-                            onClick={handlePreviousPage}
-                            style={{ opacity: page === 1 ? 0.3 : 1, cursor: 'pointer' }}
-                        />
-                        <span> Trang {page}/{totalPage} </span>
-                        <ArrowRightOutlined
-                            onClick={handleNextPage}
-                            style={{ opacity: page === totalPage ? 0.3 : 1, cursor: 'pointer' }}
-                        />
-                    </div>
+                    <Pagination
+                        currentPage={page}
+                        totalPages={totalPage}
+                        onPageChange={updatePage}
+                    />
                 </>
             )}
         </div>
