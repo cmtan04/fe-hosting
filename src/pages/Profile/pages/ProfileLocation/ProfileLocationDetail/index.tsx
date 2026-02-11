@@ -5,6 +5,8 @@ import { LocationEndpoint } from "../../../../../api/endpoints/location.endpoint
 import { getLocationByCode } from "../../../../../api/configs/location.config";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import add from "../../../../../assets/svg/profile/add.svg";
+import back from "../../../../../assets/svg/profile/back.svg";
 import information from "../../../../../assets/svg/profile/information.svg";
 import { FormInput } from "../../../../../components/FormInput/formInput";
 import { FormTextArea } from "../../../../../components/FormTextArea/formTextArea";
@@ -14,6 +16,7 @@ import { ServiceEndpoint } from "../../../../../api/endpoints/service.endpoint";
 import { getAllService } from "../../../../../api/configs/service.config";
 import { ServiceTag } from "../../../../Renter/components/ServiceTag/intex";
 import { CommonTable } from "../../../../../components/CommonTable";
+import { formatCurrencyVND } from "../../../../../common/contexts/format";
 
 export const ProfileLocationDetail = () => {
   const [form] = Form.useForm();
@@ -95,9 +98,9 @@ export const ProfileLocationDetail = () => {
         <div className="action">
           <Button
             htmlType="button"
-            icon={<img src={information} />}
+            icon={<img src={back} />}
             onClick={() => navigate(-1)}
-            className="button-infor"
+            className="button-back"
           />
         </div>
       </div>
@@ -109,7 +112,7 @@ export const ProfileLocationDetail = () => {
           className="profile__location-form"
         >
           <div className="body-row">
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} className="body-row-type">
               <Col span={4}>
                 <img src={locationData?.typeLogo} alt="Logo" className="logo" />
               </Col>
@@ -119,8 +122,8 @@ export const ProfileLocationDetail = () => {
               </Col>
             </Row>
 
-            <Row gutter={[16, 16]}>
-              <Col span={16}>
+            <Row gutter={[16, 16]} className="body-row-location">
+              <Col span={14}>
                 <FormInput
                   label="Mã địa điểm"
                   name="locationCode"
@@ -182,7 +185,7 @@ export const ProfileLocationDetail = () => {
                   }}
                 />
               </Col>
-              <Col span={8}>
+              <Col span={10}>
                 <img
                   src={locationData?.locationLogo}
                   alt="Logo"
@@ -191,7 +194,7 @@ export const ProfileLocationDetail = () => {
               </Col>
             </Row>
 
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} className="body-row-description">
               <Col span={24}>
                 <FormTextArea
                   label="Mô tả"
@@ -226,7 +229,7 @@ export const ProfileLocationDetail = () => {
               </Col>
             </Row>
 
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} className="body-row-checked">
               <Col span={24}>
                 <Form.Item
                   name="hasLimit"
@@ -238,7 +241,7 @@ export const ProfileLocationDetail = () => {
               </Col>
             </Row>
 
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} className="body-row-time">
               <Col span={24}>
                 <Form.Item
                   noStyle
@@ -313,7 +316,7 @@ export const ProfileLocationDetail = () => {
             </Row>
           </div>
           <div className="body-row">
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} className="body-row-service">
               <h1 className="header-title">Các dịch vụ được cung cấp</h1>
               <p className="header-subTitle">
                 Các dịch vụ mà bạn cung cấp sẽ giúp trải nghiệm của khách hàng
@@ -322,10 +325,8 @@ export const ProfileLocationDetail = () => {
             </Row>
 
             <div className="wrapper">
-              <h1 className="body__section-2-content-title">
-                Dịch vụ miễn phí
-              </h1>
-              <Row gutter={[16, 16]} className="body__section-2-content">
+              <h1 className="wrapper-content-title">Dịch vụ miễn phí</h1>
+              <Row gutter={[16, 16]} className="wrapper-content">
                 {service
                   ?.filter((item) => Number(item.servicePrice) === 0)
                   .map((item) => (
@@ -347,8 +348,8 @@ export const ProfileLocationDetail = () => {
             </div>
 
             <div className="wrapper">
-              <h1 className="body__section-2-content-title">Dịch vụ mất phí</h1>
-              <Row gutter={[16, 16]} className="body__section-2-content">
+              <h1 className="wrapper-content-title">Dịch vụ mất phí</h1>
+              <Row gutter={[16, 16]} className="wrapper-content">
                 {service
                   ?.filter((item) => Number(item.servicePrice) > 0)
                   .map((item) => (
@@ -369,62 +370,68 @@ export const ProfileLocationDetail = () => {
               </Row>
             </div>
 
-            <div className="wrapper">
-              <Row gutter={[16, 16]}>
+            <div className="wrapper money">
+              <Row gutter={[16, 16]} className="wrapper-money">
                 <Col span={16}>
                   <p>Tổng tiền dịch vụ:</p>
                 </Col>
                 <Col span={8}>
                   <p>
-                    {service
-                      ?.filter((item) => Number(item.servicePrice) > 0)
-                      .filter((item) => isServiceSelected(item.serviceCode))
-                      .reduce(
-                        (sum, item) => sum + Number(item.servicePrice),
-                        0,
-                      )}
+                    {formatCurrencyVND(
+                      service
+                        ?.filter((item) => Number(item.servicePrice) > 0)
+                        .filter((item) => isServiceSelected(item.serviceCode))
+                        .reduce(
+                          (sum, item) => sum + Number(item.servicePrice),
+                          0,
+                        ) || 0,
+                    )}
                   </p>
                 </Col>
               </Row>
 
-              <Row gutter={[16, 16]}>
+              <Row gutter={[16, 16]} className="wrapper-money">
                 <Col span={16}>
                   <p>Tổng tiền được giảm:</p>
                 </Col>
                 <Col span={8}>
                   <p>
-                    {service
-                      ?.filter(
-                        (item) =>
-                          Number(item.servicePrice) > 0 &&
-                          isServiceSelected(item.serviceCode),
-                      )
-                      .reduce((sum, item) => {
-                        const price = Number(item.servicePrice || 0);
-                        const discount = Number(item.serviceDiscount || 0);
-                        return sum + (price * discount) / 100;
-                      }, 0)}
+                    {formatCurrencyVND(
+                      service
+                        ?.filter(
+                          (item) =>
+                            Number(item.servicePrice) > 0 &&
+                            isServiceSelected(item.serviceCode),
+                        )
+                        .reduce((sum, item) => {
+                          const price = Number(item.servicePrice || 0);
+                          const discount = Number(item.serviceDiscount || 0);
+                          return sum + (price * discount) / 100;
+                        }, 0) || 0,
+                    )}
                   </p>
                 </Col>
               </Row>
 
-              <Row gutter={[16, 16]}>
+              <Row gutter={[16, 16]} className="wrapper-money">
                 <Col span={16}>
                   <p>Tổng tiền dịch vụ (đã giảm giá):</p>
                 </Col>
                 <Col span={8}>
                   <p>
-                    {service
-                      ?.filter(
-                        (item) =>
-                          Number(item.servicePrice) > 0 &&
-                          isServiceSelected(item.serviceCode),
-                      )
-                      .reduce((sum, item) => {
-                        const price = Number(item.servicePrice || 0);
-                        const discount = Number(item.serviceDiscount || 0);
-                        return sum + price * (1 - discount / 100);
-                      }, 0)}
+                    {formatCurrencyVND(
+                      service
+                        ?.filter(
+                          (item) =>
+                            Number(item.servicePrice) > 0 &&
+                            isServiceSelected(item.serviceCode),
+                        )
+                        .reduce((sum, item) => {
+                          const price = Number(item.servicePrice || 0);
+                          const discount = Number(item.serviceDiscount || 0);
+                          return sum + price * (1 - discount / 100);
+                        }, 0) || 0,
+                    )}
                   </p>
                 </Col>
               </Row>
@@ -432,14 +439,14 @@ export const ProfileLocationDetail = () => {
           </div>
 
           <div className="body-row">
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} className="body-row-address">
               <h1 className="header-title">Danh sách cơ sở</h1>
               <p className="header-subTitle">
                 Các địa chỉ mà bạn đã cung cấp dưới đây sẽ giúp người dùng tìm
                 đến dễ dàng hơn.
               </p>
             </Row>
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} className="body-row-address-table">
               <CommonTable
                 header={tableHeader}
                 body={locationData as any}
@@ -450,13 +457,15 @@ export const ProfileLocationDetail = () => {
                 loading={locationLoading}
               />
             </Row>
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} className="body-row-address-button">
               <Button
                 htmlType="button"
-                icon={<img src={information} />}
+                icon={<img src={add} />}
                 onClick={() => navigate(-1)}
-                className="button-infor"
-              />
+                className="button-add"
+              >
+                Thêm mới
+              </Button>
             </Row>
           </div>
         </Form>

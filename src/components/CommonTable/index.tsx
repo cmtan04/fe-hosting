@@ -27,30 +27,34 @@ export const CommonTable = ({
   const [currentPage, setCurrentPage] = useState(1);
 
   const filteredData = useMemo(() => {
-    if (!filter) return body;
+    if (!filter) return body || [];
 
-    return body?.filter((item) => {
-      return Object.keys(filter).every((key) => {
-        if (!filter[key]) return true;
+    return (
+      body?.filter((item) => {
+        return Object.keys(filter).every((key) => {
+          if (!filter[key]) return true;
 
-        const itemValue = item[key];
-        const filterValue = filter[key];
+          const itemValue = item[key];
+          const filterValue = filter[key];
 
-        if (typeof itemValue === "string") {
-          return itemValue.toLowerCase().includes(filterValue.toLowerCase());
-        }
+          if (typeof itemValue === "string") {
+            return itemValue.toLowerCase().includes(filterValue.toLowerCase());
+          }
 
-        return itemValue === filterValue;
-      });
-    });
+          return itemValue === filterValue;
+        });
+      }) || []
+    );
   }, [body, filter]);
 
   const paginatedData = useMemo(() => {
-    if (!hasPagination) return filteredData;
+    if (!hasPagination) return filteredData || [];
+
+    if (!Array.isArray(filteredData)) return [];
 
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    return filteredData?.slice(startIndex, endIndex);
+    return filteredData.slice(startIndex, endIndex);
   }, [filteredData, currentPage, pageSize, hasPagination]);
 
   const totalPages = Math.ceil(filteredData?.length / pageSize);
