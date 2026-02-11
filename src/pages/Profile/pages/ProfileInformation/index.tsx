@@ -1,7 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Col, Form, Row } from "antd";
+import { Col, DatePicker, Form, Row } from "antd";
 import { UserEndpoint } from "../../../../api/endpoints/user.endpoint";
-import { getUserPRofile } from "../../../../api/configs/user.config";
+import {
+  getUserPRofile,
+  updateUserProfile,
+} from "../../../../api/configs/user.config";
 import phone from "../../../../assets/svg/profile/phone.svg";
 import mail from "../../../../assets/svg/profile/mail.svg";
 import bio from "../../../../assets/svg/profile/bio.svg";
@@ -9,6 +12,7 @@ import upload from "../../../../assets/svg/profile/upload.svg";
 import { useEffect, useRef, useState } from "react";
 import { uploadImage } from "../../../../api/configs/common.config";
 import {
+  DATE_FORMAT,
   DEFAULT_MESSAGE,
   NOTI_ERROR,
   NOTI_SUCCESS,
@@ -18,6 +22,7 @@ import { useLoading } from "../../../../providers/loadingProvider";
 import { useNotification } from "../../../../providers/notificationProvider";
 import { FormInput } from "../../../../components/FormInput/formInput";
 import { FormTextArea } from "../../../../components/FormTextArea/formTextArea";
+import type { UserUpdatePayloadDto } from "../../../../api/dtos/user.dto";
 
 export const ProfileInformation = () => {
   const [form] = Form.useForm();
@@ -63,6 +68,33 @@ export const ProfileInformation = () => {
     },
   });
 
+  const updateUserMutation = useMutation({
+    mutationFn: (payload: UserUpdatePayloadDto) => updateUserProfile(payload),
+    onSuccess: (data) => {
+      showNotification("Cập nhật thành công", NOTI_SUCCESS);
+    },
+    onError: (error) => {
+      let message = DEFAULT_MESSAGE;
+      if (isAxiosError(error)) {
+        const apiMessage = error.response?.data?.message;
+        if (typeof apiMessage === "string") {
+          message = apiMessage;
+        } else if (Array.isArray(apiMessage) && apiMessage[0]) {
+          message = apiMessage[0];
+        }
+      }
+      showNotification(message, NOTI_ERROR);
+      setUrl("");
+    },
+
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+
   useEffect(() => {
     if (user) {
       setUrl(user.avatarUrl);
@@ -85,9 +117,22 @@ export const ProfileInformation = () => {
     uploadMutation.mutate(formData);
   };
 
-  console.log("user", user);
+  const onSubmit = () => {
+    const values = form.getFieldsValue();
 
-  const onSubmit = () => {};
+    const payload: UserUpdatePayloadDto = {
+      userName: values.username,
+      fullName: values.fullName,
+      phone: values.phone,
+      bio: values.bio,
+      fullAddress: values.fullAddress,
+      dateOfBirth: values.dateOfBirth,
+      avatarUrl: url,
+    };
+
+    console.log("payload", payload);
+    // updateUserMutation.mutate(payload);
+  };
 
   return (
     <div className="profile__information">
@@ -210,17 +255,38 @@ export const ProfileInformation = () => {
                 }}
               />
             </Col>
-            <Col span={8}>
-              <FormInput
+            <Col span={8} className="time-wrapper">
+              <Form.Item
                 label="Ngày sinh"
                 name="dateOfBirth"
-                placeholder="Nhập ngày sinh"
-                disabled
+                vertical={true}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn ngày sinh",
+                  },
+                ]}
+              >
+                <DatePicker
+                  format={DATE_FORMAT}
+                  placeholder="Chọn ngày sinh"
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
+              <FormTextArea
+                label="Bio"
+                name="bio"
+                placeholder="Nhập bio"
                 vertical={true}
                 formItemProps={{
                   rules: [
                     {
-                      required: true,
+                      required: false,
                       message: "Trường này là trường bắt buộc.",
                     },
                   ],
@@ -230,37 +296,22 @@ export const ProfileInformation = () => {
           </Row>
 
           <Row gutter={[16, 16]}>
-            <FormTextArea
-              label="Bio"
-              name="bio"
-              placeholder="Nhập bio"
-              vertical={true}
-              formItemProps={{
-                rules: [
-                  {
-                    required: false,
-                    message: "Trường này là trường bắt buộc.",
-                  },
-                ],
-              }}
-            />
-          </Row>
-
-          <Row gutter={[16, 16]}>
-            <FormTextArea
-              label="Địa chỉ"
-              name="fullAddress"
-              placeholder="Nhập địa chỉ"
-              vertical={true}
-              formItemProps={{
-                rules: [
-                  {
-                    required: false,
-                    message: "Trường này là trường bắt buộc.",
-                  },
-                ],
-              }}
-            />
+            <Col span={24}>
+              <FormTextArea
+                label="Địa chỉ"
+                name="fullAddress"
+                placeholder="Nhập địa chỉ"
+                vertical={true}
+                formItemProps={{
+                  rules: [
+                    {
+                      required: false,
+                      message: "Trường này là trường bắt buộc.",
+                    },
+                  ],
+                }}
+              />
+            </Col>
           </Row>
         </Form>
       </Col>

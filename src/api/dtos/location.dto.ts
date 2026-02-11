@@ -91,7 +91,16 @@ export interface LocationResponseDto {
   address: AddressDto[];
 }
 
-export interface ServiceDto {}
+export interface ServiceDto {
+  isActive: number;
+  serviceBackGround: string;
+  serviceCode: string;
+  serviceDescription: string;
+  serviceLogo: string;
+  serviceName: string;
+  serviceNote: string;
+  servicePrice: string;
+}
 
 export interface AddressDto {
   addressCode: string;

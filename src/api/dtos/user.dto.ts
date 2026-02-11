@@ -24,6 +24,23 @@ export interface UserProfileResponseDto {
 }
 
 export interface UserUpdatePayloadDto {
-  userCode: string;
-  data: UserProfileResponseDto;
+  userName?: string;
+  fullName?: string;
+  dateOfBirth?: string;
+  avatarUrl?: string;
+  coverUrl?: string;
+  bio?: string;
+  userDescription?: string;
+  userNote?: string;
+  phone?: string;
+  fullAddress?: string;
+  userWard?: string;
+  userDistrict?: string;
+  userCity?: string;
+  userProvince?: string;
+  userCountry?: string;
+  userPortal?: string;
+
+  userLat?: string;
+  userLong?: string;
 }

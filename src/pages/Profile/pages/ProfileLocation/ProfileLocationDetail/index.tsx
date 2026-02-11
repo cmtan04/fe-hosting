@@ -57,6 +57,16 @@ export const ProfileLocationDetail = () => {
     }
   }, [locationData, form]);
 
+  useEffect(() => {
+    if (locationData?.services && locationData.services.length > 0) {
+      const activeServiceCodes = locationData.services
+        .filter((item) => item.isActive === 1) // Lọc các service đang active
+        .map((item) => item.serviceCode);
+
+      setSelectedServices(activeServiceCodes);
+    }
+  }, [locationData]);
+
   const isServiceSelected = (serviceCode: string) => {
     return selectedServices.includes(serviceCode);
   };
