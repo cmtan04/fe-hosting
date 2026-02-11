@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Col, DatePicker, Form, Row } from "antd";
+import { Button, Col, DatePicker, Form, Modal, Row } from "antd";
 import { UserEndpoint } from "../../../../api/endpoints/user.endpoint";
 import {
   getUserPRofile,
@@ -22,8 +22,16 @@ import { useLoading } from "../../../../providers/loadingProvider";
 import { useNotification } from "../../../../providers/notificationProvider";
 import { FormInput } from "../../../../components/FormInput/formInput";
 import { FormTextArea } from "../../../../components/FormTextArea/formTextArea";
-import type { UserUpdatePayloadDto } from "../../../../api/dtos/user.dto";
+import type {
+  UserAddressDto,
+  UserUpdatePayloadDto,
+} from "../../../../api/dtos/user.dto";
 import dayjs from "dayjs";
+import { MapViewCommon } from "../../../../components/MapViewCommon";
+import {
+  MapAddressMapper,
+  type MapAddressDto,
+} from "../../../../api/dtos/map.dto";
 
 export const ProfileInformation = () => {
   const [form] = Form.useForm();
@@ -31,6 +39,11 @@ export const ProfileInformation = () => {
   const { showNotification } = useNotification();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [url, setUrl] = useState<string>("");
+  const [showModal, setShowModal] = useState<boolean>();
+  const [location, setLocation] = useState<MapAddressDto>(
+    MapAddressMapper.createEmpty(21.0285, 105.8542),
+  );
+  const [address, setAddress] = useState<UserAddressDto>();
 
   const { data: user, isLoading } = useQuery({
     queryKey: [UserEndpoint.GET_USER_INFORMATION],
@@ -129,11 +142,36 @@ export const ProfileInformation = () => {
       fullAddress: values.fullAddress,
       dateOfBirth: dayjs(values.dateOfBirth).format(DATE_FORMAT),
       avatarUrl: url,
+      userWard: address?.userWard,
+      userDistrict: address?.userDistrict,
+      userCity: address?.userCity,
+      userProvince: address?.userProvince,
+      userCountry: address?.userCountry,
+      userPortal: address?.userPortal,
+      userLat: address?.userLat,
+      userLong: address?.userLong,
     };
 
-    console.log("payload", payload);
     updateUserMutation.mutate(payload);
   };
+
+  const handleMapClick = (data: MapAddressDto) => {
+    form.setFieldValue("fullAdress", data.fullAddress);
+    setAddress({
+      fullAddress: data.fullAddress,
+      userWard: data.addressWard,
+      userDistrict: data.addressDistrict,
+      userCity: data.addressCity,
+      userProvince: data.addressProvince,
+      userCountry: data.addressCountry,
+      userPortal: data.addressPostal,
+      userLat: data.addressLat,
+      userLong: data.addressLong,
+    });
+    setShowModal(!showModal);
+  };
+
+  console.log(address);
 
   return (
     <div className="profile__information">
@@ -296,11 +334,12 @@ export const ProfileInformation = () => {
             </Col>
           </Row>
 
-          <Row gutter={[16, 16]}>
-            <Col span={24}>
+          <Row gutter={[16, 16]} className="address">
+            <Col span={20}>
               <FormTextArea
                 label="Địa chỉ"
                 name="fullAddress"
+                disabled
                 placeholder="Nhập địa chỉ"
                 vertical={true}
                 formItemProps={{
@@ -313,6 +352,15 @@ export const ProfileInformation = () => {
                 }}
               />
             </Col>
+            <Col span={4}>
+              <Button
+                htmlType="button"
+                className="button-submit"
+                onClick={() => setShowModal(!showModal)}
+              >
+                Chọn địa chỉ
+              </Button>
+            </Col>
           </Row>
 
           <Row gutter={[16, 16]} className="action">
@@ -320,6 +368,23 @@ export const ProfileInformation = () => {
               Lưu
             </Button>
           </Row>
+
+          <Modal
+            open={showModal}
+            footer={false}
+            onCancel={() => {
+              setShowModal(!showModal);
+            }}
+            className="profile__information-modal"
+          >
+            <div className="profile__information-modal-body">
+              <MapViewCommon
+                data={location}
+                hasInputSearch={true}
+                onMapClick={handleMapClick}
+              />
+            </div>
+          </Modal>
         </Form>
       </Col>
     </div>

@@ -44,3 +44,16 @@ export interface UserUpdatePayloadDto {
   userLat?: string;
   userLong?: string;
 }
+
+export interface UserAddressDto {
+  fullAddress?: string;
+  userWard?: string;
+  userDistrict?: string;
+  userCity?: string;
+  userProvince?: string;
+  userCountry?: string;
+  userPortal?: string;
+
+  userLat?: string;
+  userLong?: string;
+}
