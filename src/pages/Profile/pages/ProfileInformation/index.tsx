@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Col, DatePicker, Form, Row } from "antd";
+import { Button, Col, DatePicker, Form, Row } from "antd";
 import { UserEndpoint } from "../../../../api/endpoints/user.endpoint";
 import {
   getUserPRofile,
@@ -23,6 +23,7 @@ import { useNotification } from "../../../../providers/notificationProvider";
 import { FormInput } from "../../../../components/FormInput/formInput";
 import { FormTextArea } from "../../../../components/FormTextArea/formTextArea";
 import type { UserUpdatePayloadDto } from "../../../../api/dtos/user.dto";
+import dayjs from "dayjs";
 
 export const ProfileInformation = () => {
   const [form] = Form.useForm();
@@ -100,7 +101,7 @@ export const ProfileInformation = () => {
       setUrl(user.avatarUrl);
       form.setFieldsValue({
         userName: user.username,
-        userEmail: user.email,
+        email: user.email,
         userPhone: user.phone,
         userAdress: user.fullAddress,
       });
@@ -126,12 +127,12 @@ export const ProfileInformation = () => {
       phone: values.phone,
       bio: values.bio,
       fullAddress: values.fullAddress,
-      dateOfBirth: values.dateOfBirth,
+      dateOfBirth: dayjs(values.dateOfBirth).format(DATE_FORMAT),
       avatarUrl: url,
     };
 
     console.log("payload", payload);
-    // updateUserMutation.mutate(payload);
+    updateUserMutation.mutate(payload);
   };
 
   return (
@@ -312,6 +313,12 @@ export const ProfileInformation = () => {
                 }}
               />
             </Col>
+          </Row>
+
+          <Row gutter={[16, 16]} className="action">
+            <Button htmlType="submit" className="button-submit">
+              Lưu
+            </Button>
           </Row>
         </Form>
       </Col>
