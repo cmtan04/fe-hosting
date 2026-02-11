@@ -3,6 +3,7 @@ import { RoomList } from "../../../components/RoomList/RoomList";
 import { roomTypeProps } from "../../../assets/data/mockData";
 import { useSearchParams } from "react-router-dom";
 import "./RentPage.scss";
+import { Pagination } from "../../../components/PaginationCommon/paginationCommon";
 
 export const RentPage = () => {
     const [searchParams] = useSearchParams();

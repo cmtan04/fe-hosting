@@ -9,6 +9,7 @@
     color: $primary-color;
     font-family: $font_family_1;
   }
+
   &-form {
     display: flex;
     flex-direction: column;
@@ -33,27 +34,34 @@
           width: 100%;
           align-items: center;
         }
+
         &-2 {
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
+          width: 100% !important;
+
           @media (max-width: 1080px) {
             width: 100% !important;
+
             .form-input {
               width: 100%;
             }
+
             input {
               width: 100%;
             }
           }
-          input {
-            width: 450px;
-          }
+
+          // input {
+          //   width: 450px;
+          // }
         }
 
         &-3 {
           width: 100%;
+
           .button-submit {
             width: 100%;
             margin-bottom: 24px;
@@ -63,6 +71,7 @@
             font-weight: bold;
             height: 40px;
             border: none;
+
             &:hover {
               background-color: darken($primary_color, 10%);
               color: $white_color;
@@ -83,6 +92,7 @@
             span {
               font-weight: 700;
               cursor: pointer;
+
               &:hover {
                 text-decoration: underline;
               }
