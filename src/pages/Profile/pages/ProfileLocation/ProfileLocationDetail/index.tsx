@@ -1,22 +1,23 @@
-import { Button, Checkbox, Col, DatePicker, Form, Row } from "antd";
-import { useLoading } from "../../../../../providers/loadingProvider";
-import { useLocation, useNavigate } from "react-router-dom";
-import { LocationEndpoint } from "../../../../../api/endpoints/location.endpoint";
-import { getLocationByCode } from "../../../../../api/configs/location.config";
 import { useQuery } from "@tanstack/react-query";
+import { Button, Checkbox, Col, DatePicker, Form, Modal, Row } from "antd";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getLocationByCode } from "../../../../../api/configs/location.config";
+import { getAllService } from "../../../../../api/configs/service.config";
+import { LocationEndpoint } from "../../../../../api/endpoints/location.endpoint";
+import { ServiceEndpoint } from "../../../../../api/endpoints/service.endpoint";
 import add from "../../../../../assets/svg/profile/add.svg";
 import back from "../../../../../assets/svg/profile/back.svg";
-import information from "../../../../../assets/svg/profile/information.svg";
+import deleteIcn from "../../../../../assets/svg/profile/delete.svg";
+import pen from "../../../../../assets/svg/profile/pen.svg";
+import { DATE_FORMAT } from "../../../../../common/constants/constants";
+import { formatCurrencyVND } from "../../../../../common/contexts/format";
+import { CommonTable } from "../../../../../components/CommonTable";
 import { FormInput } from "../../../../../components/FormInput/formInput";
 import { FormTextArea } from "../../../../../components/FormTextArea/formTextArea";
-import { DATE_FORMAT } from "../../../../../common/constants/constants";
-import dayjs from "dayjs";
-import { ServiceEndpoint } from "../../../../../api/endpoints/service.endpoint";
-import { getAllService } from "../../../../../api/configs/service.config";
+import { useLoading } from "../../../../../providers/loadingProvider";
 import { ServiceTag } from "../../../../Renter/components/ServiceTag/intex";
-import { CommonTable } from "../../../../../components/CommonTable";
-import { formatCurrencyVND } from "../../../../../common/contexts/format";
 
 export const ProfileLocationDetail = () => {
   const [form] = Form.useForm();
@@ -26,6 +27,9 @@ export const ProfileLocationDetail = () => {
   const locationCode = location?.state?.locationCode;
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [filter, setFilter] = useState<any>();
+  const [showUpdate, setShowUpdate] = useState<boolean>();
+  const [showDelete, setShowDelete] = useState<boolean>();
+  const [showAdd, setShowAdd] = useState<boolean>();
 
   const { data: locationData, isLoading: locationLoading } = useQuery({
     queryKey: [LocationEndpoint.GET_LOCATION_BY_CODE, locationCode],
@@ -60,7 +64,7 @@ export const ProfileLocationDetail = () => {
   useEffect(() => {
     if (locationData?.services && locationData.services.length > 0) {
       const activeServiceCodes = locationData.services
-        .filter((item) => item.isActive === 1) // Lọc các service đang active
+        .filter((item) => item.isActive === 1)
         .map((item) => item.serviceCode);
 
       setSelectedServices(activeServiceCodes);
@@ -91,8 +95,66 @@ export const ProfileLocationDetail = () => {
   const tableHeader = [
     {
       key: 1,
-      label: "Mã địa điểm",
-      value: "locationCode",
+      label: "Mã địa chỉ",
+      value: "addressCode",
+    },
+    {
+      key: 2,
+      label: "Tên địa điểm",
+      value: "addressName",
+    },
+    {
+      key: 3,
+      label: "Địa chỉ",
+      value: "fullAddress",
+    },
+    {
+      key: 4,
+      label: "Thành phố",
+      value: "addressCity",
+    },
+    {
+      key: 5,
+      label: "Nước",
+      value: "addressCountry",
+    },
+    {
+      key: 6,
+      label: "Mô tả",
+      value: "addressDescription",
+    },
+    {
+      key: 7,
+      label: "Chú thích",
+      value: "addressNote",
+    },
+    {
+      key: 8,
+      label: "",
+      value: "action",
+      render: (index: any, record: any) => {
+        return (
+          <div className="action-column">
+            <Button
+              htmlType="button"
+              icon={<img src={pen} />}
+              onClick={() => {
+                setShowUpdate(!showUpdate);
+              }}
+              className="button-update"
+            />
+
+            <Button
+              htmlType="button"
+              icon={<img src={deleteIcn} />}
+              onClick={() => {
+                setShowDelete(!showDelete);
+              }}
+              className="button-delete"
+            />
+          </div>
+        );
+      },
     },
   ];
   return (
@@ -459,7 +521,7 @@ export const ProfileLocationDetail = () => {
             <Row gutter={[16, 16]} className="body-row-address-table">
               <CommonTable
                 header={tableHeader}
-                body={locationData as any}
+                body={locationData?.address as any}
                 className="location__table"
                 hasPagination={true}
                 pageSize={10}
@@ -478,6 +540,32 @@ export const ProfileLocationDetail = () => {
               </Button>
             </Row>
           </div>
+
+          <Modal
+            open={showDelete}
+            onCancel={() => {
+              setShowDelete(!showDelete);
+            }}
+            onOk={() => {}}
+            className="profile__location-modal-delete"
+          >
+            Bạn có chắc chắn muốn gỡ địa chỉ này!
+          </Modal>
+
+          <Modal
+            open={showUpdate}
+            onCancel={() => {
+              setShowUpdate(!showUpdate);
+            }}
+            onOk={() => {}}
+            className="profile__location-modal-update"
+          >
+            <div className="modal__header">
+              <h1>Cập nhật thông tin địa chỉ</h1>
+              <p>Cập nhật thông tin địa chỉ mới của điểm nếu có thay đổi.</p>
+            </div>
+            <div className="modal__body"></div>
+          </Modal>
         </Form>
       </div>
     </div>
