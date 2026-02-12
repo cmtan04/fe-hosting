@@ -5,6 +5,10 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getLocationByCode } from "../../../../../api/configs/location.config";
 import { getAllService } from "../../../../../api/configs/service.config";
+import {
+  MapAddressMapper,
+  type MapAddressDto,
+} from "../../../../../api/dtos/map.dto";
 import { LocationEndpoint } from "../../../../../api/endpoints/location.endpoint";
 import { ServiceEndpoint } from "../../../../../api/endpoints/service.endpoint";
 import add from "../../../../../assets/svg/profile/add.svg";
@@ -13,19 +17,17 @@ import deleteIcn from "../../../../../assets/svg/profile/delete.svg";
 import pen from "../../../../../assets/svg/profile/pen.svg";
 import { DATE_FORMAT } from "../../../../../common/constants/constants";
 import { formatCurrencyVND } from "../../../../../common/contexts/format";
+import { validString } from "../../../../../common/contexts/helper";
 import { CommonTable } from "../../../../../components/CommonTable";
 import { FormInput } from "../../../../../components/FormInput/formInput";
 import { FormTextArea } from "../../../../../components/FormTextArea/formTextArea";
+import { MapViewCommon } from "../../../../../components/MapViewCommon";
 import { useLoading } from "../../../../../providers/loadingProvider";
 import { ServiceTag } from "../../../../Renter/components/ServiceTag/intex";
-import { MapViewCommon } from "../../../../../components/MapViewCommon";
-import {
-  MapAddressMapper,
-  type MapAddressDto,
-} from "../../../../../api/dtos/map.dto";
 
 export const ProfileLocationDetail = () => {
   const [form] = Form.useForm();
+  const [address] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
   const { setLoading } = useLoading();
@@ -112,7 +114,44 @@ export const ProfileLocationDetail = () => {
     });
   };
 
+  const handleUpdateClick = (addressCode: string) => {
+    if (validString(addressCode)) {
+      const addressData = locationData?.address?.find(
+        (item) => item.addressCode === addressCode,
+      );
+
+      setLocationDefault({
+        lat: Number(addressData?.addressLat),
+        long: Number(addressData?.addressLong),
+        addressLat: addressData?.addressLat ?? "",
+        addressLong: addressData?.addressLong ?? "",
+        fullAddress: addressData?.fullAddress ?? "",
+        addressWard: addressData?.addressWard ?? "",
+        addressDistrict: addressData?.addressDistrict ?? "",
+        addressCity: addressData?.addressCity ?? "",
+        addressProvince: addressData?.addressProvince ?? "",
+        addressCountry: addressData?.addressCountry ?? "",
+        addressPostal: addressData?.addressPortal ?? "",
+        addressRegion: addressData?.addressRegion ?? "",
+      });
+
+      address.setFieldsValue({
+        fullAddress: addressData?.fullAddress,
+        addressWard: addressData?.addressWard,
+        addressDistrict: addressData?.addressDistrict,
+        addressCity: addressData?.addressCity,
+        addressProvince: addressData?.addressProvince,
+        addressCountry: addressData?.addressCountry,
+        addressPostal: addressData?.addressPortal,
+        addressRegion: addressData?.addressRegion,
+      });
+      setShowUpdate(!showUpdate);
+    }
+  };
+
   const onSubmit = () => {};
+
+  const onAddressSubmit = () => {};
 
   const tableHeader = [
     {
@@ -160,9 +199,7 @@ export const ProfileLocationDetail = () => {
             <Button
               htmlType="button"
               icon={<img src={pen} />}
-              onClick={() => {
-                setShowUpdate(!showUpdate);
-              }}
+              onClick={() => handleUpdateClick(record.addressCode)}
               className="button-update"
             />
 
@@ -555,7 +592,7 @@ export const ProfileLocationDetail = () => {
               <Button
                 htmlType="button"
                 icon={<img src={add} />}
-                onClick={() => navigate(-1)}
+                onClick={() => setShowUpdate(!showUpdate)}
                 className="button-add"
               >
                 Thêm mới
@@ -579,7 +616,8 @@ export const ProfileLocationDetail = () => {
             onCancel={() => {
               setShowUpdate(!showUpdate);
             }}
-            onOk={() => {}}
+            onOk={() => address.submit()}
+            confirmLoading={false}
             afterOpenChange={(visible) => {
               if (visible) {
                 setTimeout(() => {
@@ -602,202 +640,208 @@ export const ProfileLocationDetail = () => {
                 />
               </Col>
               <Col span={12}>
-                <Row gutter={[16, 16]} className="form-row">
-                  <Col span={6}>
-                    <FormInput
-                      label="Tên địa chỉ"
-                      name="addressName"
-                      placeholder="Nhập tên địa chỉ"
-                      vertical={true}
-                      formItemProps={{
-                        rules: [
-                          {
-                            required: true,
-                            message: "Trường này là trường bắt buộc.",
-                          },
-                        ],
-                      }}
-                    />
-                  </Col>
-                  <Col span={18}>
-                    <FormInput
-                      label="Địa chỉ chi tiết"
-                      name="fullAddress"
-                      placeholder="Nhập địa chỉ chi tiết"
-                      vertical={true}
-                      formItemProps={{
-                        rules: [
-                          {
-                            required: true,
-                            message: "Trường này là trường bắt buộc.",
-                          },
-                        ],
-                      }}
-                    />
-                  </Col>
-                </Row>
+                <Form
+                  form={address}
+                  onFinish={onAddressSubmit}
+                  className="profile__location-form"
+                >
+                  <Row gutter={[16, 16]} className="form-row">
+                    <Col span={6}>
+                      <FormInput
+                        label="Tên địa chỉ"
+                        name="addressName"
+                        placeholder="Nhập tên địa chỉ"
+                        vertical={true}
+                        formItemProps={{
+                          rules: [
+                            {
+                              required: true,
+                              message: "Trường này là trường bắt buộc.",
+                            },
+                          ],
+                        }}
+                      />
+                    </Col>
+                    <Col span={18}>
+                      <FormInput
+                        label="Địa chỉ chi tiết"
+                        name="fullAddress"
+                        placeholder="Nhập địa chỉ chi tiết"
+                        vertical={true}
+                        formItemProps={{
+                          rules: [
+                            {
+                              required: true,
+                              message: "Trường này là trường bắt buộc.",
+                            },
+                          ],
+                        }}
+                      />
+                    </Col>
+                  </Row>
 
-                <Row gutter={[16, 16]} className="form-row">
-                  <Col span={12}>
-                    <FormInput
-                      label="Mã bưu chính"
-                      name="addressPostal"
-                      placeholder="Nhập mã bưu chính."
-                      vertical={true}
-                      formItemProps={{
-                        rules: [
-                          {
-                            required: true,
-                            message: "Trường này là trường bắt buộc.",
-                          },
-                        ],
-                      }}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <FormInput
-                      label="Phường / Xã"
-                      name="addressWard"
-                      placeholder="Nhập phường / xã."
-                      vertical={true}
-                      formItemProps={{
-                        rules: [
-                          {
-                            required: true,
-                            message: "Trường này là trường bắt buộc.",
-                          },
-                        ],
-                      }}
-                    />
-                  </Col>
-                </Row>
+                  <Row gutter={[16, 16]} className="form-row">
+                    <Col span={12}>
+                      <FormInput
+                        label="Mã bưu chính"
+                        name="addressPostal"
+                        placeholder="Nhập mã bưu chính."
+                        vertical={true}
+                        formItemProps={{
+                          rules: [
+                            {
+                              required: true,
+                              message: "Trường này là trường bắt buộc.",
+                            },
+                          ],
+                        }}
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <FormInput
+                        label="Phường / Xã"
+                        name="addressWard"
+                        placeholder="Nhập phường / xã."
+                        vertical={true}
+                        formItemProps={{
+                          rules: [
+                            {
+                              required: true,
+                              message: "Trường này là trường bắt buộc.",
+                            },
+                          ],
+                        }}
+                      />
+                    </Col>
+                  </Row>
 
-                <Row gutter={[16, 16]} className="form-row">
-                  <Col span={12}>
-                    <FormInput
-                      label="Quận / Huyện"
-                      name="addressDistrict"
-                      placeholder="Nhập quận / huyện"
-                      vertical={true}
-                      formItemProps={{
-                        rules: [
-                          {
-                            required: true,
-                            message: "Trường này là trường bắt buộc.",
-                          },
-                        ],
-                      }}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <FormInput
-                      label="Thành phố"
-                      name="addressCity"
-                      placeholder="Nhập thành phố."
-                      vertical={true}
-                      formItemProps={{
-                        rules: [
-                          {
-                            required: true,
-                            message: "Trường này là trường bắt buộc.",
-                          },
-                        ],
-                      }}
-                    />
-                  </Col>
-                </Row>
+                  <Row gutter={[16, 16]} className="form-row">
+                    <Col span={12}>
+                      <FormInput
+                        label="Quận / Huyện"
+                        name="addressDistrict"
+                        placeholder="Nhập quận / huyện"
+                        vertical={true}
+                        formItemProps={{
+                          rules: [
+                            {
+                              required: true,
+                              message: "Trường này là trường bắt buộc.",
+                            },
+                          ],
+                        }}
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <FormInput
+                        label="Thành phố"
+                        name="addressCity"
+                        placeholder="Nhập thành phố."
+                        vertical={true}
+                        formItemProps={{
+                          rules: [
+                            {
+                              required: true,
+                              message: "Trường này là trường bắt buộc.",
+                            },
+                          ],
+                        }}
+                      />
+                    </Col>
+                  </Row>
 
-                <Row gutter={[16, 16]} className="form-row">
-                  <Col span={12}>
-                    <FormInput
-                      label="Tỉnh"
-                      name="addressProvince"
-                      placeholder="Nhập tỉnh"
-                      vertical={true}
-                      formItemProps={{
-                        rules: [
-                          {
-                            required: true,
-                            message: "Trường này là trường bắt buộc.",
-                          },
-                        ],
-                      }}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <FormInput
-                      label="Quốc gia"
-                      name="addressCountry"
-                      placeholder="Nhập quốc giá"
-                      vertical={true}
-                      formItemProps={{
-                        rules: [
-                          {
-                            required: true,
-                            message: "Trường này là trường bắt buộc.",
-                          },
-                        ],
-                      }}
-                    />
-                  </Col>
-                </Row>
+                  <Row gutter={[16, 16]} className="form-row">
+                    <Col span={12}>
+                      <FormInput
+                        label="Tỉnh"
+                        name="addressProvince"
+                        placeholder="Nhập tỉnh"
+                        vertical={true}
+                        formItemProps={{
+                          rules: [
+                            {
+                              required: true,
+                              message: "Trường này là trường bắt buộc.",
+                            },
+                          ],
+                        }}
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <FormInput
+                        label="Quốc gia"
+                        name="addressCountry"
+                        placeholder="Nhập quốc giá"
+                        vertical={true}
+                        formItemProps={{
+                          rules: [
+                            {
+                              required: true,
+                              message: "Trường này là trường bắt buộc.",
+                            },
+                          ],
+                        }}
+                      />
+                    </Col>
+                  </Row>
 
-                <Row gutter={[16, 16]} className="form-row">
-                  <Col span={24}>
-                    <FormInput
-                      label="Vùng"
-                      name="addressRegion"
-                      placeholder="Nhập vùng"
-                      vertical={true}
-                      formItemProps={{
-                        rules: [
-                          {
-                            required: true,
-                            message: "Trường này là trường bắt buộc.",
-                          },
-                        ],
-                      }}
-                    />
-                  </Col>
-                </Row>
+                  <Row gutter={[16, 16]} className="form-row">
+                    <Col span={24}>
+                      <FormInput
+                        label="Vùng"
+                        name="addressRegion"
+                        placeholder="Nhập vùng"
+                        vertical={true}
+                        formItemProps={{
+                          rules: [
+                            {
+                              required: true,
+                              message: "Trường này là trường bắt buộc.",
+                            },
+                          ],
+                        }}
+                      />
+                    </Col>
+                  </Row>
 
-                <Row gutter={[16, 16]} className="form-row">
-                  <Col span={24}>
-                    <FormTextArea
-                      label="Mô tả"
-                      name="addressDescription"
-                      placeholder="Nhập mô tả"
-                      vertical={true}
-                      formItemProps={{
-                        rules: [
-                          {
-                            required: false,
-                            message: "Trường này là trường bắt buộc.",
-                          },
-                        ],
-                      }}
-                    />
-                  </Col>
-                </Row>
+                  <Row gutter={[16, 16]} className="form-row">
+                    <Col span={24}>
+                      <FormTextArea
+                        label="Mô tả"
+                        name="addressDescription"
+                        placeholder="Nhập mô tả"
+                        vertical={true}
+                        formItemProps={{
+                          rules: [
+                            {
+                              required: false,
+                              message: "Trường này là trường bắt buộc.",
+                            },
+                          ],
+                        }}
+                      />
+                    </Col>
+                  </Row>
 
-                <Row gutter={[16, 16]} className="form-row">
-                  <Col span={24}>
-                    <FormTextArea
-                      label="Ghi chú"
-                      name="addressNote"
-                      placeholder="Nhập ghi chú"
-                      vertical={true}
-                      formItemProps={{
-                        rules: [
-                          {
-                            required: false,
-                            message: "Trường này là trường bắt buộc.",
-                          },
-                        ],
-                      }}
-                    />
-                  </Col>
-                </Row>
+                  <Row gutter={[16, 16]} className="form-row">
+                    <Col span={24}>
+                      <FormTextArea
+                        label="Ghi chú"
+                        name="addressNote"
+                        placeholder="Nhập ghi chú"
+                        vertical={true}
+                        formItemProps={{
+                          rules: [
+                            {
+                              required: false,
+                              message: "Trường này là trường bắt buộc.",
+                            },
+                          ],
+                        }}
+                      />
+                    </Col>
+                  </Row>
+                </Form>
               </Col>
             </div>
           </Modal>
