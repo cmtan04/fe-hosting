@@ -45,7 +45,11 @@ export const ProfileInformation = () => {
   );
   const [address, setAddress] = useState<UserAddressDto>();
 
-  const { data: user, isLoading } = useQuery({
+  const {
+    data: user,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: [UserEndpoint.GET_USER_INFORMATION],
     queryFn: () => getUserPRofile(),
   });
@@ -57,6 +61,7 @@ export const ProfileInformation = () => {
   const uploadMutation = useMutation({
     mutationFn: (payload: FormData) => uploadImage(payload),
     onSuccess: (data) => {
+      refetch();
       setUrl(data.imageUrl);
       showNotification(data.message, NOTI_SUCCESS);
     },
@@ -111,12 +116,16 @@ export const ProfileInformation = () => {
 
   useEffect(() => {
     if (user) {
+      console.log(user);
       setUrl(user.avatarUrl);
       form.setFieldsValue({
-        userName: user.username,
+        username: user.username,
+        fullName: user.fullName,
         email: user.email,
-        userPhone: user.phone,
-        userAdress: user.fullAddress,
+        phone: user.phone,
+        bio: user.bio,
+        dateOfBirth: user.dateOfBirth ? dayjs(user.dateOfBirth) : null,
+        fullAddress: user.fullAddress,
       });
     }
   }, [user, form]);
@@ -156,7 +165,7 @@ export const ProfileInformation = () => {
   };
 
   const handleMapClick = (data: MapAddressDto) => {
-    form.setFieldValue("fullAdress", data.fullAddress);
+    form.setFieldValue("fullAddress", data.fullAddress);
     setAddress({
       fullAddress: data.fullAddress,
       userWard: data.addressWard,
@@ -170,8 +179,6 @@ export const ProfileInformation = () => {
     });
     setShowModal(!showModal);
   };
-
-  console.log(address);
 
   return (
     <div className="profile__information">
@@ -374,6 +381,13 @@ export const ProfileInformation = () => {
             footer={false}
             onCancel={() => {
               setShowModal(!showModal);
+            }}
+            afterOpenChange={(visible) => {
+              if (visible) {
+                setTimeout(() => {
+                  window.dispatchEvent(new Event("resize"));
+                }, 0);
+              }
             }}
             className="profile__information-modal"
           >
