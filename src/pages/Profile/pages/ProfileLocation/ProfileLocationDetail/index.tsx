@@ -102,7 +102,7 @@ export const ProfileLocationDetail = () => {
   const handleMapClick = (data: MapAddressDto) => {
     setLocationDefault(data);
 
-    form.setFieldsValue({
+    address.setFieldsValue({
       fullAddress: data.fullAddress,
       addressWard: data.addressWard,
       addressDistrict: data.addressDistrict,
