@@ -845,6 +845,14 @@ export const ProfileLocationDetail = () => {
               </Col>
             </div>
           </Modal>
+
+          <div className="body-row">
+            <Row gutter={[16, 16]} className="body-row-address">
+              <Button htmlType="submit" className="button-submit">
+                Lưu
+              </Button>
+            </Row>
+          </div>
         </Form>
       </div>
     </div>
