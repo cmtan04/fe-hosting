@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Checkbox, Col, DatePicker, Form, Modal, Row } from "antd";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getLocationByCode } from "../../../../../api/configs/location.config";
 import { getAllService } from "../../../../../api/configs/service.config";
@@ -15,7 +15,12 @@ import add from "../../../../../assets/svg/profile/add.svg";
 import back from "../../../../../assets/svg/profile/back.svg";
 import deleteIcn from "../../../../../assets/svg/profile/delete.svg";
 import pen from "../../../../../assets/svg/profile/pen.svg";
-import { DATE_FORMAT } from "../../../../../common/constants/constants";
+import {
+  DATE_FORMAT,
+  DEFAULT_MESSAGE,
+  NOTI_ERROR,
+  NOTI_SUCCESS,
+} from "../../../../../common/constants/constants";
 import { formatCurrencyVND } from "../../../../../common/contexts/format";
 import { validString } from "../../../../../common/contexts/helper";
 import { CommonTable } from "../../../../../components/CommonTable";
@@ -24,6 +29,10 @@ import { FormTextArea } from "../../../../../components/FormTextArea/formTextAre
 import { MapViewCommon } from "../../../../../components/MapViewCommon";
 import { useLoading } from "../../../../../providers/loadingProvider";
 import { ServiceTag } from "../../../../Renter/components/ServiceTag/intex";
+import { uploadImage } from "../../../../../api/configs/common.config";
+import { isAxiosError } from "axios";
+import { useNotification } from "../../../../../providers/notificationProvider";
+import { MediaGallery } from "../../../../../components/MediaComponent";
 
 export const ProfileLocationDetail = () => {
   const [form] = Form.useForm();
@@ -36,6 +45,15 @@ export const ProfileLocationDetail = () => {
   const [filter, setFilter] = useState<any>();
   const [showUpdate, setShowUpdate] = useState<boolean>(false);
   const [showDelete, setShowDelete] = useState<boolean>(false);
+  const [mediaList, setMediaList] = useState<
+    Array<{
+      url: string;
+      type: "image" | "video";
+      thumbnail?: string;
+    }>
+  >([]);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { showNotification } = useNotification();
   const [locationDefault, setLocationDefault] = useState<MapAddressDto>(
     MapAddressMapper.createEmpty(21.0285, 105.8542),
   );
@@ -49,6 +67,31 @@ export const ProfileLocationDetail = () => {
   const { data: service } = useQuery({
     queryKey: [ServiceEndpoint.GET_ALL_LOCATION_SERVICE],
     queryFn: () => getAllService(),
+  });
+
+  const uploadMutation = useMutation({
+    mutationFn: (payload: FormData) => uploadImage(payload),
+    onSuccess: (data) => {
+      showNotification(data.message, NOTI_SUCCESS);
+    },
+    onError: (error) => {
+      let message = DEFAULT_MESSAGE;
+      if (isAxiosError(error)) {
+        const apiMessage = error.response?.data?.message;
+        if (typeof apiMessage === "string") {
+          message = apiMessage;
+        } else if (Array.isArray(apiMessage) && apiMessage[0]) {
+          message = apiMessage[0];
+        }
+      }
+      showNotification(message, NOTI_ERROR);
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
   });
 
   useEffect(() => {
@@ -67,6 +110,15 @@ export const ProfileLocationDetail = () => {
         locationPriceStart: locationData.locationPriceStart,
         locationPriceEnd: locationData.locationPriceEnd,
       });
+
+      if (locationData.locationLogo) {
+        setMediaList([
+          {
+            url: locationData.locationLogo,
+            type: "image",
+          },
+        ]);
+      }
     }
   }, [locationData, form]);
 
@@ -155,6 +207,36 @@ export const ProfileLocationDetail = () => {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) {
+      return;
+    }
+
+    Array.from(files).forEach((file) => {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const isVideo = file.type.startsWith("video/");
+
+      uploadMutation.mutate(formData, {
+        onSuccess: (data) => {
+          setMediaList((prev) => [
+            ...prev,
+            {
+              url: data.imageUrl,
+              type: isVideo ? "video" : "image",
+            },
+          ]);
+        },
+      });
+    });
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const onSubmit = () => {};
 
   const onAddressSubmit = () => {};
@@ -222,6 +304,7 @@ export const ProfileLocationDetail = () => {
       },
     },
   ];
+
   return (
     <div className="profile__location-detail">
       <div className="profile__location-detail-header">
@@ -322,12 +405,24 @@ export const ProfileLocationDetail = () => {
                   }}
                 />
               </Col>
-              <Col span={10}>
-                <img
-                  src={locationData?.locationLogo}
-                  alt="Logo"
-                  className="logo"
-                />
+
+              <Col span={10} className="upload-wrapper">
+                <MediaGallery media={mediaList} />
+
+                <label
+                  htmlFor="upload"
+                  className="renter__fillInformation-upload-btn-upload"
+                >
+                  <input
+                    id="upload"
+                    type="file"
+                    accept="image/*,video/*"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    multiple
+                  />
+                  <span>Tải ảnh/video lên</span>
+                </label>
               </Col>
             </Row>
 
@@ -452,6 +547,7 @@ export const ProfileLocationDetail = () => {
               </Col>
             </Row>
           </div>
+
           <div className="body-row">
             <Row gutter={[16, 16]} className="body-row-service">
               <h1 className="header-title">Các dịch vụ được cung cấp</h1>
