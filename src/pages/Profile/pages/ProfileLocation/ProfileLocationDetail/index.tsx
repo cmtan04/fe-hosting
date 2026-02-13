@@ -34,8 +34,8 @@ export const ProfileLocationDetail = () => {
   const locationCode = location?.state?.locationCode;
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [filter, setFilter] = useState<any>();
-  const [showUpdate, setShowUpdate] = useState<boolean>();
-  const [showDelete, setShowDelete] = useState<boolean>();
+  const [showUpdate, setShowUpdate] = useState<boolean>(false);
+  const [showDelete, setShowDelete] = useState<boolean>(false);
   const [locationDefault, setLocationDefault] = useState<MapAddressDto>(
     MapAddressMapper.createEmpty(21.0285, 105.8542),
   );
@@ -114,8 +114,8 @@ export const ProfileLocationDetail = () => {
     });
   };
 
-  const handleUpdateClick = (addressCode: string) => {
-    if (validString(addressCode)) {
+  const handleUpdateClick = (addressCode?: string) => {
+    if (validString(addressCode as string)) {
       const addressData = locationData?.address?.find(
         (item) => item.addressCode === addressCode,
       );
@@ -136,6 +136,7 @@ export const ProfileLocationDetail = () => {
       });
 
       address.setFieldsValue({
+        addressName: addressData?.addressName,
         fullAddress: addressData?.fullAddress,
         addressWard: addressData?.addressWard,
         addressDistrict: addressData?.addressDistrict,
@@ -144,7 +145,12 @@ export const ProfileLocationDetail = () => {
         addressCountry: addressData?.addressCountry,
         addressPostal: addressData?.addressPortal,
         addressRegion: addressData?.addressRegion,
+        addressDescription: addressData?.addressDescription,
+        addressNote: addressData?.addressNote,
       });
+      setShowUpdate(!showUpdate);
+    } else {
+      address.resetFields();
       setShowUpdate(!showUpdate);
     }
   };
@@ -592,7 +598,7 @@ export const ProfileLocationDetail = () => {
               <Button
                 htmlType="button"
                 icon={<img src={add} />}
-                onClick={() => setShowUpdate(!showUpdate)}
+                onClick={() => handleUpdateClick()}
                 className="button-add"
               >
                 Thêm mới
@@ -631,7 +637,7 @@ export const ProfileLocationDetail = () => {
               <h1>Cập nhật thông tin địa chỉ</h1>
               <p>Cập nhật thông tin địa chỉ mới của điểm nếu có thay đổi.</p>
             </div>
-            <div className="modal__body">
+            <Row gutter={[16, 16]} className="modal__body">
               <Col span={12}>
                 <MapViewCommon
                   data={locationDefault}
@@ -843,7 +849,7 @@ export const ProfileLocationDetail = () => {
                   </Row>
                 </Form>
               </Col>
-            </div>
+            </Row>
           </Modal>
 
           <div className="body-row">
