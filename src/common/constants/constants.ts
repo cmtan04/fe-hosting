@@ -7,6 +7,7 @@ export const AUTH_FLOWTYPE = {
 export const NOTI_ERROR = "error";
 export const NOTI_SUCCESS = "success";
 export const DEFAULT_MESSAGE = "Đã xảy ra lỗi.";
+export const TYPE_LOG_OUT = 99;
 
 export const RENTER_STEP = {
   PICK_TYPE: 1,

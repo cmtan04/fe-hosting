@@ -9,6 +9,7 @@ import bill from "../../assets/svg/profile/bill.svg";
 import chat from "../../assets/svg/profile/chat.svg";
 import contract from "../../assets/svg/profile/contract.svg";
 import payment from "../../assets/svg/profile/payment.svg";
+import { TYPE_LOG_OUT } from "../constants/constants";
 
 export const items = [
   {
@@ -201,7 +202,7 @@ export const profileItems: ProfileItem[] = [
     key: 4,
     icon: chat,
     label: "Tin nhắn",
-    href: ROUTER_PATH.PROFILE_LOCATION,
+    href: ROUTER_PATH.PROFILE_CHAT,
   },
   {
     key: 5,
@@ -216,7 +217,7 @@ export const profileItems: ProfileItem[] = [
     href: ROUTER_PATH.PROFILE_LOCATION,
   },
   {
-    key: 7,
+    key: TYPE_LOG_OUT,
     icon: logout,
     label: "Đăng xuất",
     href: ROUTER_PATH.HOME,

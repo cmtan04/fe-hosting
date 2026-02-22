@@ -17,6 +17,7 @@ import { Profile } from "../pages/Profile/pages";
 import { ProfileInformation } from "../pages/Profile/pages/ProfileInformation";
 import { ProfileLocation } from "../pages/Profile/pages/ProfileLocation";
 import { ProfileLocationDetail } from "../pages/Profile/pages/ProfileLocation/ProfileLocationDetail";
+import { ProfileChat } from "../pages/Profile/pages/ProfileChat";
 
 export const WebRouter = () => (
   <Routes>
@@ -63,6 +64,10 @@ export const WebRouter = () => (
         <Route
           path={ROUTER_PATH.PROFILE_LOCATION_DETAIL}
           element={<ProfileLocationDetail />}
+        ></Route>
+        <Route
+          path={ROUTER_PATH.PROFILE_CHAT}
+          element={<ProfileChat />}
         ></Route>
       </Route>
       {/* PROFILE */}
