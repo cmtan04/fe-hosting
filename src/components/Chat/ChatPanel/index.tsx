@@ -3,164 +3,85 @@ import { getUserPRofile } from "../../../api/configs/user.config";
 import { UserEndpoint } from "../../../api/endpoints/user.endpoint";
 import { ChatInput } from "../ChatInput";
 import { ChatLabel } from "../ChatLabel";
+import type { ConversationResponseDto } from "../../../api/dtos/chat.dto";
+import { data } from "react-router-dom";
+import { ConverationEndpoint } from "../../../api/endpoints/chat.endpoint";
+import {
+  getAllConversation,
+  getConversationMessages,
+} from "../../../api/configs/chat.config";
+import { useState } from "react";
 
 export interface ChatPanelProps {
-  data?: any;
+  data?: ConversationResponseDto;
 }
 
-export const fakeMessages = [
-  {
-    id: 1,
-    isYour: true,
-    isRead: true,
-    timeLine: "2026-02-22T09:00:00",
-    content: "Chào bạn 👋",
-    avartar: "https://i.pravatar.cc/150?img=3",
-  },
-  {
-    id: 2,
-    isYour: false,
-    isRead: true,
-    timeLine: "2026-02-22T09:02:00",
-    content: "Chào bạn, mình có thể giúp gì?",
-    avartar: "https://i.pravatar.cc/150?img=5",
-  },
-  {
-    id: 3,
-    isYour: true,
-    isRead: false,
-    timeLine: "2026-02-22T09:05:00",
-    content: "Mình đang test giao diện chat 😄",
-    avartar: "https://i.pravatar.cc/150?img=3",
-  },
-  {
-    id: 2,
-    isYour: false,
-    isRead: true,
-    timeLine: "2026-02-22T09:02:00",
-    content: "Chào bạn, mình có thể giúp gì?",
-    avartar: "https://i.pravatar.cc/150?img=5",
-  },
-  {
-    id: 3,
-    isYour: true,
-    isRead: false,
-    timeLine: "2026-02-22T09:05:00",
-    content: "Mình đang test giao diện chat 😄",
-    avartar: "https://i.pravatar.cc/150?img=3",
-  },
-  {
-    id: 2,
-    isYour: false,
-    isRead: true,
-    timeLine: "2026-02-22T09:02:00",
-    content: "Chào bạn, mình có thể giúp gì?",
-    avartar: "https://i.pravatar.cc/150?img=5",
-  },
-  {
-    id: 3,
-    isYour: true,
-    isRead: false,
-    timeLine: "2026-02-22T09:05:00",
-    content: "Mình đang test giao diện chat 😄",
-    avartar: "https://i.pravatar.cc/150?img=3",
-  },
-  {
-    id: 2,
-    isYour: false,
-    isRead: true,
-    timeLine: "2026-02-22T09:02:00",
-    content: "Chào bạn, mình có thể giúp gì?",
-    avartar: "https://i.pravatar.cc/150?img=5",
-  },
-  {
-    id: 3,
-    isYour: true,
-    isRead: false,
-    timeLine: "2026-02-22T09:05:00",
-    content: "Mình đang test giao diện chat 😄",
-    avartar: "https://i.pravatar.cc/150?img=3",
-  },
-  {
-    id: 2,
-    isYour: false,
-    isRead: true,
-    timeLine: "2026-02-22T09:02:00",
-    content: "Chào bạn, mình có thể giúp gì?",
-    avartar: "https://i.pravatar.cc/150?img=5",
-  },
-  {
-    id: 3,
-    isYour: true,
-    isRead: false,
-    timeLine: "2026-02-22T09:05:00",
-    content: "Mình đang test giao diện chat 😄",
-    avartar: "https://i.pravatar.cc/150?img=3",
-  },
-  {
-    id: 2,
-    isYour: false,
-    isRead: true,
-    timeLine: "2026-02-22T09:02:00",
-    content: "Chào bạn, mình có thể giúp gì?",
-    avartar: "https://i.pravatar.cc/150?img=5",
-  },
-  {
-    id: 3,
-    isYour: true,
-    isRead: false,
-    timeLine: "2026-02-22T09:05:00",
-    content: "Mình đang test giao diện chat 😄",
-    avartar: "https://i.pravatar.cc/150?img=3",
-  },
-  {
-    id: 2,
-    isYour: false,
-    isRead: true,
-    timeLine: "2026-02-22T09:02:00",
-    content: "Chào bạn, mình có thể giúp gì?",
-    avartar: "https://i.pravatar.cc/150?img=5",
-  },
-  {
-    id: 3,
-    isYour: true,
-    isRead: false,
-    timeLine: "2026-02-22T09:05:00",
-    content: "Mình đang test giao diện chat 😄",
-    avartar: "https://i.pravatar.cc/150?img=3",
-  },
-];
+interface Conversation {
+  conversationId: number;
+  page: number;
+  size: number;
+}
 
 export const ChatPanel = (props: ChatPanelProps) => {
-  const { data: user } = useQuery({
-    queryKey: [UserEndpoint.GET_USER_INFORMATION],
-    queryFn: () => getUserPRofile(),
+  const [conversation, setConversation] = useState<Conversation>({
+    conversationId: props.data?.conversationId || 0,
+    page: 1,
+    size: 20,
   });
+
+  const { data: message } = useQuery({
+    queryKey: [ConverationEndpoint.GET_CHAT_CONVERSATION_MESSAGE, conversation],
+    queryFn: () =>
+      getConversationMessages(conversation.conversationId, {
+        page: conversation.page,
+        size: conversation.size,
+      }),
+  });
+
   return (
-    <div className="chat__panel">
-      <div className="chat__panel-header">
-        <div className="chat__panel-header-left">
-          <img src={user?.avatarUrl} alt={user?.avatarUrl} />
+    <>
+      {props.data && (
+        <div className="chat__panel">
+          <div className="chat__panel-header">
+            <div className="chat__panel-header-left">
+              <img
+                src={props.data?.toUser.avatarUrl}
+                alt={props.data?.toUser.avatarUrl}
+              />
+            </div>
+            <div className="chat__panel-header-right">
+              <p className={`line-1`}>{props.data?.toUser.username}</p>
+              <p className="line-2">{props.data?.toUser.email}</p>
+            </div>
+          </div>
+          <div className="chat__panel-body">
+            {message ? (
+              <>
+                {message.map((item) => (
+                  <ChatLabel
+                    isYour={item.isYour}
+                    isRead={item.isRead}
+                    timeLine={item.timeLine}
+                    content={item.content}
+                    avartar={item.avartar}
+                  />
+                ))}
+              </>
+            ) : (
+              <ChatLabel
+                isYour={true}
+                isRead={false}
+                timeLine={props.data.conversationCreatedAt}
+                content={props.data.lastMessage || "Không có tin nhắn nào"}
+                avartar={props.data.toUser.avatarUrl || ""}
+              />
+            )}
+          </div>
+          <div className="chat__panel-footer">
+            <ChatInput />
+          </div>
         </div>
-        <div className="chat__panel-header-right">
-          <p className={`line-1`}>{user?.fullName}</p>
-          <p className="line-2">{user?.email}</p>
-        </div>
-      </div>
-      <div className="chat__panel-body">
-        {fakeMessages.map((item) => (
-          <ChatLabel
-            isYour={item.isYour}
-            isRead={item.isRead}
-            timeLine={item.timeLine}
-            content={item.content}
-            avartar={item.avartar}
-          />
-        ))}
-      </div>
-      <div className="chat__panel-footer">
-        <ChatInput />
-      </div>
-    </div>
+      )}
+    </>
   );
 };

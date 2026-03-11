@@ -1,4 +1,7 @@
-import { formatDateDDMMYYYY } from "../../../common/contexts/format";
+import {
+  formatDateDDMMYYYY,
+  formatLastMessageAt,
+} from "../../../common/contexts/format";
 import "../style.scss";
 
 export interface ChatItemProps {
@@ -18,7 +21,7 @@ export const ChatItem = (props: ChatItemProps) => {
       </div>
       <div className="chat__item-right">
         <p className={`line-1 ${props.isRead && "read"}`}>
-          {props.name} <span>{formatDateDDMMYYYY(props.time)}</span>
+          {props.name} <span>{formatLastMessageAt(props.time as string)}</span>
         </p>
         <p className="line-2">{props.content}</p>
       </div>

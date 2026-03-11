@@ -1,7 +1,10 @@
 import "../style.scss";
 import tick from "../../../assets/svg/tick.svg";
 import doubleTick from "../../../assets/svg/doubleTick.svg";
-import { formatDateDDMMYYYY } from "../../../common/contexts/format";
+import {
+  formatDateDDMMYYYY,
+  formatLastMessageAt,
+} from "../../../common/contexts/format";
 
 export interface ChatLabelProps {
   isYour: boolean;
@@ -23,7 +26,7 @@ export const ChatLabel = (props: ChatLabelProps) => {
         </div>
         <div className="row-2">
           <p className="chat__label-timeLine">
-            {formatDateDDMMYYYY(props.timeLine)}
+            {formatLastMessageAt(props.timeLine)}
             <span>
               {props.isRead ? (
                 <img src={doubleTick} alt={"read"} />
