@@ -90,6 +90,7 @@ export const ProfileInformation = () => {
   const updateUserMutation = useMutation({
     mutationFn: (payload: UserUpdatePayloadDto) => updateUserProfile(payload),
     onSuccess: (data) => {
+      refetch();
       showNotification("Cập nhật thành công", NOTI_SUCCESS);
     },
     onError: (error) => {
@@ -116,7 +117,6 @@ export const ProfileInformation = () => {
 
   useEffect(() => {
     if (user) {
-      console.log(user);
       setUrl(user.avatarUrl);
       form.setFieldsValue({
         username: user.username,

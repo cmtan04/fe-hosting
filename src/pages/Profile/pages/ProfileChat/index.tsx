@@ -5,15 +5,24 @@ import { ConverationEndpoint } from "../../../../api/endpoints/chat.endpoint";
 import { ChatItem } from "../../../../components/Chat/ChatItem";
 import { ChatPanel } from "../../../../components/Chat/ChatPanel";
 import "../style.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const ProfileChat = () => {
-  const [active, setActive] = useState<number>(0);
+  const [active, setActive] = useState<number>();
 
   const { data: conversations } = useQuery({
     queryKey: [ConverationEndpoint.GET_CHAT_CONVERSATION],
     queryFn: () => getAllConversation(),
   });
+
+  useEffect(() => {
+    const firstId = conversations?.[0]?.conversationId;
+    if (firstId) {
+      setActive(firstId);
+    }
+  }, [conversations]);
+
+  console.log(conversations);
 
   return (
     <div className="profile__chat">
@@ -37,11 +46,11 @@ export const ProfileChat = () => {
                 key={conversation.conversationId}
                 icon={
                   conversation.conversationAvatar ||
-                  conversation.toUser.avatarUrl
+                  conversation?.toUser?.avatarUrl
                 }
-                name={conversation.toUser.username}
-                content={conversation.lastMessage}
-                time={conversation.lastMessageAt}
+                name={conversation?.toUser?.username}
+                content={conversation?.lastMessage}
+                time={conversation?.lastMessageAt}
                 isRead={false}
                 focus={active === conversation.conversationId}
               />

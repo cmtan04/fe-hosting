@@ -256,6 +256,13 @@
               gap: 12px;
               margin: 0px !important;
 
+              mix-blend-mode: difference;
+              text-shadow:
+                -0.25px -0.25px 0 #fff,
+                0.25px -0.25px 0 #fff,
+                -0.25px 0.25px 0 #fff,
+                0.25px 0.25px 0 #fff;
+
               &.name {
                 font-weight: 700;
                 font-size: 24px;

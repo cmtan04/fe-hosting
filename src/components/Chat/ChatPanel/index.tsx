@@ -36,6 +36,8 @@ export const ChatPanel = (props: ChatPanelProps) => {
         page: conversation.page,
         size: conversation.size,
       }),
+
+    enabled: !!props.data?.conversationId,
   });
 
   return (
@@ -45,13 +47,13 @@ export const ChatPanel = (props: ChatPanelProps) => {
           <div className="chat__panel-header">
             <div className="chat__panel-header-left">
               <img
-                src={props.data?.toUser.avatarUrl}
-                alt={props.data?.toUser.avatarUrl}
+                src={props.data?.toUser?.avatarUrl}
+                alt={props.data?.toUser?.avatarUrl}
               />
             </div>
             <div className="chat__panel-header-right">
-              <p className={`line-1`}>{props.data?.toUser.username}</p>
-              <p className="line-2">{props.data?.toUser.email}</p>
+              <p className={`line-1`}>{props.data?.toUser?.username}</p>
+              <p className="line-2">{props.data?.toUser?.email}</p>
             </div>
           </div>
           <div className="chat__panel-body">
@@ -73,7 +75,7 @@ export const ChatPanel = (props: ChatPanelProps) => {
                 isRead={false}
                 timeLine={props.data.conversationCreatedAt}
                 content={props.data.lastMessage || "Không có tin nhắn nào"}
-                avartar={props.data.toUser.avatarUrl || ""}
+                avartar={props.data.toUser?.avatarUrl || ""}
               />
             )}
           </div>
