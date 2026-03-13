@@ -124,6 +124,26 @@
   }
 }
 
+.ant-dropdown {
+  border-radius: 24px;
+  &-menu {
+    &-item {
+      &-icon {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+.hide {
+  display: none !important;
+}
+
+.show {
+  display: block !important;
+}
+
 @keyframes slideIn {
   from {
     transform: translateY(-100%);

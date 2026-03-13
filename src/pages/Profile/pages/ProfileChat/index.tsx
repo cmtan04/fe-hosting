@@ -22,8 +22,6 @@ export const ProfileChat = () => {
     }
   }, [conversations]);
 
-  console.log(conversations);
-
   return (
     <div className="profile__chat">
       <div className="profile__chat-header">

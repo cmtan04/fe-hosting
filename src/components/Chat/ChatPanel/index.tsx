@@ -1,17 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import { getUserPRofile } from "../../../api/configs/user.config";
-import { UserEndpoint } from "../../../api/endpoints/user.endpoint";
+import { useState } from "react";
+import { getConversationMessages } from "../../../api/configs/chat.config";
+import type { ConversationResponseDto } from "../../../api/dtos/chat.dto";
+import { ConverationEndpoint } from "../../../api/endpoints/chat.endpoint";
 import { ChatInput } from "../ChatInput";
 import { ChatLabel } from "../ChatLabel";
-import type { ConversationResponseDto } from "../../../api/dtos/chat.dto";
-import { data } from "react-router-dom";
-import { ConverationEndpoint } from "../../../api/endpoints/chat.endpoint";
-import {
-  getAllConversation,
-  getConversationMessages,
-} from "../../../api/configs/chat.config";
-import { useState } from "react";
-
+import deleteIcn from "../../../assets/svg/profile/delete.svg";
+import penIcn from "../../../assets/svg/profile/pen.svg";
+import bioIcn from "../../../assets/svg/profile/bio.svg";
+import bellOffIcn from "../../../assets/svg/profile/bellOff.svg";
+import hideIcn from "../../../assets/svg/profile/hide.svg";
+import threeDotIcn from "../../../assets/svg/three-dots.svg";
+import { Dropdown, Space } from "antd";
 export interface ChatPanelProps {
   data?: ConversationResponseDto;
 }
@@ -21,6 +21,34 @@ interface Conversation {
   page: number;
   size: number;
 }
+
+const chatMenuAction = [
+  {
+    key: 1,
+    label: "Biệt danh",
+    icon: <img src={penIcn} alt="pen" />,
+  },
+  {
+    key: 2,
+    label: "Xem trang cá nhân",
+    icon: <img src={bioIcn} alt="bio" />,
+  },
+  {
+    key: 3,
+    label: "Tắt thông báo",
+    icon: <img src={bellOffIcn} alt="bell-off" />,
+  },
+  {
+    key: 4,
+    label: "Ẩn trò chuyện",
+    icon: <img src={hideIcn} alt="hide" />,
+  },
+  {
+    key: 5,
+    label: "Xóa trò chuyện",
+    icon: <img src={deleteIcn} alt="delete" />,
+  },
+];
 
 export const ChatPanel = (props: ChatPanelProps) => {
   const [conversation, setConversation] = useState<Conversation>({
@@ -40,6 +68,30 @@ export const ChatPanel = (props: ChatPanelProps) => {
     enabled: !!props.data?.conversationId,
   });
 
+  const handleMenuClick = (e: any) => {
+    if (e.key === "1") {
+      const nameLabel = document.querySelector(".name-label");
+      nameLabel?.classList.remove("show");
+      nameLabel?.classList.add("hide");
+
+      const input = document.querySelector(".name-input");
+      input?.classList.remove("hide");
+      input?.classList.add("show");
+    }
+  };
+
+  const handleUpdateNickname = (e: any) => {
+    e.preventDefault();
+    const nameLabel = document.querySelector(".name-label");
+    nameLabel?.classList.remove("hide");
+    nameLabel?.classList.add("show");
+    const input = document.querySelector(".name-input");
+    input?.classList.remove("show");
+    input?.classList.add("hide");
+
+    console.log(e.target.value);
+  };
+
   return (
     <>
       {props.data && (
@@ -52,8 +104,43 @@ export const ChatPanel = (props: ChatPanelProps) => {
               />
             </div>
             <div className="chat__panel-header-right">
-              <p className={`line-1`}>{props.data?.toUser?.username}</p>
-              <p className="line-2">{props.data?.toUser?.email}</p>
+              <div className="row-left">
+                <p className={`line-1 name-label show`}>
+                  {props.data?.toUser?.username}
+                </p>
+                <input
+                  className="name-input hide"
+                  id="name-input"
+                  name="name"
+                  defaultValue={props.data?.toUser?.username}
+                  type="text"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleUpdateNickname(e);
+                    }
+                  }}
+                  onBlur={(e) => {
+                    handleUpdateNickname(e);
+                  }}
+                />
+                <p className="line-2">{props.data?.toUser?.email}</p>
+              </div>
+
+              <div className="row-right">
+                <Dropdown
+                  menu={{
+                    items: chatMenuAction,
+                    onClick: handleMenuClick,
+                  }}
+                  trigger={["click"]}
+                >
+                  <img
+                    src={threeDotIcn}
+                    alt="three-dot"
+                    onClick={(e) => e.preventDefault()}
+                  />
+                </Dropdown>
+              </div>
             </div>
           </div>
           <div className="chat__panel-body">
