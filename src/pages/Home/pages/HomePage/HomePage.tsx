@@ -1,16 +1,16 @@
-import { FormSearch } from "../../../components/FormSearch/formSearch";
-import { type HomeCardProps } from "../../../components/HomeCard/HomeCard";
-import { HomeCarousel } from "../../../components/HomeCarousel/HomeCarousel";
 import "../home.scss";
 import "./homePage.scss";
-import homeMap1 from "../../../assets/svg/home/home_map1.svg";
-import homeMap2 from "../../../assets/svg/home/home_map4.svg";
-import homeMap3 from "../../../assets/svg/home/home_map3.svg";
-import call from "../../../assets/lotties/home/call.json";
-import docs from "../../../assets/lotties/home/docs.json";
-import find from "../../../assets/lotties/home/find.json";
-import search from "../../../assets/lotties/home/search.json";
+import homeMap1 from "../../../../assets/svg/home/home_map1.svg";
+import homeMap2 from "../../../../assets/svg/home/home_map4.svg";
+import homeMap3 from "../../../../assets/svg/home/home_map3.svg";
+import search from "../../../../assets/lotties/home/search.json";
+import call from "../../../../assets/lotties/home/call.json";
+import find from "../../../../assets/lotties/home/find.json";
+import docs from "../../../../assets/lotties/home/docs.json";
 import Lottie from "lottie-react";
+import type { HomeCardProps } from "../../../../components/HomeCard/HomeCard";
+import { FormSearch } from "../../../../components/FormSearch/formSearch";
+import { HomeCarousel } from "../../../../components/HomeCarousel/HomeCarousel";
 export const HomePage = () => {
   const sampleHomes: HomeCardProps[] = [
     {

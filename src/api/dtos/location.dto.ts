@@ -30,9 +30,11 @@ export interface LocationAddressUpdateDto {
 }
 
 export interface LocationDto {
+  locationCode: string;
   typeCode: string;
+  typeName: string;
   serviceCode: ServicePayloadDto[];
-  locationAddress: LocationAddressUpdateDto[];
+  address: LocationAddressUpdateDto[];
   locationName: string;
   locationLogo: string;
   locationPriceStart: number;
