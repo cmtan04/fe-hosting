@@ -13,7 +13,7 @@ export const LocationListView = () => {
   const { setLoading } = useLoading();
   const [filter, setFilter] = useState<ProfileLocationFilter>({
     page: 1,
-    limit: 2,
+    limit: 20,
   });
 
   const { data: locationData, isLoading: locationLoading } = useQuery({
