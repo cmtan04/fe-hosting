@@ -450,6 +450,14 @@
           color: $primary-color;
           font-family: $font_family_1 !important;
         }
+
+        &__user {
+          &-avartar {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+          }
+        }
       }
 
       .body__section {

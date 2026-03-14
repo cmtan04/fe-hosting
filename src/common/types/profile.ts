@@ -12,4 +12,6 @@ export interface ProfileLocationFilter {
   renderName?: string;
   renderEmail?: string;
   fullAddress?: string;
+  page?: number;
+  limit?: number;
 }

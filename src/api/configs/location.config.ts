@@ -1,8 +1,10 @@
+import type { ProfileLocationFilter } from "../../common/types/profile";
 import axiosClient from "../axiosClient";
 import type {
   LocationDto,
   LocationResponseDto,
   LocationTypeDto,
+  PaginatedLocationDto,
 } from "../dtos/location.dto";
 import { LocationEndpoint } from "../endpoints/location.endpoint";
 
@@ -14,8 +16,8 @@ export const getAllLocationType = async (): Promise<LocationTypeDto[]> => {
 };
 
 export const getLocationByFilter = async (
-  filter: any,
-): Promise<LocationDto[]> => {
+  filter: ProfileLocationFilter,
+): Promise<PaginatedLocationDto> => {
   const response = await axiosClient.get(
     LocationEndpoint.GET_LOCATION_BY_FILTER,
     {

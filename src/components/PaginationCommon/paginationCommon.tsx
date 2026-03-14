@@ -12,7 +12,6 @@ export const Pagination = ({
   onPageChange,
 }: PaginationProps) => {
   if (totalPages <= 1) return null;
-
   return (
     <div className="pagination">
       <button

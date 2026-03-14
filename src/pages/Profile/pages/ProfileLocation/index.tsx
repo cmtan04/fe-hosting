@@ -20,13 +20,16 @@ import information from "../../../../assets/svg/profile/information.svg";
 import type { ProfileLocationFilter } from "../../../../common/types/profile";
 import { useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "../../../../router/Route";
+import type { LocationDto } from "../../../../api/dtos/location.dto";
 
 export const ProfileLocation = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { setLoading } = useLoading();
-  const [filter, setFilter] = useState<ProfileLocationFilter>();
-
+  const [filter, setFilter] = useState<ProfileLocationFilter>({
+    page: 1,
+    limit: 2,
+  });
   const { data: typeList, isLoading } = useQuery({
     queryKey: [LocationEndpoint.GET_ALL_LOCATION_TYPE],
     queryFn: () => getAllLocationType(),
@@ -280,12 +283,13 @@ export const ProfileLocation = () => {
           <Row gutter={[16, 16]}>
             <CommonTable
               header={header}
-              body={locationData as any}
+              body={locationData?.data as LocationDto[]}
               className="location__table"
-              hasPagination={true}
-              pageSize={10}
-              filter={filter}
               loading={locationLoading}
+              hasPagination={true}
+              currentPage={filter.page ?? 1}
+              totalPages={locationData?.totalPages ?? 0}
+              onPageChange={(page) => setFilter((prev) => ({ ...prev, page }))}
             />
           </Row>
         </div>

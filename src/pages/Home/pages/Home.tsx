@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import "./home.scss";
 import { TopBar } from "../../../components/TopBar/TopBar";
-import { Footer } from "antd/es/layout/layout";
+import { Footer } from "../../../components/Footer/Footer";
 
 export const Home = () => {
   return (

@@ -1,4 +1,4 @@
-import "./style.scss";
+import "../style.scss";
 import share from "../../../../assets/svg/location/share.svg";
 import favouriteblack from "../../../../assets/svg/location/favourite-black.svg";
 import favouritered from "../../../../assets/svg/location/favourite-red.svg";
@@ -41,15 +41,13 @@ export const LocationCard = (props: LocationCardProps) => {
           </button>
         </div>
       </div>
-      <div className="location__card-content"></div>
-      <h3 className="location__card-title">{props.name}</h3>
-      <p className="location__card-description">{props.description}</p>
-      <div className="location__card-details">
-        <span className="location__card-type">{props.typeName}</span>
-        <span className="location__card-address">{props.address}</span>
-        <span className="location__card-rate">
-          <Rate disabled defaultValue={Number(props.rate)} />
-        </span>
+      <div className="location__card-content">
+        <h3 className="location__card-title">
+          {props.typeName} <span>:</span> {props.name}
+        </h3>
+        <p className="location__card-description">{props.description}</p>
+        <p className="location__card-address">{props.address}</p>
+        <Rate disabled defaultValue={Number(props.rate)} />
       </div>
     </div>
   );
