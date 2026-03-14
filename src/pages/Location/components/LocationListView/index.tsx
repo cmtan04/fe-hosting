@@ -8,9 +8,12 @@ import { useLoading } from "../../../../providers/loadingProvider";
 import { LocationCard } from "../LocationCard";
 import "../style.scss";
 import type { LocationDto } from "../../../../api/dtos/location.dto";
+import { useSearchParams } from "react-router-dom";
 
 export const LocationListView = () => {
   const { setLoading } = useLoading();
+  const [searchParams] = useSearchParams();
+  const location = searchParams.get("location");
   const [filter, setFilter] = useState<ProfileLocationFilter>({
     page: 1,
     limit: 20,
@@ -25,13 +28,20 @@ export const LocationListView = () => {
     setLoading(locationLoading);
   }, [locationLoading]);
 
+  useEffect(() => {
+    if (location) {
+      setFilter((prev) => ({
+        ...prev,
+        addressRegion: location,
+      }));
+    }
+  }, [location]);
+
   const handlePageChange = (page: number) => {
     setFilter((prev) => ({ ...prev, page }));
   };
 
   const totalPages = locationData?.totalPages ?? 1;
-
-  console.log(locationData);
 
   return (
     <div className="location__list">
