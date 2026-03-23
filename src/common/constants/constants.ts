@@ -25,3 +25,21 @@ export const USER_ROLE = {
   OWNER: 1,
   USER: 2,
 };
+
+export const RENT_TYPE = {
+  MOTEL: "motel",
+  APARTMENT: "apartment",
+  OFFICE: "office",
+  FULL_HOUSE: "full_house",
+  VENUE: "venue",
+} as const;
+
+export const LOCATION_TYPE = {
+  NORTH: "north",
+  CENTRAL: "central",
+  SOUTH: "south",
+  WEST: "west",
+} as const;
+
+export type RentType = (typeof RENT_TYPE)[keyof typeof RENT_TYPE];
+export type LocationType = (typeof LOCATION_TYPE)[keyof typeof LOCATION_TYPE];

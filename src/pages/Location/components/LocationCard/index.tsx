@@ -16,6 +16,7 @@ interface LocationCardProps {
   isFavourite: boolean;
   onFavouriteToggle?: (code: string) => void;
   onShare?: (code: string) => void;
+  onClick?: (code: string) => void;
 }
 
 export const LocationCard = (props: LocationCardProps) => {
@@ -63,7 +64,10 @@ export const LocationCard = (props: LocationCardProps) => {
       )}
       placement="topRight"
     >
-      <div className="location__card">
+      <div
+        className="location__card"
+        onClick={() => props.onClick?.(props.code)}
+      >
         <div className="location__card-image">
           <img src={props.image} alt="" />
           <div className="action">

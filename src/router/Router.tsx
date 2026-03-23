@@ -37,7 +37,11 @@ export const WebRouter = () => (
       {/* Home */}
       <Route path={ROUTER_PATH.HOME} element={<Home />}>
         <Route path={ROUTER_PATH.HOME} element={<HomePage />}></Route>
-        <Route path={ROUTER_PATH.LOCATION} element={<LocationList />}></Route>
+        <Route path={ROUTER_PATH.LOCATIONS} element={<LocationList />}></Route>
+        <Route
+          path={ROUTER_PATH.LOCATION_DETAIL}
+          element={<LocationList />}
+        ></Route>
       </Route>
       {/* Home */}
       {/* PROFILE */}

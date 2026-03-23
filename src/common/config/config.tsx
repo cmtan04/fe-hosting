@@ -1,4 +1,4 @@
-import { createSearchParams, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "../../router/Route";
 import type { ProfileItem } from "../types/profile";
 import location from "../../assets/images/profile/icn_location.svg";
@@ -9,9 +9,9 @@ import bill from "../../assets/svg/profile/bill.svg";
 import chat from "../../assets/svg/profile/chat.svg";
 import contract from "../../assets/svg/profile/contract.svg";
 import payment from "../../assets/svg/profile/payment.svg";
-import { TYPE_LOG_OUT } from "../constants/constants";
+import { LOCATION_TYPE, RENT_TYPE, TYPE_LOG_OUT } from "../constants/constants";
 
-export const items = [
+export const items = (navigate: ReturnType<typeof useNavigate>) => [
   {
     key: 1,
     label: <Link to={ROUTER_PATH.HOME}>Trang chủ</Link>,
@@ -26,72 +26,77 @@ export const items = [
     children: [
       {
         key: 21,
-        value: "motel",
+        value: RENT_TYPE.MOTEL,
         label: (
-          <Link
-            to={{
-              pathname: ROUTER_PATH.RENT,
-              search: `?${createSearchParams({ rent: "motel", page: "1" }).toString()}`,
-            }}
+          <span
+            onClick={() =>
+              navigate(ROUTER_PATH.LOCATIONS, {
+                state: { rent: RENT_TYPE.MOTEL, page: 1 },
+              })
+            }
           >
             Phòng trọ
-          </Link>
+          </span>
         ),
       },
       {
         key: 22,
-        value: "apartment",
+        value: RENT_TYPE.APARTMENT,
         label: (
-          <Link
-            to={{
-              pathname: ROUTER_PATH.RENT,
-              search: `?${createSearchParams({ rent: "apartment", page: "1" }).toString()}`,
-            }}
+          <span
+            onClick={() =>
+              navigate(ROUTER_PATH.LOCATIONS, {
+                state: { rent: RENT_TYPE.APARTMENT, page: 1 },
+              })
+            }
           >
             Căn hộ
-          </Link>
+          </span>
         ),
       },
       {
         key: 23,
-        value: "office",
+        value: RENT_TYPE.OFFICE,
         label: (
-          <Link
-            to={{
-              pathname: ROUTER_PATH.RENT,
-              search: `?${createSearchParams({ rent: "office", page: "1" }).toString()}`,
-            }}
+          <span
+            onClick={() =>
+              navigate(ROUTER_PATH.LOCATIONS, {
+                state: { rent: RENT_TYPE.OFFICE, page: 1 },
+              })
+            }
           >
             Văn phòng
-          </Link>
+          </span>
         ),
       },
       {
         key: 24,
-        value: "full-house",
+        value: RENT_TYPE.FULL_HOUSE,
         label: (
-          <Link
-            to={{
-              pathname: ROUTER_PATH.RENT,
-              search: `?${createSearchParams({ rent: "full-house", page: "1" }).toString()}`,
-            }}
+          <span
+            onClick={() =>
+              navigate(ROUTER_PATH.LOCATIONS, {
+                state: { rent: RENT_TYPE.FULL_HOUSE, page: 1 },
+              })
+            }
           >
             Nhà nguyên căn
-          </Link>
+          </span>
         ),
       },
       {
         key: 25,
-        value: "venue",
+        value: RENT_TYPE.VENUE,
         label: (
-          <Link
-            to={{
-              pathname: ROUTER_PATH.RENT,
-              search: `?${createSearchParams({ rent: "venue", page: "1" }).toString()}`,
-            }}
+          <span
+            onClick={() =>
+              navigate(ROUTER_PATH.LOCATIONS, {
+                state: { rent: RENT_TYPE.VENUE, page: 1 },
+              })
+            }
           >
             Địa điểm tổ chức sự kiện
-          </Link>
+          </span>
         ),
       },
     ],
@@ -106,58 +111,62 @@ export const items = [
     children: [
       {
         key: 31,
-        value: "north",
+        value: LOCATION_TYPE.NORTH,
         label: (
-          <Link
-            to={{
-              pathname: ROUTER_PATH.LOCATION,
-              search: `?${createSearchParams({ location: "north", page: "1" }).toString()}`,
-            }}
+          <span
+            onClick={() =>
+              navigate(ROUTER_PATH.LOCATIONS, {
+                state: { location: LOCATION_TYPE.NORTH, page: 1 },
+              })
+            }
           >
             Miền Bắc
-          </Link>
+          </span>
         ),
       },
       {
         key: 32,
-        value: "central",
+        value: LOCATION_TYPE.CENTRAL,
         label: (
-          <Link
-            to={{
-              pathname: ROUTER_PATH.LOCATION,
-              search: `?${createSearchParams({ location: "central", page: "1" }).toString()}`,
-            }}
+          <span
+            onClick={() =>
+              navigate(ROUTER_PATH.LOCATIONS, {
+                state: { location: LOCATION_TYPE.CENTRAL, page: 1 },
+              })
+            }
           >
             Miền Trung
-          </Link>
+          </span>
         ),
       },
       {
         key: 33,
-        value: "south",
+        value: LOCATION_TYPE.SOUTH,
         label: (
-          <Link
-            to={{
-              pathname: ROUTER_PATH.LOCATION,
-              search: `?${createSearchParams({ location: "south", page: "1" }).toString()}`,
-            }}
+          <span
+            onClick={() =>
+              navigate(ROUTER_PATH.LOCATIONS, {
+                state: { location: LOCATION_TYPE.SOUTH, page: 1 },
+              })
+            }
           >
             Miền Nam
-          </Link>
+          </span>
         ),
       },
       {
         key: 34,
-        value: "west",
+        value: LOCATION_TYPE.WEST,
         label: (
-          <Link
-            to={{
-              pathname: ROUTER_PATH.LOCATION,
-              search: `?${createSearchParams({ location: "west", page: "1" }).toString()}`,
-            }}
+          <span
+            onClick={() =>
+              navigate(ROUTER_PATH.LOCATIONS, {
+                state: { location: LOCATION_TYPE.WEST, page: 1 },
+              })
+            }
           >
             Miền Tây
-          </Link>
+          </span>
         ),
       },
     ],
@@ -174,7 +183,10 @@ export const items = [
         key: 51,
         label: <Link to={ROUTER_PATH.SUPPORT}>Nhắn tin với Bookings</Link>,
       },
-      { key: 52, label: <Link to={ROUTER_PATH.DOCS}>Hướng dẫn</Link> },
+      {
+        key: 52,
+        label: <Link to={ROUTER_PATH.DOCS}>Hướng dẫn</Link>,
+      },
     ],
   },
 ];

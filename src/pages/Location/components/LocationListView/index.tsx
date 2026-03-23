@@ -8,13 +8,14 @@ import { useLoading } from "../../../../providers/loadingProvider";
 import { LocationCard } from "../LocationCard";
 import "../style.scss";
 import type { LocationDto } from "../../../../api/dtos/location.dto";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export const LocationListView = () => {
   const { setLoading } = useLoading();
   const [searchParams] = useSearchParams();
   const location = searchParams.get("location");
   const containerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const [filter, setFilter] = useState<ProfileLocationFilter>({
     page: 1,
@@ -70,6 +71,10 @@ export const LocationListView = () => {
 
   const totalPages = locationData?.totalPages ?? 1;
 
+  const handleCardClick = (code: string) => {
+    navigate(`/locations/${code}`);
+  };
+
   return (
     <div className="location__list">
       <h2 className="location__list-title">Danh sách địa điểm</h2>
@@ -86,6 +91,7 @@ export const LocationListView = () => {
             rate={location.locationRate}
             image={location.locationLogo}
             isFavourite={false}
+            onClick={handleCardClick}
           />
         ))}
       </div>

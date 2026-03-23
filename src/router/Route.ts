@@ -12,7 +12,8 @@ export const ROUTER_NAME = {
   // Home
   HOME: "home",
   RENT: "rent",
-  LOCATION: "location",
+  LOCATIONS: "locations",
+  LOCATION_DETAIL: "locations/:code",
   MAP: "map",
   SUPPORT: "support",
   DOCS: "docs",
@@ -26,6 +27,8 @@ export const ROUTER_NAME = {
   FILTER: "filter",
   //Renter
   RENTER: "renter",
+  // Location
+
   //Profile
   PROFILE: "profile",
   PROFILE_INFORMATION: "profile-information",
@@ -45,7 +48,8 @@ export const ROUTER_PATH = {
   //Home
   HOME: `${ROUTER}/${ROUTER_NAME.HOME}`,
   RENT: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.RENT}`,
-  LOCATION: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.LOCATION}`,
+  LOCATIONS: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.LOCATIONS}`,
+  LOCATION_DETAIL: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.LOCATIONS}/${ROUTER_NAME.LOCATION_DETAIL}`,
   MAP: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.MAP}`,
   SUPPORT: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.SUPPORT}`,
   DOCS: `${ROUTER}/${ROUTER_NAME.HOME}/${ROUTER_NAME.DOCS}`,

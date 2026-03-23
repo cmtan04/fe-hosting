@@ -43,7 +43,7 @@ export const TopBar = () => {
         <div className="top__bar-menu">
           <Menu
             mode="horizontal"
-            items={items as any}
+            items={items(navigate)}
             className="top__bar-menu-list"
           />
         </div>
