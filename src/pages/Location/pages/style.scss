@@ -1,0 +1,38 @@
+@import "../../../color.scss";
+
+.location {
+  &__detail {
+    display: flex;
+    flex-direction: column;
+    padding: 24px 10%;
+    height: fit-content;
+
+    &-content {
+      &-left {
+        height: fit-content;
+      }
+
+      &-info {
+        box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12);
+        border-radius: 24px;
+        padding: 12px 24px;
+        margin-top: 24px !important;
+        &-code {
+          font-size: 20px;
+          font-weight: 800;
+          line-height: 1.4;
+          color: $text_color_4;
+          font-family: $font_family_1 !important;
+        }
+
+        &-name {
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 1.4;
+          color: $text_color_1;
+          font-family: $font_family_1 !important;
+        }
+      }
+    }
+  }
+}

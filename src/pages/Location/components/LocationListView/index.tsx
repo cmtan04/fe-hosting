@@ -74,7 +74,7 @@ export const LocationListView = () => {
 
   const handleCardClick = (code: string) => {
     const url = ROUTER_PATH.LOCATION_DETAIL.replace(":code", code);
-    navigate(url);
+    navigate(url, { state: { code } });
   };
 
   return (

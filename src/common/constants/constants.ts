@@ -20,6 +20,8 @@ export const RENTER_STEP = {
 
 export const DATE_FORMAT = "YYYY/MM/DD";
 
+export const DOUBLE_DOT = " : ";
+
 export const USER_ROLE = {
   ADMIN: 0,
   OWNER: 1,
