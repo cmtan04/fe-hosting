@@ -14,6 +14,8 @@ interface MediaGalleryProps {
   className?: string;
 }
 
+const DEFAULT_VIDEO_THUMB = "/default-video-thumb.png";
+
 export const MediaGallery = ({ media, className = "" }: MediaGalleryProps) => {
   const [showModal, setShowModal] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -34,19 +36,20 @@ export const MediaGallery = ({ media, className = "" }: MediaGalleryProps) => {
   const mainMedia = media[0];
   const remainingCount = media.length - 1;
 
-  const handleNext = () => {
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setCurrentIndex((prev) => (prev + 1) % media.length);
   };
 
-  const handlePrev = () => {
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setCurrentIndex((prev) => (prev - 1 + media.length) % media.length);
   };
 
-  const renderMedia = (item: MediaItem, index: number) => {
+  const renderMedia = (item: MediaItem) => {
     if (item.type === "video") {
       return (
         <video
-          key={index}
           controls
           className="media-viewer__content"
           crossOrigin="anonymous"
@@ -58,13 +61,19 @@ export const MediaGallery = ({ media, className = "" }: MediaGalleryProps) => {
     }
     return (
       <img
-        key={index}
         src={item.url}
-        alt={`Media ${index + 1}`}
+        alt={`Media ${currentIndex + 1}`}
         className="media-viewer__content"
         crossOrigin="anonymous"
       />
     );
+  };
+
+  const getThumbSrc = (item: MediaItem) => {
+    if (item.type === "video") {
+      return item.thumbnail || DEFAULT_VIDEO_THUMB;
+    }
+    return item.url;
   };
 
   const currentMedia = media[currentIndex];
@@ -78,15 +87,11 @@ export const MediaGallery = ({ media, className = "" }: MediaGalleryProps) => {
         onClick={() => setShowModal(true)}
       >
         <figure className="media-gallery__preview">
-          {mainMedia?.type === "video" ? (
-            <img
-              src={mainMedia?.thumbnail || mainMedia?.url}
-              alt="Preview"
-              crossOrigin="anonymous"
-            />
-          ) : (
-            <img src={mainMedia?.url} alt="Preview" crossOrigin="anonymous" />
-          )}
+          <img
+            src={getThumbSrc(mainMedia as any)}
+            alt="Preview"
+            crossOrigin="anonymous"
+          />
 
           {remainingCount > 0 && (
             <div
@@ -100,16 +105,20 @@ export const MediaGallery = ({ media, className = "" }: MediaGalleryProps) => {
 
       <Modal
         open={showModal}
-        onCancel={() => setShowModal(false)}
+        onCancel={() => {
+          setShowModal(false);
+          setCurrentIndex(0);
+        }}
         footer={null}
         width="90vw"
         centered
+        destroyOnClose
         className="media-gallery-modal"
         closeIcon={<CloseOutlined style={{ color: "#fff", fontSize: 24 }} />}
       >
         <div className="media-viewer">
           <div className="media-viewer__main">
-            {currentMedia && renderMedia(currentMedia, currentIndex)}
+            {currentMedia && renderMedia(currentMedia)}
 
             {media.length > 1 && (
               <>
@@ -137,26 +146,16 @@ export const MediaGallery = ({ media, className = "" }: MediaGalleryProps) => {
             {media.map((item, index) => (
               <div
                 key={index}
-                className={`media-viewer__thumbnail ${
-                  index === currentIndex ? "active" : ""
-                }`}
+                className={`media-viewer__thumbnail ${index === currentIndex ? "active" : ""}`}
                 onClick={() => setCurrentIndex(index)}
               >
-                {item.type === "video" ? (
-                  <>
-                    <img
-                      src={item.thumbnail || item.url}
-                      alt={`Thumbnail ${index + 1}`}
-                      crossOrigin="anonymous"
-                    />
-                    <div className="media-viewer__thumbnail-video-icon">▶</div>
-                  </>
-                ) : (
-                  <img
-                    src={item.url}
-                    alt={`Thumbnail ${index + 1}`}
-                    crossOrigin="anonymous"
-                  />
+                <img
+                  src={getThumbSrc(item)}
+                  alt={`Thumbnail ${index + 1}`}
+                  crossOrigin="anonymous"
+                />
+                {item.type === "video" && (
+                  <div className="media-viewer__thumbnail-video-icon">▶</div>
                 )}
               </div>
             ))}

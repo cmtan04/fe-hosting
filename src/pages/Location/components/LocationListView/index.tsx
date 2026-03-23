@@ -9,6 +9,7 @@ import { LocationCard } from "../LocationCard";
 import "../style.scss";
 import type { LocationDto } from "../../../../api/dtos/location.dto";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { ROUTER_PATH } from "../../../../router/Route";
 
 export const LocationListView = () => {
   const { setLoading } = useLoading();
@@ -72,7 +73,8 @@ export const LocationListView = () => {
   const totalPages = locationData?.totalPages ?? 1;
 
   const handleCardClick = (code: string) => {
-    navigate(`/locations/${code}`);
+    const url = ROUTER_PATH.LOCATION_DETAIL.replace(":code", code);
+    navigate(url);
   };
 
   return (
