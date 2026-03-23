@@ -50,6 +50,14 @@ export interface LocationDto {
   locationRate?: number;
 }
 
+export interface PaginatedLocationDto {
+  data: LocationDto[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export interface LocationResponseDto {
   typeCode: string;
   locationName: string;
