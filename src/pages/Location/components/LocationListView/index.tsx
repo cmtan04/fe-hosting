@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getLocationByFilter } from "../../../../api/configs/location.config";
 import { LocationEndpoint } from "../../../../api/endpoints/location.endpoint";
 import type { ProfileLocationFilter } from "../../../../common/types/profile";
@@ -14,6 +14,8 @@ export const LocationListView = () => {
   const { setLoading } = useLoading();
   const [searchParams] = useSearchParams();
   const location = searchParams.get("location");
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const [filter, setFilter] = useState<ProfileLocationFilter>({
     page: 1,
     limit: 20,
@@ -37,6 +39,31 @@ export const LocationListView = () => {
     }
   }, [location]);
 
+  useEffect(() => {
+    const resizeCards = () => {
+      const cards = containerRef.current?.querySelectorAll(
+        ".location__card",
+      ) as NodeListOf<HTMLElement>;
+
+      if (!cards || cards.length === 0) return;
+
+      cards.forEach((card) => (card.style.height = "auto"));
+
+      let maxHeight = 0;
+      cards.forEach((card) => {
+        if (card.offsetHeight > maxHeight) maxHeight = card.offsetHeight;
+      });
+
+      cards.forEach((card) => {
+        card.style.height = `${maxHeight}px`;
+      });
+    };
+
+    resizeCards();
+    window.addEventListener("resize", resizeCards);
+    return () => window.removeEventListener("resize", resizeCards);
+  }, [locationData]);
+
   const handlePageChange = (page: number) => {
     setFilter((prev) => ({ ...prev, page }));
   };
@@ -46,7 +73,8 @@ export const LocationListView = () => {
   return (
     <div className="location__list">
       <h2 className="location__list-title">Danh sách địa điểm</h2>
-      <div className="location__list-content">
+
+      <div className="location__list-content" ref={containerRef}>
         {locationData?.data?.map((location: LocationDto) => (
           <LocationCard
             key={location.locationCode}
@@ -61,6 +89,7 @@ export const LocationListView = () => {
           />
         ))}
       </div>
+
       <Pagination
         currentPage={filter.page ?? 1}
         totalPages={totalPages}
