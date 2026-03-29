@@ -27,13 +27,13 @@
     text-align: center;
 
     &.success {
-      background: #e0f4ed;
-      color: #34c759;
+      background: #e0f4ed !important;
+      color: #34c759 !important;
     }
 
     &.error {
-      background: #fee3e3;
-      color: #fd4043;
+      background: #fee3e3 !important;
+      color: #fd4043 !important ;
     }
 
     &.message {

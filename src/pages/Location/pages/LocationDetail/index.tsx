@@ -48,51 +48,30 @@ export const LocationDetail = () => {
   return (
     <div className="location__detail">
       <Row gutter={[16, 16]} className="location__detail-content">
-        <Col span={16} className="location__detail-content-left">
+        <Col span={24} className="location__detail-content-left">
           <MediaGallery media={media} />
           <div className="location__detail-content-info">
-            <h2>
-              <span className="location__detail-content-info-code">
-                {locationDetail?.locationCode}
+            <p className="content-label">
+              <span>
+                <img
+                  src={locationDetail?.typeLogo}
+                  alt={locationDetail?.typeCode}
+                />
               </span>
-              <span>{DOUBLE_DOT}</span>
-              <span className="location__detail-content-info-name">
-                {locationDetail?.locationName}
-              </span>
-            </h2>
-
-            <p className="location__detail-content-info-description">
-              {locationDetail?.locationDescription}
+              <span>{locationDetail?.typeName}</span>
             </p>
-
+            <h1 className="content-name">{locationDetail?.locationName}</h1>
             {locationDetail?.address?.map((address, index) => (
               <div className="location__detail-address">
                 <p key={index} className="address">
-                  Địa chỉ {index + 1}: <span>{address.fullAddress} </span>
+                  <span></span>
+                  <span>{address.fullAddress} </span>
                   <span className="note">({address.addressNote})</span>
                 </p>
               </div>
             ))}
-
-            <div className="flx-r">
-              <div className="flx-r ">
-                <p className="location__detail-label label">Giá thấp nhất: </p>
-                <p className="location__detail-value">
-                  {formatCurrencyVND(
-                    Number(locationDetail?.locationPriceStart),
-                  )}
-                </p>
-              </div>
-              <div className="flx-r ">
-                <p className="location__detail-label label">Giá cao nhất:</p>
-                <p className="location__detail-value">
-                  {formatCurrencyVND(Number(locationDetail?.locationPriceEnd))}
-                </p>
-              </div>
-            </div>
           </div>
         </Col>
-        <Col span={8} className="location__detail-content-right" />
       </Row>
     </div>
   );
