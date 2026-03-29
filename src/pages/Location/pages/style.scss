@@ -7,38 +7,48 @@
     padding: 24px 10%;
     height: fit-content;
 
-    &-content {
-      &-left {
-        height: fit-content;
-      }
-
-      &-info {
-        box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12);
-        border-radius: 24px;
-        padding: 12px 24px;
-        margin-top: 24px !important;
-        &-code {
-          font-size: 20px;
-          font-weight: 800;
-          line-height: 1.4;
-          color: $text_color_4;
-          font-family: $font_family_1 !important;
+    &-row {
+      &-1 {
+        &-col {
+          height: 450px;
+          position: relative;
         }
 
-        &-name {
-          font-size: 24px;
-          font-weight: 700;
-          line-height: 1.4;
-          color: $text_color_1;
-          font-family: $font_family_1 !important;
+        &-info {
+          position: absolute;
+          bottom: 16px;
+          left: 50px;
         }
 
-        &-description {
-          font-size: 14px;
-          font-weight: 500;
-          line-height: 1.4;
-          color: $text_color_1;
-          font-family: $font_family_1 !important;
+        .content {
+          &-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.4;
+            background-color: #e8d5a3;
+            width: fit-content;
+            height: fit-content;
+            padding: 4px 18px;
+            border-radius: 4px;
+            font-family: $font_family_1 !important;
+            img {
+              width: 20px;
+              height: 20px;
+              object-fit: cover;
+            }
+          }
+
+          &-name {
+            margin-top: 8px;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: #ffffff;
+            font-family: $font_family_1 !important;
+          }
         }
       }
     }
@@ -48,9 +58,11 @@
         font-size: 14px;
         font-weight: 500;
         line-height: 1.4;
-        color: $text_color_1;
+        color: #e8d5a3;
         font-family: $font_family_1 !important;
-
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
         span {
           font-style: 400;
           font-size: 12px;

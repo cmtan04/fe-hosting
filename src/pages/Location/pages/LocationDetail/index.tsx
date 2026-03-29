@@ -1,15 +1,13 @@
-import { Col, Row } from "antd";
-import { MediaGallery } from "../../../../components/MediaComponent";
-import type { MediaItem } from "../../../../common/config/common-config";
 import { useQuery } from "@tanstack/react-query";
-import { LocationEndpoint } from "../../../../api/endpoints/location.endpoint";
+import { Col, Row } from "antd";
+import { useEffect } from "react";
 import { useLocation } from "react-router";
 import { getLocationByCode } from "../../../../api/configs/location.config";
-import { useEffect } from "react";
+import { LocationEndpoint } from "../../../../api/endpoints/location.endpoint";
+import type { MediaItem } from "../../../../common/config/common-config";
+import { MediaGallery } from "../../../../components/MediaComponent";
 import { useLoading } from "../../../../providers/loadingProvider";
-import { DOUBLE_DOT } from "../../../../common/constants/constants";
-import { formatCurrencyVND } from "./../../../../common/contexts/format";
-
+import pin from "../../../../assets/svg/home/pin.svg";
 export const LocationDetail = () => {
   const media: MediaItem[] = [
     {
@@ -47,10 +45,10 @@ export const LocationDetail = () => {
   console.log("locationDetail", locationDetail);
   return (
     <div className="location__detail">
-      <Row gutter={[16, 16]} className="location__detail-content">
-        <Col span={24} className="location__detail-content-left">
+      <Row gutter={[16, 16]} className="location__detail-row-1">
+        <Col span={24} className="location__detail-row-1-col">
           <MediaGallery media={media} />
-          <div className="location__detail-content-info">
+          <div className="location__detail-row-1-info">
             <p className="content-label">
               <span>
                 <img
@@ -64,7 +62,9 @@ export const LocationDetail = () => {
             {locationDetail?.address?.map((address, index) => (
               <div className="location__detail-address">
                 <p key={index} className="address">
-                  <span></span>
+                  <span>
+                    <img src={pin} alt="Pin" />
+                  </span>
                   <span>{address.fullAddress} </span>
                   <span className="note">({address.addressNote})</span>
                 </p>
