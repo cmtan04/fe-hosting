@@ -32,6 +32,29 @@
           color: $text_color_1;
           font-family: $font_family_1 !important;
         }
+
+        &-description {
+          font-size: 14px;
+          font-weight: 500;
+          line-height: 1.4;
+          color: $text_color_1;
+          font-family: $font_family_1 !important;
+        }
+      }
+    }
+
+    &-address {
+      .address {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+        color: $text_color_1;
+        font-family: $font_family_1 !important;
+
+        span {
+          font-style: 400;
+          font-size: 12px;
+        }
       }
     }
   }

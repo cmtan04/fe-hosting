@@ -8,6 +8,7 @@ import { getLocationByCode } from "../../../../api/configs/location.config";
 import { useEffect } from "react";
 import { useLoading } from "../../../../providers/loadingProvider";
 import { DOUBLE_DOT } from "../../../../common/constants/constants";
+import { formatCurrencyVND } from "./../../../../common/contexts/format";
 
 export const LocationDetail = () => {
   const media: MediaItem[] = [
@@ -68,10 +69,27 @@ export const LocationDetail = () => {
               <div className="location__detail-address">
                 <p key={index} className="address">
                   Địa chỉ {index + 1}: <span>{address.fullAddress} </span>
+                  <span className="note">({address.addressNote})</span>
                 </p>
-                <p className="note">({address.addressNote})</p>
               </div>
             ))}
+
+            <div className="flx-r">
+              <div className="flx-r ">
+                <p className="location__detail-label label">Giá thấp nhất: </p>
+                <p className="location__detail-value">
+                  {formatCurrencyVND(
+                    Number(locationDetail?.locationPriceStart),
+                  )}
+                </p>
+              </div>
+              <div className="flx-r ">
+                <p className="location__detail-label label">Giá cao nhất:</p>
+                <p className="location__detail-value">
+                  {formatCurrencyVND(Number(locationDetail?.locationPriceEnd))}
+                </p>
+              </div>
+            </div>
           </div>
         </Col>
         <Col span={8} className="location__detail-content-right" />
