@@ -14,7 +14,7 @@ export const formatMinutesToTime = (minutes: number) => {
 export const formatMoney = (value: string) => {
   if (Number(value) === 0) return "";
 
-  const number = Number(value.replace(/,/g, ""));
+  const number = Number(value?.replace(/,/g, ""));
   return number.toLocaleString("en-US");
 };
 

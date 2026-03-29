@@ -33,6 +33,7 @@ import { uploadImage } from "../../../../../api/configs/common.config";
 import { isAxiosError } from "axios";
 import { useNotification } from "../../../../../providers/notificationProvider";
 import { MediaGallery } from "../../../../../components/MediaComponent";
+import type { ProfileLocationFilter } from "../../../../../common/types/profile";
 
 export const ProfileLocationDetail = () => {
   const [form] = Form.useForm();
@@ -42,7 +43,10 @@ export const ProfileLocationDetail = () => {
   const { setLoading } = useLoading();
   const locationCode = location?.state?.locationCode;
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [filter, setFilter] = useState<any>();
+  const [filter, setFilter] = useState<ProfileLocationFilter>({
+    page: 1,
+    limit: 2,
+  });
   const [showUpdate, setShowUpdate] = useState<boolean>(false);
   const [showDelete, setShowDelete] = useState<boolean>(false);
   const [mediaList, setMediaList] = useState<
@@ -682,12 +686,15 @@ export const ProfileLocationDetail = () => {
             <Row gutter={[16, 16]} className="body-row-address-table">
               <CommonTable
                 header={tableHeader}
-                body={locationData?.address as any}
+                body={locationData?.address as any[]}
                 className="location__table"
-                hasPagination={true}
-                pageSize={10}
-                filter={filter}
                 loading={locationLoading}
+                hasPagination={true}
+                currentPage={filter.page ?? 1}
+                totalPages={10}
+                onPageChange={(page) =>
+                  setFilter((prev: any) => ({ ...prev, page }))
+                }
               />
             </Row>
             <Row gutter={[16, 16]} className="body-row-address-button">

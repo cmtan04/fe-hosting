@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Col, Row } from "antd";
+import { Button, Col, Rate, Row } from "antd";
 import { useEffect } from "react";
 import { useLocation } from "react-router";
 import { getLocationByCode } from "../../../../api/configs/location.config";
@@ -8,6 +8,9 @@ import type { MediaItem } from "../../../../common/config/common-config";
 import { MediaGallery } from "../../../../components/MediaComponent";
 import { useLoading } from "../../../../providers/loadingProvider";
 import pin from "../../../../assets/svg/home/pin.svg";
+import { MapViewCommon } from "../../../../components/MapViewCommon";
+import { ServiceTag } from "../../../Renter/components/ServiceTag/intex";
+import { formatMoney } from "../../../../common/contexts/format";
 export const LocationDetail = () => {
   const media: MediaItem[] = [
     {
@@ -59,17 +62,175 @@ export const LocationDetail = () => {
               <span>{locationDetail?.typeName}</span>
             </p>
             <h1 className="content-name">{locationDetail?.locationName}</h1>
-            {locationDetail?.address?.map((address, index) => (
-              <div className="location__detail-address">
-                <p key={index} className="address">
+            <div className="location__detail-address">
+              <p className="address">
+                <span>
+                  <img src={pin} alt="Pin" />
+                </span>
+                <span>{locationDetail?.address?.[0]?.fullAddress} </span>
+                <span className="note">
+                  ({locationDetail?.address?.[0]?.addressNote})
+                </span>
+              </p>
+            </div>
+          </div>
+        </Col>
+      </Row>
+      <Row gutter={[16, 16]} className="location__detail-row-2">
+        <Col span={16}>
+          <Row gutter={[16, 16]} className="row-wrap-1">
+            <Rate defaultValue={Number(locationDetail?.locationRate)} />
+            <span className="code">
+              Chưa có đánh giá · Mã: <span>{locationDetail?.locationCode}</span>
+            </span>
+          </Row>
+          <Row gutter={[16, 16]} className="row-wrap">
+            <Col span={24}>
+              <p className="wrap-label">Giới thiệu</p>
+              <p className="wrap-title">Về không gian này</p>
+              <p className="wrap-content">
+                {locationDetail?.locationDescription}
+              </p>
+            </Col>
+          </Row>
+          <Row gutter={[16, 16]} className="row-wrap">
+            <Col span={24}>
+              <p className="wrap-label">Vị trí</p>
+              <p className="wrap-title">Địa chỉ cụ thể</p>
+              <div className="wrap-content">
+                {locationDetail?.address?.map((item, index) => (
+                  <div className="wrap-content-row">
+                    <div className="wrap-content-row-info">
+                      <img src={pin} alt="" />
+                      <div className="content">
+                        <p className="name">{item.addressName}</p>
+                        <p className="note">({item.fullAddress})</p>
+                      </div>
+                    </div>
+
+                    <div className="wrap-content-row-map">
+                      <iframe
+                        title={`map-${index}`}
+                        width="100%"
+                        height="250"
+                        frameBorder="0"
+                        scrolling="no"
+                        src={`https://www.openstreetmap.org/export/embed.html?bbox=${Number(item.addressLong) - 0.01}%2C${
+                          Number(item.addressLat) - 0.01
+                        }%2C${Number(item.addressLong) + 0.01}%2C${Number(item.addressLat) + 0.01}&layer=mapnik&marker=${item.addressLat}%2C${item.addressLong}`}
+                        style={{
+                          border: "none",
+                          pointerEvents: "none",
+                        }}
+                      ></iframe>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Col>
+          </Row>
+          <Row gutter={[16, 16]} className="row-wrap">
+            <Col span={24}>
+              <p className="wrap-label">Tiện ích & Dịch vụ</p>
+              <p className="wrap-title">Những gì bạn sẽ nhận được</p>
+              <div className="wrap-content-service">
+                {locationDetail?.services?.map((service) => (
+                  <ServiceTag
+                    icon={service.serviceLogo}
+                    name={service.serviceName}
+                    price={service.servicePrice}
+                    description={service.serviceDescription}
+                    active={true}
+                  />
+                ))}
+              </div>
+            </Col>
+          </Row>
+        </Col>
+        <Col span={8}>
+          <div className="col-content">
+            <div className="row-1">
+              <p className="label">Giá thuê</p>
+              <p className="tag">
+                {locationDetail?.renterCode !== null ? "Đã thuê" : "Còn trống"}
+              </p>
+            </div>
+            <div className="row-2">
+              <div className="sum-price">
+                <p className="sum-price-end">
+                  <sup>đ</sup>
+                  {formatMoney(
+                    locationDetail?.locationPriceAfterDeal as string,
+                  )}
+                </p>
+                <p className="sum-price-detail">
                   <span>
-                    <img src={pin} alt="Pin" />
+                    <sup>đ</sup>
+                    {formatMoney(locationDetail?.locationPriceStart as string)}
                   </span>
-                  <span>{address.fullAddress} </span>
-                  <span className="note">({address.addressNote})</span>
+                  <span> - </span>
+                  <span>
+                    <sup>đ</sup>
+                    {formatMoney(locationDetail?.locationPriceEnd as string)}
+                  </span>
                 </p>
               </div>
-            ))}
+
+              <div className="detail-price">
+                <div className="detail-price-start">
+                  <p className="detail-price-label">Giá gốc từ</p>
+                  <p className="detail-price-value">
+                    <sup>đ</sup>
+                    {formatMoney(locationDetail?.locationPriceStart as string)}
+                  </p>
+                </div>
+
+                <div className="detail-price-end">
+                  <p className="detail-price-label">Giá gốc đến</p>
+                  <p className="detail-price-value">
+                    <sup>đ</sup>
+                    {formatMoney(locationDetail?.locationPriceEnd as string)}
+                  </p>
+                </div>
+
+                <div className="detail-price-rent">
+                  <p className="detail-price-label">Giá thuê`</p>
+                  <p className="detail-price-value">
+                    <sup>đ</sup>
+                    {formatMoney(
+                      locationDetail?.locationPriceAfterDeal as string,
+                    )}
+                  </p>
+                </div>
+
+                {locationDetail?.minTime && locationDetail?.maxTime && (
+                  <div className="detail-price-time">
+                    <p className="detail-price-label">Thời gian thuê</p>
+                    <p className="detail-price-value">
+                      {locationDetail?.minTime} - {locationDetail?.maxTime}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <Button
+                type="primary"
+                block
+                disabled={locationDetail?.renterCode !== null}
+              >
+                Thuê ngay
+              </Button>
+            </div>
+          </div>
+
+          <div className="col-owner">
+            <img src={locationDetail?.ownerAvatar as string} alt="Owner" />
+            <div className="owner-info">
+              <p className="owner-name">{locationDetail?.ownerName}</p>
+              <p className="owner-phone">{locationDetail?.ownerPhone}</p>
+              <p className="owner-email">{locationDetail?.ownerEmail}</p>
+              <p className="owner-address">{locationDetail?.ownerAddress}</p>
+            </div>
           </div>
         </Col>
       </Row>
