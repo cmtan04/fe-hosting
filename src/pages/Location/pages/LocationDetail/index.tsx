@@ -4,13 +4,17 @@ import { useEffect } from "react";
 import { useLocation } from "react-router";
 import { getLocationByCode } from "../../../../api/configs/location.config";
 import { LocationEndpoint } from "../../../../api/endpoints/location.endpoint";
+import pin from "../../../../assets/svg/home/pin.svg";
 import type { MediaItem } from "../../../../common/config/common-config";
+import { formatMoney } from "../../../../common/contexts/format";
 import { MediaGallery } from "../../../../components/MediaComponent";
 import { useLoading } from "../../../../providers/loadingProvider";
-import pin from "../../../../assets/svg/home/pin.svg";
-import { MapViewCommon } from "../../../../components/MapViewCommon";
 import { ServiceTag } from "../../../Renter/components/ServiceTag/intex";
-import { formatMoney } from "../../../../common/contexts/format";
+import profileIcn from "../../../../assets/images/profile/icn_profile.svg";
+import address from "../../../../assets/images/address.svg";
+import mail from "../../../../assets/images/mail.svg";
+import phone from "../../../../assets/images/phone.svg";
+import message from "../../../../assets/svg/profile/chat.svg";
 export const LocationDetail = () => {
   const media: MediaItem[] = [
     {
@@ -226,10 +230,40 @@ export const LocationDetail = () => {
           <div className="col-owner">
             <img src={locationDetail?.ownerAvatar as string} alt="Owner" />
             <div className="owner-info">
-              <p className="owner-name">{locationDetail?.ownerName}</p>
-              <p className="owner-phone">{locationDetail?.ownerPhone}</p>
-              <p className="owner-email">{locationDetail?.ownerEmail}</p>
-              <p className="owner-address">{locationDetail?.ownerAddress}</p>
+              <h1 className="title">Liên hệ</h1>
+              <p className="owner-name">
+                <span>
+                  <img src={profileIcn} alt="Profile" />
+                </span>
+                <span>{locationDetail?.ownerName}</span>
+              </p>
+              <p className="owner-address">
+                <span>
+                  <img src={address} alt="Address" />
+                </span>
+                <span>{locationDetail?.ownerAddress}</span>
+              </p>
+              <p className="owner-phone">
+                <span>
+                  <img src={phone} alt="Phone" />
+                </span>
+                <span>{locationDetail?.ownerPhone}</span>
+              </p>
+              <p className="owner-email">
+                <span>
+                  <img src={mail} alt="Email" />
+                </span>
+                <span>{locationDetail?.ownerEmail}</span>
+              </p>
+            </div>
+
+            <div className="owner-contact">
+              <Button type="primary">
+                <span>
+                  <img src={message} alt="Message" />
+                </span>
+                <span>Liên hệ</span>
+              </Button>
             </div>
           </div>
         </Col>
