@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Col, Rate, Row } from "antd";
 import { useEffect } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { getLocationByCode } from "../../../../api/configs/location.config";
 import { LocationEndpoint } from "../../../../api/endpoints/location.endpoint";
 import pin from "../../../../assets/svg/home/pin.svg";
@@ -15,6 +15,7 @@ import address from "../../../../assets/images/address.svg";
 import mail from "../../../../assets/images/mail.svg";
 import phone from "../../../../assets/images/phone.svg";
 import message from "../../../../assets/svg/profile/chat.svg";
+import { createConversation } from "../../../../api/configs/chat.config";
 export const LocationDetail = () => {
   const media: MediaItem[] = [
     {
@@ -34,6 +35,7 @@ export const LocationDetail = () => {
   const location = useLocation();
   const locationCode = location?.state?.code;
   const { setLoading } = useLoading();
+  const navigate = useNavigate();
 
   const {
     data: locationDetail,
@@ -48,6 +50,26 @@ export const LocationDetail = () => {
   useEffect(() => {
     setLoading(isLoading);
   }, [isLoading]);
+
+  const contactMutation = useMutation({
+    mutationFn: (toUserCd: string) => createConversation(toUserCd),
+    onSuccess: () => {
+      // Handle successful contact action, e.g., show a success message
+    },
+    onError: () => {
+      // Handle error in contact action, e.g., show an error message
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+
+  const handleContactOwner = (toUserCd: string) => {
+    contactMutation.mutate(toUserCd);
+  };
 
   console.log("locationDetail", locationDetail);
   return (
@@ -258,7 +280,12 @@ export const LocationDetail = () => {
             </div>
 
             <div className="owner-contact">
-              <Button type="primary">
+              <Button
+                type="primary"
+                onClick={() =>
+                  handleContactOwner(locationDetail?.ownerCode as string)
+                }
+              >
                 <span>
                   <img src={message} alt="Message" />
                 </span>
