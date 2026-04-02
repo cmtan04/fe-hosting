@@ -16,6 +16,13 @@ import mail from "../../../../assets/images/mail.svg";
 import phone from "../../../../assets/images/phone.svg";
 import message from "../../../../assets/svg/profile/chat.svg";
 import { createConversation } from "../../../../api/configs/chat.config";
+import { ROUTER_PATH } from "../../../../router/Route";
+import {
+  DEFAULT_MESSAGE,
+  NOTI_ERROR,
+} from "../../../../common/constants/constants";
+import { isAxiosError } from "axios";
+import { useNotification } from "../../../../providers/notificationProvider";
 export const LocationDetail = () => {
   const media: MediaItem[] = [
     {
@@ -36,6 +43,7 @@ export const LocationDetail = () => {
   const locationCode = location?.state?.code;
   const { setLoading } = useLoading();
   const navigate = useNavigate();
+  const { showNotification } = useNotification();
 
   const {
     data: locationDetail,
@@ -53,11 +61,22 @@ export const LocationDetail = () => {
 
   const contactMutation = useMutation({
     mutationFn: (toUserCd: string) => createConversation(toUserCd),
-    onSuccess: () => {
-      // Handle successful contact action, e.g., show a success message
+    onSuccess: (data) => {
+      navigate(ROUTER_PATH.PROFILE_CHAT, {
+        state: { id: data?.id },
+      });
     },
-    onError: () => {
-      // Handle error in contact action, e.g., show an error message
+    onError: (error) => {
+      let message = DEFAULT_MESSAGE;
+      if (isAxiosError(error)) {
+        const apiMessage = error.response?.data?.message;
+        if (typeof apiMessage === "string") {
+          message = apiMessage;
+        } else if (Array.isArray(apiMessage) && apiMessage[0]) {
+          message = apiMessage[0];
+        }
+      }
+      showNotification(message, NOTI_ERROR);
     },
     onMutate: () => {
       setLoading(true);
@@ -71,7 +90,6 @@ export const LocationDetail = () => {
     contactMutation.mutate(toUserCd);
   };
 
-  console.log("locationDetail", locationDetail);
   return (
     <div className="location__detail">
       <Row gutter={[16, 16]} className="location__detail-row-1">

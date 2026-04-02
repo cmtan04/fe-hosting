@@ -17,7 +17,7 @@ export interface ChatPanelProps {
 }
 
 interface Conversation {
-  conversationId: number;
+  id: number;
   page: number;
   size: number;
 }
@@ -52,7 +52,7 @@ const chatMenuAction = [
 
 export const ChatPanel = (props: ChatPanelProps) => {
   const [conversation, setConversation] = useState<Conversation>({
-    conversationId: props.data?.conversationId || 0,
+    id: props.data?.conversationId || 0,
     page: 1,
     size: 20,
   });
@@ -60,7 +60,7 @@ export const ChatPanel = (props: ChatPanelProps) => {
   const { data: message } = useQuery({
     queryKey: [ConverationEndpoint.GET_CHAT_CONVERSATION_MESSAGE, conversation],
     queryFn: () =>
-      getConversationMessages(conversation.conversationId, {
+      getConversationMessages(conversation.id, {
         page: conversation.page,
         size: conversation.size,
       }),
@@ -88,8 +88,6 @@ export const ChatPanel = (props: ChatPanelProps) => {
     const input = document.querySelector(".name-input");
     input?.classList.remove("show");
     input?.classList.add("hide");
-
-    console.log(e.target.value);
   };
 
   return (

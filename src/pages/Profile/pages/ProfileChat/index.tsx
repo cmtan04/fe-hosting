@@ -5,10 +5,20 @@ import { ConverationEndpoint } from "../../../../api/endpoints/chat.endpoint";
 import { ChatItem } from "../../../../components/Chat/ChatItem";
 import { ChatPanel } from "../../../../components/Chat/ChatPanel";
 import "../style.scss";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 export const ProfileChat = () => {
   const [active, setActive] = useState<number>();
+  const location = useLocation();
+
+  useEffect(() => {
+    const conversationconversationId = location?.state?.conversationId;
+
+    if (conversationconversationId) {
+      setActive(conversationconversationId);
+    }
+  }, [location]);
 
   const { data: conversations } = useQuery({
     queryKey: [ConverationEndpoint.GET_CHAT_CONVERSATION],
@@ -16,9 +26,9 @@ export const ProfileChat = () => {
   });
 
   useEffect(() => {
-    const firstId = conversations?.[0]?.conversationId;
-    if (firstId) {
-      setActive(firstId);
+    const firstconversationId = conversations?.[0]?.conversationId;
+    if (firstconversationId) {
+      setActive(firstconversationId);
     }
   }, [conversations]);
 
@@ -50,7 +60,7 @@ export const ProfileChat = () => {
                 content={conversation?.lastMessage}
                 time={conversation?.lastMessageAt}
                 isRead={false}
-                focus={active === conversation.conversationId}
+                focus={Number(active) === Number(conversation.conversationId)}
               />
             </div>
           ))}

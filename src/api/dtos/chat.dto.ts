@@ -32,3 +32,15 @@ export interface ConversationResponseDto {
   participants: ParticipantDto[];
   toUser: UserResponseDto;
 }
+
+export interface ConversationCreateResponseDto {
+  id: number;
+  type: string;
+  name: string;
+  avatar: string;
+  lastMessage: string;
+  lastMessageAt: string;
+  conversationCreatedAt: string;
+  participants: ParticipantDto[];
+  toUser: UserResponseDto;
+}

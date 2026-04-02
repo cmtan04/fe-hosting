@@ -47,7 +47,6 @@ export const VerifyEmail = () => {
       localStorage.setItem("token", data.access_token);
     },
     onError: (error) => {
-      console.log("object");
       let message = DEFAULT_MESSAGE;
       if (isAxiosError(error)) {
         const apiMessage = error.response?.data?.message;

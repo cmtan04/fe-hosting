@@ -1,5 +1,8 @@
 import axiosClient from "../axiosClient";
-import type { ConversationResponseDto } from "../dtos/chat.dto";
+import type {
+  ConversationCreateResponseDto,
+  ConversationResponseDto,
+} from "../dtos/chat.dto";
 import { ConverationEndpoint } from "../endpoints/chat.endpoint";
 
 export const getAllConversation = async (): Promise<
@@ -26,7 +29,7 @@ export const getConversationMessages = async (
 
 export const createConversation = async (
   toUserCd: string,
-): Promise<ConversationResponseDto> => {
+): Promise<ConversationCreateResponseDto> => {
   const response = await axiosClient.post(
     ConverationEndpoint.CREATE_CONVERSATION,
     {
