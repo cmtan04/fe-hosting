@@ -29,11 +29,15 @@ export const getConversationMessages = async (
 
 export const createConversation = async (
   toUserCd: string,
+  type: string,
+  locationCd?: string,
 ): Promise<ConversationCreateResponseDto> => {
   const response = await axiosClient.post(
     ConverationEndpoint.CREATE_CONVERSATION,
     {
       toUserCd,
+      type,
+      locationCd,
     },
   );
   return response.data;

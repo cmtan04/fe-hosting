@@ -60,6 +60,7 @@ export const ProfileChat = () => {
                 content={conversation?.lastMessage}
                 time={conversation?.lastMessageAt}
                 isRead={false}
+                type={conversation?.lastMessageType}
                 focus={Number(active) === Number(conversation.conversationId)}
               />
             </div>

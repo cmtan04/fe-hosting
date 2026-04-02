@@ -28,6 +28,7 @@ export interface ConversationResponseDto {
   conversationAvatar: string;
   lastMessage: string;
   lastMessageAt: string;
+  lastMessageType: string;
   conversationCreatedAt: string;
   participants: ParticipantDto[];
   toUser: UserResponseDto;

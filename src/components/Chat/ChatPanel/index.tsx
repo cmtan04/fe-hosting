@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getConversationMessages } from "../../../api/configs/chat.config";
 import type { ConversationResponseDto } from "../../../api/dtos/chat.dto";
 import { ConverationEndpoint } from "../../../api/endpoints/chat.endpoint";
@@ -52,10 +52,19 @@ const chatMenuAction = [
 
 export const ChatPanel = (props: ChatPanelProps) => {
   const [conversation, setConversation] = useState<Conversation>({
-    id: props.data?.conversationId || 0,
+    id: props?.data?.conversationId || 0,
     page: 1,
     size: 20,
   });
+
+  useEffect(() => {
+    if (props?.data?.conversationId) {
+      setConversation((prev) => ({
+        ...prev,
+        id: props.data.conversationId as number,
+      }));
+    }
+  }, [props?.data?.conversationId]);
 
   const { data: message } = useQuery({
     queryKey: [ConverationEndpoint.GET_CHAT_CONVERSATION_MESSAGE, conversation],
@@ -89,6 +98,8 @@ export const ChatPanel = (props: ChatPanelProps) => {
     input?.classList.remove("show");
     input?.classList.add("hide");
   };
+
+  console.log("message", message);
 
   return (
     <>
@@ -144,15 +155,22 @@ export const ChatPanel = (props: ChatPanelProps) => {
           <div className="chat__panel-body">
             {message ? (
               <>
-                {message.map((item) => (
-                  <ChatLabel
-                    isYour={item.isYour}
-                    isRead={item.isRead}
-                    timeLine={item.timeLine}
-                    content={item.content}
-                    avartar={item.avartar}
-                  />
-                ))}
+                {message
+                  .sort(
+                    (a, b) =>
+                      new Date(a.createdAt).getTime() -
+                      new Date(b.createdAt).getTime(),
+                  )
+                  .map((item) => (
+                    <ChatLabel
+                      isYour={props.data?.toUser?.id !== item.senderId}
+                      isRead={item.isRead}
+                      timeLine={item.createdAt}
+                      content={item.content}
+                      avartar={item.avartarUrl}
+                      type={item.type}
+                    />
+                  ))}
               </>
             ) : (
               <ChatLabel

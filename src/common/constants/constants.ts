@@ -18,6 +18,19 @@ export const RENTER_STEP = {
   SUCCESS: 6,
 };
 
+export const MessageTypeEnum = {
+  RENT: "RENT",
+  CONTACT: "CONTACT",
+  NORMAL: "NORMAL",
+};
+
+export enum MessageType {
+  TEXT = "TEXT",
+  IMAGE = "IMAGE",
+  FILE = "FILE",
+  SYSTEM = "SYSTEM",
+}
+
 export const DATE_FORMAT = "YYYY/MM/DD";
 
 export const DOUBLE_DOT = " : ";
