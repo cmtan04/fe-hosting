@@ -20,6 +20,7 @@ export interface ParticipantDto {
   lastReadAt: string | null;
   muteUntil: string | null;
   isPinned: boolean;
+  nickname?: string | null;
   deletedAt: string | null;
   joinedAt: string;
 }
@@ -71,3 +72,28 @@ export interface MessageResponseDto {
   createdAt: string;
   updatedAt?: string;
 }
+
+export type MuteConversationPreset =
+  | "15m"
+  | "1h"
+  | "8h"
+  | "24h"
+  | "no end time yet";
+
+export interface SetConversationNicknamePayloadDto {
+  conversationId: number;
+  nickname: string | null;
+}
+
+export interface PinConversationPayloadDto {
+  conversationId: number;
+  isPinned: boolean;
+}
+
+export interface MuteConversationPayloadDto {
+  conversationId: number;
+  preset: MuteConversationPreset;
+}
+
+export interface ConversationParticipantSettingsResponseDto
+  extends ParticipantDto {}

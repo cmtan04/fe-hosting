@@ -213,7 +213,7 @@ export const profileItems: ProfileItem[] = [
   {
     key: 4,
     icon: chat,
-    label: "Tin nhắn",
+    label: "Đoạn chat",
     href: ROUTER_PATH.PROFILE_CHAT,
   },
   {

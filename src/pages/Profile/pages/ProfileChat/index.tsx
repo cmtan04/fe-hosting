@@ -1,14 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { getUserPRofile } from "../../../../api/configs/user.config";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getAllConversation } from "../../../../api/configs/chat.config";
+import { getUserPRofile } from "../../../../api/configs/user.config";
 import type { ConversationResponseDto } from "../../../../api/dtos/chat.dto";
 import { ConverationEndpoint } from "../../../../api/endpoints/chat.endpoint";
 import { UserEndpoint } from "../../../../api/endpoints/user.endpoint";
+
 import { ChatItem } from "../../../../components/Chat/ChatItem";
 import { ChatPanel } from "../../../../components/Chat/ChatPanel";
 import "../style.scss";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 
 type ProfileChatLocationState = {
   conversationId?: number;
@@ -82,7 +83,10 @@ export const ProfileChat = () => {
       : undefined;
 
     const nextActiveConversation = pinnedConversation ?? conversations[0];
-    if (nextActiveConversation && active !== nextActiveConversation.conversationId) {
+    if (
+      nextActiveConversation &&
+      active !== nextActiveConversation.conversationId
+    ) {
       setActive(nextActiveConversation.conversationId);
     }
   }, [
@@ -98,47 +102,58 @@ export const ProfileChat = () => {
   return (
     <div className="profile__chat">
       <div className="profile__chat-header">
-        <h1>Tin nhắn</h1>
-        <p>Tin nhắn của bạn.</p>
+        <h1>Đoạn chat</h1>
       </div>
       <div className="profile__chat-body">
         <div className="profile__chat-left">
-          {
-            conversations?.length === 0 && (
-              <div className="profile__chat-empty">
-                <p>Không có cuộc trò chuyện nào.</p>
-              </div>
-            )
-          }
-          {conversations?.map((conversation: ConversationResponseDto) => (
-            <div
-              onClick={() => {
-                if (active === conversation.conversationId) {
-                  setActive(0);
-                } else {
-                  setActive(conversation.conversationId);
-                }
-              }}
-            >
-              <ChatItem
+          {conversations?.length === 0 && (
+            <div className="profile__chat-empty">
+              <p>Không có cuộc trò chuyện nào.</p>
+            </div>
+          )}
+          {conversations?.map((conversation: ConversationResponseDto) => {
+            const currentParticipant = conversation.participants.find(
+              (participant) => participant.userId === currentUser?.id,
+            );
+
+            return (
+              <div
                 key={conversation.conversationId}
-                icon={
-                  conversation.conversationAvatar ||
-                  conversation?.toUser?.avatarUrl
-                }
-                name={conversation?.toUser?.username}
-                content={conversation.conversationType}
-                time={conversation?.lastMessageAt}
-                isRead={false}
+                className="profile__chat-left-item"
+                onClick={() => {
+                  if (active === conversation.conversationId) {
+                    setActive(0);
+                  } else {
+                    setActive(conversation.conversationId);
+                  }
+                }}
+              >
+                
+                <ChatItem
+                  icon={
+                    conversation.conversationAvatar || conversation.toUser?.avatarUrl
+                  }
+                  name={
+                    currentParticipant?.nickname ||
+                    conversation.conversationName ||
+                    conversation.toUser?.fullName ||
+                    conversation.toUser?.username
+                  }
+                content={conversation.lastMessagePreview || ""}
+                time={conversation.lastMessageAt || undefined}
+                isRead={conversation.unreadCount === 0}
                 type={conversation.conversationType}
+                isPinned={!!currentParticipant?.isPinned}
                 focus={Number(active) === Number(conversation.conversationId)}
               />
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
         <div className="profile__chat-right">
           <ChatPanel
             data={conversations?.find((item) => item.conversationId === active)}
+            currentUserId={currentUser?.id}
           />
         </div>
       </div>

@@ -1,106 +1,211 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { getConversationMessages } from "../../../api/configs/chat.config";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Dropdown, type MenuProps } from "antd";
+import { useEffect, useMemo, useState } from "react";
+import {
+  getConversationMessages,
+  muteConversation,
+  pinConversation,
+  setConversationNickname,
+} from "../../../api/configs/chat.config";
 import type {
   ConversationResponseDto,
   MessageResponseDto,
+  MuteConversationPreset,
 } from "../../../api/dtos/chat.dto";
 import { ConverationEndpoint } from "../../../api/endpoints/chat.endpoint";
+import bellOffIcn from "../../../assets/svg/profile/bellOff.svg";
+import bioIcn from "../../../assets/svg/profile/bio.svg";
+import deleteIcn from "../../../assets/svg/profile/delete.svg";
+import hideIcn from "../../../assets/svg/profile/hide.svg";
+import penIcn from "../../../assets/svg/profile/pen.svg";
+import pinIcn from "../../../assets/svg/profile/pin.svg";
+import threeDotIcn from "../../../assets/svg/three-dots.svg";
 import { ChatInput } from "../ChatInput";
 import { ChatLabel } from "../ChatLabel";
-import deleteIcn from "../../../assets/svg/profile/delete.svg";
-import penIcn from "../../../assets/svg/profile/pen.svg";
-import bioIcn from "../../../assets/svg/profile/bio.svg";
-import bellOffIcn from "../../../assets/svg/profile/bellOff.svg";
-import hideIcn from "../../../assets/svg/profile/hide.svg";
-import threeDotIcn from "../../../assets/svg/three-dots.svg";
-import { Dropdown } from "antd";
+
 export interface ChatPanelProps {
   data?: ConversationResponseDto;
+  currentUserId?: number;
 }
 
 interface Conversation {
   id: number;
   page: number;
-  size: number;
+  limit: number;
 }
 
-const chatMenuAction = [
+const mutePresetItems: {
+  key: string;
+  preset: MuteConversationPreset;
+  label: string;
+}[] = [
+  { key: "mute-15m", preset: "15m", label: "15 phút" },
+  { key: "mute-1h", preset: "1h", label: "1 giờ" },
+  { key: "mute-8h", preset: "8h", label: "8 giờ" },
+  { key: "mute-24h", preset: "24h", label: "24 giờ" },
   {
-    key: 1,
-    label: "Biệt danh",
-    icon: <img src={penIcn} alt="pen" />,
-  },
-  {
-    key: 2,
-    label: "Xem trang cá nhân",
-    icon: <img src={bioIcn} alt="bio" />,
-  },
-  {
-    key: 3,
-    label: "Tắt thông báo",
-    icon: <img src={bellOffIcn} alt="bell-off" />,
-  },
-  {
-    key: 4,
-    label: "Ẩn trò chuyện",
-    icon: <img src={hideIcn} alt="hide" />,
-  },
-  {
-    key: 5,
-    label: "Xóa trò chuyện",
-    icon: <img src={deleteIcn} alt="delete" />,
+    key: "mute-no-end-time-yet",
+    preset: "no end time yet",
+    label: "Cho đến khi tôi bật lại",
   },
 ];
 
 export const ChatPanel = (props: ChatPanelProps) => {
+  const queryClient = useQueryClient();
   const [conversation, setConversation] = useState<Conversation>({
     id: props?.data?.conversationId || 0,
     page: 1,
-    size: 20,
+    limit: 20,
   });
+  const [isNicknameEditing, setIsNicknameEditing] = useState(false);
+  const [nicknameInput, setNicknameInput] = useState("");
+
+  const currentParticipant = useMemo(
+    () =>
+      props.currentUserId != null
+        ? props.data?.participants.find(
+            (participant) => participant.userId === props.currentUserId,
+          )
+        : undefined,
+    [props.currentUserId, props.data?.participants],
+  );
+
+  const fallbackName =
+    props.data?.conversationName ||
+    props.data?.toUser?.fullName ||
+    props.data?.toUser?.username ||
+    "Cuộc trò chuyện";
+
+  const displayName = currentParticipant?.nickname || fallbackName;
+  const displayAvatar =
+    props.data?.conversationAvatar || props.data?.toUser?.avatarUrl || "";
+  const displayEmail = props.data?.toUser?.email || "";
+  const isPinned = !!currentParticipant?.isPinned;
 
   useEffect(() => {
     if (props?.data?.conversationId) {
       setConversation((prev) => ({
         ...prev,
-        id: props.data.conversationId as number,
+        id: props.data!.conversationId,
       }));
     }
   }, [props?.data?.conversationId]);
+
+  useEffect(() => {
+    setNicknameInput(displayName);
+    setIsNicknameEditing(false);
+  }, [displayName, props.data?.conversationId]);
+
+  const invalidateConversationList = async () => {
+    await queryClient.invalidateQueries({
+      queryKey: [ConverationEndpoint.GET_CHAT_CONVERSATION],
+    });
+  };
+
+  const setNicknameMutation = useMutation({
+    mutationFn: (nickname: string | null) =>
+      setConversationNickname({
+        conversationId: props.data!.conversationId,
+        nickname,
+      }),
+    onSuccess: invalidateConversationList,
+  });
+
+  const pinConversationMutation = useMutation({
+    mutationFn: (nextPinned: boolean) =>
+      pinConversation({
+        conversationId: props.data!.conversationId,
+        isPinned: nextPinned,
+      }),
+    onSuccess: invalidateConversationList,
+  });
+
+  const muteConversationMutation = useMutation({
+    mutationFn: (preset: MuteConversationPreset) =>
+      muteConversation({
+        conversationId: props.data!.conversationId,
+        preset,
+      }),
+    onSuccess: invalidateConversationList,
+  });
 
   const { data: message } = useQuery<MessageResponseDto[]>({
     queryKey: [ConverationEndpoint.GET_CHAT_CONVERSATION_MESSAGE, conversation],
     queryFn: () =>
       getConversationMessages(conversation.id, {
         page: conversation.page,
-        size: conversation.size,
+        limit: conversation.limit,
       }),
-
     enabled: !!props.data?.conversationId,
   });
 
-  const handleMenuClick = (e: any) => {
-    if (e.key === "1") {
-      const nameLabel = document.querySelector(".name-label");
-      nameLabel?.classList.remove("show");
-      nameLabel?.classList.add("hide");
+  const commitNickname = async () => {
+    const trimmedNickname = nicknameInput.trim();
+    const currentNickname = currentParticipant?.nickname?.trim() || "";
 
-      const input = document.querySelector(".name-input");
-      input?.classList.remove("hide");
-      input?.classList.add("show");
+    setIsNicknameEditing(false);
+
+    if (trimmedNickname === currentNickname) {
+      setNicknameInput(currentParticipant?.nickname || fallbackName);
+      return;
+    }
+
+    await setNicknameMutation.mutateAsync(trimmedNickname || null);
+  };
+
+  const handleMenuClick: MenuProps["onClick"] = async ({ key }) => {
+    if (key === "nickname") {
+      setIsNicknameEditing(true);
+      return;
+    }
+
+    if (key === "pin") {
+      await pinConversationMutation.mutateAsync(!isPinned);
+      return;
+    }
+
+    const mutePreset = mutePresetItems.find((item) => item.key === key)?.preset;
+    if (mutePreset) {
+      await muteConversationMutation.mutateAsync(mutePreset);
     }
   };
 
-  const handleUpdateNickname = (e: any) => {
-    e.preventDefault();
-    const nameLabel = document.querySelector(".name-label");
-    nameLabel?.classList.remove("hide");
-    nameLabel?.classList.add("show");
-    const input = document.querySelector(".name-input");
-    input?.classList.remove("show");
-    input?.classList.add("hide");
-  };
+  const chatMenuAction: MenuProps["items"] = [
+    {
+      key: "nickname",
+      label: "Biệt danh",
+      icon: <img src={penIcn} alt="pen" />,
+    },
+    {
+      key: "profile",
+      label: "Xem trang cá nhân",
+      icon: <img src={bioIcn} alt="bio" />,
+    },
+    {
+      key: "pin",
+      label: isPinned ? "Bỏ ghim cuộc trò chuyện" : "Ghim cuộc trò chuyện",
+      icon: <img src={pinIcn} alt="pin" />,
+    },
+    {
+      key: "mute",
+      label: "Tắt thông báo",
+      icon: <img src={bellOffIcn} alt="bell-off" />,
+      children: mutePresetItems.map((item) => ({
+        key: item.key,
+        label: item.label,
+      })),
+    },
+    {
+      key: "hide",
+      label: "Ẩn cuộc trò chuyện",
+      icon: <img src={hideIcn} alt="hide" />,
+    },
+    {
+      key: "delete",
+      label: "Xóa cuộc trò chuyện",
+      icon: <img src={deleteIcn} alt="delete" />,
+    },
+  ];
 
   return (
     <>
@@ -108,32 +213,30 @@ export const ChatPanel = (props: ChatPanelProps) => {
         <div className="chat__panel">
           <div className="chat__panel-header">
             <div className="chat__panel-header-left">
-              <img
-                src={props.data?.toUser?.avatarUrl}
-                alt={props.data?.toUser?.avatarUrl}
-              />
+              <img src={displayAvatar} alt={displayName} />
             </div>
             <div className="chat__panel-header-right">
               <div className="row-left">
-                <p className={`line-1 name-label show`}>
-                  {props.data?.toUser?.username}
-                </p>
-                <input
-                  className="name-input hide"
-                  id="name-input"
-                  name="name"
-                  defaultValue={props.data?.toUser?.username}
-                  type="text"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleUpdateNickname(e);
-                    }
-                  }}
-                  onBlur={(e) => {
-                    handleUpdateNickname(e);
-                  }}
-                />
-                <p className="line-2">{props.data?.toUser?.email}</p>
+                {!isNicknameEditing ? (
+                  <p className="line-1 name-label show">{displayName}</p>
+                ) : (
+                  <input
+                    autoFocus
+                    className="name-input show"
+                    id="name-input"
+                    name="name"
+                    value={nicknameInput}
+                    type="text"
+                    onChange={(e) => setNicknameInput(e.target.value)}
+                    onKeyDown={async (e) => {
+                      if (e.key === "Enter") {
+                        await commitNickname();
+                      }
+                    }}
+                    onBlur={commitNickname}
+                  />
+                )}
+                <p className="line-2">{displayEmail}</p>
               </div>
 
               <div className="row-right">
@@ -154,7 +257,7 @@ export const ChatPanel = (props: ChatPanelProps) => {
             </div>
           </div>
           <div className="chat__panel-body">
-            {message ? (
+            {message && message.length > 0 ? (
               <>
                 {message
                   .sort(
@@ -164,11 +267,16 @@ export const ChatPanel = (props: ChatPanelProps) => {
                   )
                   .map((item) => (
                     <ChatLabel
-                      isYour={props.data?.toUser?.id !== item.senderId}
-                      isRead={item.isRead}
+                      key={item.id}
+                      isYour={
+                        props.data?.toUser?.id != null
+                          ? props.data.toUser.id !== item.senderId
+                          : false
+                      }
+                      isRead={item.status === "READ"}
                       timeLine={item.createdAt}
-                      content={item.content}
-                      avartar={item.senderAvatarUrl || ""}
+                      content={item.content || ""}
+                      avartar={item.senderAvatarUrl || displayAvatar}
                       type={item.type}
                     />
                   ))}
@@ -178,8 +286,8 @@ export const ChatPanel = (props: ChatPanelProps) => {
                 isYour={true}
                 isRead={false}
                 timeLine={props.data.conversationCreatedAt}
-                content={props.data.lastMessage || "Không có tin nhắn nào"}
-                avartar={props.data.toUser?.avatarUrl || ""}
+                content={props.data.lastMessagePreview || "Không có tin nhắn nào"}
+                avartar={displayAvatar}
               />
             )}
           </div>

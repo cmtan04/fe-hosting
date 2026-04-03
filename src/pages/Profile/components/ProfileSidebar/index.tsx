@@ -25,13 +25,12 @@ export const ProfileSideBar = () => {
       showNotification("Đăng xuất thành công!", NOTI_SUCCESS);
       navigate(ROUTER_PATH.SIGN_IN);
     } else {
-      setColaspe(!colaspe);
       setTabActive(data.key);
       navigate(data.href);
     }
   };
   return (
-    <div className={`profile__sideBar ${colaspe && "colaspe"}`}>
+    <div className={`profile__sideBar ${colaspe ? "colaspe" : ""}`}>
       <div className="profile__sideBar-header">
         <img src={barLeft} alt="Close" onClick={() => setColaspe(!colaspe)} />
       </div>

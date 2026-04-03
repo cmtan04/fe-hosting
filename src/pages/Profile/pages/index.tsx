@@ -11,10 +11,10 @@ export const Profile = () => {
         <TopBar />
       </div>
       <Row gutter={[16, 16]} className="profile__body">
-        <Col span={6}>
+        <Col span={6} className="profile__body-sidebar">
           <ProfileSideBar />
         </Col>
-        <Col span={18}>
+        <Col span={18} className="profile__body-content">
           <Outlet />
         </Col>
       </Row>
