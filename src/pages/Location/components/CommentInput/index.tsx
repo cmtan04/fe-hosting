@@ -1,16 +1,27 @@
 import { Rate } from "antd";
-import type { UserProfileResponseDto } from "../../../../api/dtos/user.dto";
-import "../style.scss";
 import { useState } from "react";
+import type { ChatAndCommentDto } from "../../../../api/dtos/common.dto";
+import type { UserProfileResponseDto } from "../../../../api/dtos/user.dto";
 import { ChatInput } from "../../../../components/Chat/ChatInput";
+import "../style.scss";
 
 interface CommentInputProps {
   data: UserProfileResponseDto;
-  onSubmit?: (value: any) => void;
+  onSubmit: (value: ChatAndCommentDto) => void;
 }
 
 export const CommentInput = (props: CommentInputProps) => {
   const [rate, setRate] = useState<number>();
+
+  const handleSubmitComment = (value: ChatAndCommentDto) => {
+    const payload: ChatAndCommentDto = {
+      content: value.content,
+      ratevalue: rate,
+      metaData: value.metaData,
+    };
+
+    props?.onSubmit(payload);
+  };
   return (
     <div className="comment__input">
       <div className="comment__input-left">
@@ -29,7 +40,9 @@ export const CommentInput = (props: CommentInputProps) => {
         </div>
 
         <div className="row-2">
-          <ChatInput />
+          <ChatInput
+            onSubmit={(value: ChatAndCommentDto) => handleSubmitComment(value)}
+          />
         </div>
       </div>
     </div>

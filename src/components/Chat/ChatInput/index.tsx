@@ -4,12 +4,13 @@ import { useRef, useState } from "react";
 import emoji from "../../../assets/svg/emoji.svg";
 import remove from "../../../assets/svg/remove.svg";
 import send from "../../../assets/svg/send.svg";
+import type { ChatAndCommentDto } from "../../../api/dtos/common.dto";
 
 export interface ChatInputProps {
-  onSubmit?: (value: any) => void;
+  onSubmit?: (value: ChatAndCommentDto) => void;
 }
 
-export const ChatInput = () => {
+export const ChatInput = (props: ChatInputProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [message, setMessage] = useState("");
@@ -57,7 +58,26 @@ export const ChatInput = () => {
     }, 0);
   };
 
-  const sendMessage = () => {};
+  const sendMessage = () => {
+    if (!message.trim() && files.length === 0) return;
+
+    const payload: ChatAndCommentDto = {
+      content: message,
+      metaData: previews.map((url, index) => ({
+        id: index,
+        url,
+      })),
+    };
+
+    props?.onSubmit?.(payload);
+
+    setMessage("");
+    setFiles([]);
+    setPreviews((prev) => {
+      prev.forEach((url) => URL.revokeObjectURL(url));
+      return [];
+    });
+  };
   return (
     <div className="chat__input">
       <div className="chat__input-col-1">

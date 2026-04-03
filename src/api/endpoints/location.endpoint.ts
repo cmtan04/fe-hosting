@@ -5,4 +5,6 @@ export const LocationEndpoint = {
   GET_ALL_LOCATION_TYPE: "/location/get-all-location-type",
   GET_LOCATION_BY_FILTER: "/location/get-location-by-filter",
   GET_LOCATION_BY_CODE: "/location/get-location-by-code",
+  GET_LOCATION_COMMENT: "/location/get-comment",
+  CREATE_LOCATION_COMMENT: "/location/create-comment",
 };

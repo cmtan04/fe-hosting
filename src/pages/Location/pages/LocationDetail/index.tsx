@@ -173,7 +173,6 @@ export const LocationDetail = () => {
     contactMutation.mutate({ toUserCd, type, locationCd });
   };
 
-  console.log("locationDetail", locationDetail);
   return (
     <div className="location__detail">
       <Row gutter={[16, 16]} className="location__detail-row-1">
@@ -287,7 +286,10 @@ export const LocationDetail = () => {
               </p>
               <div className="row-3-content">
                 <p className="row-3-title">Bình luận</p>
-                <LocationComment data={fakeComments} />
+                <LocationComment
+                  locationCode={locationDetail?.locationCode}
+                  data={fakeComments}
+                />
               </div>
             </Col>
           </Row>

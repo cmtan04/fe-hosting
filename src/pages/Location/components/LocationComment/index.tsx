@@ -1,21 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { getUserPRofile } from "../../../../api/configs/user.config";
+import { UserEndpoint } from "../../../../api/endpoints/user.endpoint";
 import more from "../../../../assets/svg/location/more.svg";
 import up from "../../../../assets/svg/location/up.svg";
+import { useLoading } from "../../../../providers/loadingProvider";
+import { CommentInput } from "../CommentInput";
 import { CommentLabel } from "../CommentLabel";
 import "../style.scss";
-import { useLoading } from "../../../../providers/loadingProvider";
-import { UserEndpoint } from "../../../../api/endpoints/user.endpoint";
-import { getLocationByFilter } from "../../../../api/configs/location.config";
-import { getUserPRofile } from "../../../../api/configs/user.config";
-import { CommentInput } from "../CommentInput";
+import type { ChatAndCommentDto } from "../../../../api/dtos/common.dto";
+import type { LocationCommentPayloadDto } from "../../../../api/dtos/location.dto";
 interface LocationCommentProps {
+  locationCode: string;
   data: any;
 }
 
 export const LocationComment = (props: LocationCommentProps) => {
   const { setLoading } = useLoading();
   const [showReply, setShowReply] = useState<number>();
+  const [commentId, setCommentId] = useState<number>();
 
   const { data: userData, isLoading: locationLoading } = useQuery({
     queryKey: [UserEndpoint.GET_USER_INFORMATION],
@@ -26,7 +29,15 @@ export const LocationComment = (props: LocationCommentProps) => {
     setLoading(locationLoading);
   }, [locationLoading]);
 
-  console.log(userData);
+  const handleComment = (value: ChatAndCommentDto) => {
+    const payload: LocationCommentPayloadDto = {
+      locationCode: props.locationCode,
+      commentId: commentId,
+      content: value,
+    };
+
+    console.log("comment", payload);
+  };
   return (
     <div className="location__comment">
       <div className="location__comment-list">
@@ -68,7 +79,10 @@ export const LocationComment = (props: LocationCommentProps) => {
       </div>
 
       <div className="location__comment-action">
-        <CommentInput data={userData} />
+        <CommentInput
+          data={userData}
+          onSubmit={(value) => handleComment(value)}
+        />
       </div>
     </div>
   );
