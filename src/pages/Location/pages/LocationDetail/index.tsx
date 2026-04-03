@@ -24,6 +24,76 @@ import { useLoading } from "../../../../providers/loadingProvider";
 import { useNotification } from "../../../../providers/notificationProvider";
 import { ROUTER_PATH } from "../../../../router/Route";
 import { ServiceTag } from "../../../Renter/components/ServiceTag/intex";
+import { LocationComment } from "../../components/LocationComment";
+
+export const fakeComments = [
+  {
+    id: 1,
+    content: "Địa điểm rất đẹp, đáng để ghé thăm!",
+    type: "REVIEW",
+    createdAt: "2026-04-03T10:15:00Z",
+    user: {
+      name: "Nguyễn Văn A",
+      avatar: "https://i.pravatar.cc/150?img=1",
+    },
+    replies: [
+      {
+        id: 11,
+        content: "Mình cũng thấy vậy 👍",
+        type: "REPLY",
+        createdAt: "2026-04-03T10:20:00Z",
+        user: {
+          name: "Trần Thị B",
+          avatar: "https://i.pravatar.cc/150?img=2",
+        },
+      },
+      {
+        id: 12,
+        content: "Cuối tuần đông không bạn?",
+        type: "REPLY",
+        createdAt: "2026-04-03T10:25:00Z",
+        user: {
+          name: "Lê Văn C",
+          avatar: "https://i.pravatar.cc/150?img=3",
+        },
+      },
+    ],
+  },
+  {
+    id: 2,
+    content: "Giá hơi cao nhưng dịch vụ ổn.",
+    type: "REVIEW",
+    createdAt: "2026-04-02T08:00:00Z",
+    user: {
+      name: "Phạm Minh D",
+      avatar: "https://i.pravatar.cc/150?img=4",
+    },
+    replies: [
+      {
+        id: 21,
+        content: "Chuẩn luôn, giá hơi chát 😅",
+        type: "REPLY",
+        createdAt: "2026-04-02T08:10:00Z",
+        user: {
+          name: "Hoàng Anh E",
+          avatar: "https://i.pravatar.cc/150?img=5",
+        },
+      },
+    ],
+  },
+  {
+    id: 3,
+    content: "Không gian yên tĩnh, thích hợp làm việc.",
+    type: "REVIEW",
+    createdAt: "2026-04-01T14:30:00Z",
+    user: {
+      name: "Đỗ Thu F",
+      avatar: "https://i.pravatar.cc/150?img=6",
+    },
+    replies: [],
+  },
+];
+
 export const LocationDetail = () => {
   const media: MediaItem[] = [
     {
@@ -215,8 +285,9 @@ export const LocationDetail = () => {
                   <span>Chưa có đánh giá nào</span>
                 )}
               </p>
-              <div className="row-wrap-content">
-                <h1 className="wrap-title">Bình luận</h1>
+              <div className="row-3-content">
+                <p className="row-3-title">Bình luận</p>
+                <LocationComment data={fakeComments} />
               </div>
             </Col>
           </Row>
