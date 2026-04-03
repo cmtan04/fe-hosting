@@ -1,14 +1,32 @@
-import { useState } from "react";
-import { CommentLabel } from "../CommentLabel";
-import up from "../../../../assets/svg/location/up.svg";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import more from "../../../../assets/svg/location/more.svg";
+import up from "../../../../assets/svg/location/up.svg";
+import { CommentLabel } from "../CommentLabel";
 import "../style.scss";
+import { useLoading } from "../../../../providers/loadingProvider";
+import { UserEndpoint } from "../../../../api/endpoints/user.endpoint";
+import { getLocationByFilter } from "../../../../api/configs/location.config";
+import { getUserPRofile } from "../../../../api/configs/user.config";
+import { CommentInput } from "../CommentInput";
 interface LocationCommentProps {
   data: any;
 }
 
 export const LocationComment = (props: LocationCommentProps) => {
+  const { setLoading } = useLoading();
   const [showReply, setShowReply] = useState<number>();
+
+  const { data: userData, isLoading: locationLoading } = useQuery({
+    queryKey: [UserEndpoint.GET_USER_INFORMATION],
+    queryFn: () => getUserPRofile(),
+  });
+
+  useEffect(() => {
+    setLoading(locationLoading);
+  }, [locationLoading]);
+
+  console.log(userData);
   return (
     <div className="location__comment">
       <div className="location__comment-list">
@@ -49,7 +67,9 @@ export const LocationComment = (props: LocationCommentProps) => {
         ))}
       </div>
 
-      <div className="location__comment-action"></div>
+      <div className="location__comment-action">
+        <CommentInput data={userData} />
+      </div>
     </div>
   );
 };
