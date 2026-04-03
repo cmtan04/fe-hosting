@@ -24,6 +24,59 @@ export interface UserProfileResponseDto {
 }
 
 export interface UserUpdatePayloadDto {
-  userCode: string;
-  data: UserProfileResponseDto;
+  userName?: string;
+  fullName?: string;
+  dateOfBirth?: string;
+  avatarUrl?: string;
+  coverUrl?: string;
+  bio?: string;
+  userDescription?: string;
+  userNote?: string;
+  phone?: string;
+  fullAddress?: string;
+  userWard?: string;
+  userDistrict?: string;
+  userCity?: string;
+  userProvince?: string;
+  userCountry?: string;
+  userPortal?: string;
+
+  userLat?: string;
+  userLong?: string;
+}
+
+export interface UserAddressDto {
+  fullAddress?: string;
+  userWard?: string;
+  userDistrict?: string;
+  userCity?: string;
+  userProvince?: string;
+  userCountry?: string;
+  userPortal?: string;
+
+  userLat?: string;
+  userLong?: string;
+}
+
+export class UserResponseDto {
+  id?: number;
+  username?: string;
+  email?: string;
+  fullName?: string;
+  dateOfBirth?: string;
+  avatarUrl?: string;
+  coverUrl?: string;
+  bio?: string;
+  phone?: string;
+  fullAddress?: string;
+  userWard?: string;
+  userDistrict?: string;
+  userCity?: string;
+  userProvince?: string;
+  userCountry?: string;
+  userPortal?: string;
+  userLat?: string;
+  userLong?: string;
+  userDescription?: string;
+  userNote?: string;
 }

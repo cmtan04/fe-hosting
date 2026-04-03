@@ -37,6 +37,11 @@
           flex-direction: column;
           justify-content: center;
           align-items: center;
+          max-width: 100%;
+          gap: 12px;
+          .form-input {
+            max-width: 100%;
+          }
           input {
             width: 450px;
           }

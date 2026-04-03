@@ -40,7 +40,12 @@
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          width: 100% !important;
+          max-width: 100%;
+          width: 100%;
+          gap: 12px;
+          .form-input {
+            max-width: 100%;
+          }
 
           @media (max-width: 1080px) {
             width: 100% !important;

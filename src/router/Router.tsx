@@ -4,18 +4,18 @@ import { ResetPassword } from "../pages/Auth/ResetPassword/ResetPassword";
 import { SignIn } from "../pages/Auth/SignIn/SignIn";
 import { SignUp } from "../pages/Auth/SignUp/SignUp";
 import { VerifyEmail } from "../pages/Auth/VerifyEmail/VerifyEmail";
-import { Filter } from "../pages/Home/Filter/Filter";
-import { Home } from "../pages/Home/Home";
-import { HomePage } from "../pages/Home/HomePage/HomePage";
-import { Location } from "../pages/Home/Location/Location";
-import { RentPage } from "../pages/Home/RentPage/RentPage";
-import { RoomDetailPage } from "../pages/Home/RoomDetail/RoomDetailPage";
 import { RenterLayout } from "../pages/Renter/RenterLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import { ROUTER_PATH } from "./Route";
 import { Profile } from "../pages/Profile/pages";
 import { ProfileInformation } from "../pages/Profile/pages/ProfileInformation";
 import { ProfileLocation } from "../pages/Profile/pages/ProfileLocation";
+import { ProfileLocationDetail } from "../pages/Profile/pages/ProfileLocation/ProfileLocationDetail";
+import { ProfileChat } from "../pages/Profile/pages/ProfileChat";
+import { LocationList } from "../pages/Location/pages/LocationList";
+import { Home } from "../pages/Home/pages/Home";
+import { HomePage } from "../pages/Home/pages/HomePage/HomePage";
+import { LocationDetail } from "../pages/Location/pages/LocationDetail";
 
 export const WebRouter = () => (
   <Routes>
@@ -38,14 +38,10 @@ export const WebRouter = () => (
       {/* Home */}
       <Route path={ROUTER_PATH.HOME} element={<Home />}>
         <Route path={ROUTER_PATH.HOME} element={<HomePage />}></Route>
-        <Route path={ROUTER_PATH.FILTER} element={<Filter />}></Route>
-        <Route path={ROUTER_PATH.RENT} element={<RentPage />}>
-          {" "}
-        </Route>
-        <Route path={ROUTER_PATH.LOCATION} element={<Location />}></Route>
+        <Route path={ROUTER_PATH.LOCATIONS} element={<LocationList />}></Route>
         <Route
-          path={ROUTER_PATH.ROOMDETAIL}
-          element={<RoomDetailPage />}
+          path={ROUTER_PATH.LOCATION_DETAIL}
+          element={<LocationDetail />}
         ></Route>
       </Route>
       {/* Home */}
@@ -58,6 +54,14 @@ export const WebRouter = () => (
         <Route
           path={ROUTER_PATH.PROFILE_LOCATION}
           element={<ProfileLocation />}
+        ></Route>
+        <Route
+          path={ROUTER_PATH.PROFILE_LOCATION_DETAIL}
+          element={<ProfileLocationDetail />}
+        ></Route>
+        <Route
+          path={ROUTER_PATH.PROFILE_CHAT}
+          element={<ProfileChat />}
         ></Route>
       </Route>
       {/* PROFILE */}

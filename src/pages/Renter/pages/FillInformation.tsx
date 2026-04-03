@@ -255,6 +255,7 @@ export const FillInformation = (props: RenterProps) => {
               )
             }
           </Form.Item>
+
           <div className="form-action">
             <Button
               htmlType="button"

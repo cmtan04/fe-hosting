@@ -4,7 +4,10 @@ import { profileItems } from "../../../../common/config/config";
 import type { ProfileItem } from "../../../../common/types/profile";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../../../providers/notificationProvider";
-import { NOTI_SUCCESS } from "../../../../common/constants/constants";
+import {
+  NOTI_SUCCESS,
+  TYPE_LOG_OUT,
+} from "../../../../common/constants/constants";
 import { ROUTER_PATH } from "../../../../router/Route";
 import "./style.scss";
 import { useState } from "react";
@@ -16,12 +19,13 @@ export const ProfileSideBar = () => {
   const { showNotification } = useNotification();
 
   const handleProfileClick = (data: ProfileItem) => {
-    if (data.key === 3) {
+    if (data.key === TYPE_LOG_OUT) {
       localStorage.removeItem("token");
       localStorage.removeItem("userRole");
       showNotification("Đăng xuất thành công!", NOTI_SUCCESS);
       navigate(ROUTER_PATH.SIGN_IN);
     } else {
+      setColaspe(!colaspe);
       setTabActive(data.key);
       navigate(data.href);
     }

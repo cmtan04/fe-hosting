@@ -14,10 +14,57 @@ export const formatMinutesToTime = (minutes: number) => {
 export const formatMoney = (value: string) => {
   if (Number(value) === 0) return "";
 
-  const number = Number(value.replace(/,/g, ""));
+  const number = Number(value?.replace(/,/g, ""));
   return number.toLocaleString("en-US");
 };
 
 export const formatCurrencyVND = (amount: number) => {
   return new Intl.NumberFormat("vi-VN").format(amount) + " đ";
+};
+
+export const formatDateDDMMYYYY = (input?: string | number | Date) => {
+  if (!input) return "";
+
+  const date = new Date(input);
+  if (isNaN(date.getTime())) return "";
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+
+export const formatLastMessageAt = (dateString: string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+
+  const pad = (n: number) => n.toString().padStart(2, "0");
+
+  const isSameDay =
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth() &&
+    date.getDate() === now.getDate();
+
+  const yesterday = new Date();
+  yesterday.setDate(now.getDate() - 1);
+
+  const isYesterday =
+    date.getFullYear() === yesterday.getFullYear() &&
+    date.getMonth() === yesterday.getMonth() &&
+    date.getDate() === yesterday.getDate();
+
+  if (isSameDay) {
+    return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  if (isYesterday) {
+    return "Hôm qua";
+  }
+
+  if (date.getFullYear() !== now.getFullYear()) {
+    return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
+  }
+
+  return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}`;
 };

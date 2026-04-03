@@ -82,7 +82,7 @@ export const ConfirmInformation = (props: RenterProps) => {
   useEffect(() => {
     if (!props.data) return;
     const addressData: LocationAddressUpdateDto = props.data
-      .locationAddress?.[0] as LocationAddressUpdateDto;
+      .address?.[0] as LocationAddressUpdateDto;
 
     form.setFieldsValue({
       locationName: props.data.locationName,
@@ -125,12 +125,13 @@ export const ConfirmInformation = (props: RenterProps) => {
     const payload: LocationDto = {
       typeCode: props.data.typeCode,
       serviceCode: props.data.serviceCode || [],
-      locationAddress: props.data.locationAddress || [],
+      address: props.data.address || [],
       locationName: props.data.locationName,
       locationLogo: props.data.locationLogo || "",
       locationPriceStart: Number(props.data.locationPriceStart) || 0,
       locationPriceEnd: locationPriceEnd,
       locationPriceAfterDeal: locationPriceAfterDeal,
+      locationRate: props.data.locationRate || 0,
       locationStatus: props.data.locationStatus || 0,
       ...(props.data.minTimeLimit && {
         minTimeLimit: dayjs(props.data.minTimeLimit).format(DATE_FORMAT),
@@ -216,7 +217,7 @@ export const ConfirmInformation = (props: RenterProps) => {
             </Col>
           </Row>
           {props.data.minTimeLimit && props.data.maxTimeLimit && (
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} className="time-wrapper">
               <Col span={12}>
                 <Form.Item name="minTimeLimit" label="Từ ngày" vertical={true}>
                   <DatePicker

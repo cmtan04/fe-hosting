@@ -20,6 +20,7 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": false,
     "noUncheckedSideEffectImports": true,
+    "strictNullChecks": false,
 
     "types": ["node"],
     "skipLibCheck": true
