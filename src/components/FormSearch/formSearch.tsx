@@ -1,7 +1,6 @@
-import { Form, type FormItemProps } from "antd";
-import Search from "antd/es/transfer/search";
-import "./formSearch.scss";
+import { Form, Input, Space, type FormItemProps } from "antd";
 import type { ReactNode } from "react";
+import "./formSearch.scss";
 
 interface IFormSearch {
   label: string;
@@ -44,7 +43,7 @@ export const FormSearch = ({
       className={`form-input ${vertical ? "form-input--vertical" : ""}`}
       {...formItemProps}
     >
-      <Search
+      <Input.Search
         className="form-input__search"
         placeholder={placeholder}
         size={size}

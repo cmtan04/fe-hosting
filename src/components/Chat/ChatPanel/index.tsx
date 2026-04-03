@@ -99,8 +99,6 @@ export const ChatPanel = (props: ChatPanelProps) => {
     input?.classList.add("hide");
   };
 
-  console.log("message", message);
-
   return (
     <>
       {props.data && (

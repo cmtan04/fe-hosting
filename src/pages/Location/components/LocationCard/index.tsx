@@ -22,12 +22,14 @@ interface LocationCardProps {
 export const LocationCard = (props: LocationCardProps) => {
   const [isFavourite, setIsFavourite] = useState(props.isFavourite);
 
-  const handleFavourite = () => {
+  const handleFavourite = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     setIsFavourite((prev) => !prev);
     props.onFavouriteToggle?.(props.code);
   };
 
-  const handleShare = () => {
+  const handleShare = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     props.onShare?.(props.code);
   };
 

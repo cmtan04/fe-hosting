@@ -11,7 +11,11 @@ import type { LocationDto } from "../../../../api/dtos/location.dto";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ROUTER_PATH } from "../../../../router/Route";
 
-export const LocationListView = () => {
+interface LocationListViewProps {
+  searchValue?: string;
+}
+
+export const LocationListView = (props: LocationListViewProps) => {
   const { setLoading } = useLoading();
   const [searchParams] = useSearchParams();
   const location = searchParams.get("location");
@@ -40,6 +44,13 @@ export const LocationListView = () => {
       }));
     }
   }, [location]);
+
+  useEffect(() => {
+    setFilter((prev) => ({
+      ...prev,
+      searchValue: props.searchValue,
+    }));
+  }, [props.searchValue]);
 
   useEffect(() => {
     const resizeCards = () => {
