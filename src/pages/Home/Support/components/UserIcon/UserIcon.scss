@@ -1,0 +1,39 @@
+@import '../../../../../color.scss';
+
+.user-icon {
+    display: flex;
+    margin: 10px 0;
+
+    .image {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        overflow: hidden;
+        align-self: center;
+    }
+
+    .info {
+        flex-grow: 1;
+
+        &__header {
+            padding: 0 10px;
+        }
+
+
+        &__content {
+            padding: 0 10px;
+            color: $black_color;
+        }
+
+    }
+
+    .status {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: green;
+        align-self: center;
+        margin-right: 10px;
+        ;
+    }
+}
