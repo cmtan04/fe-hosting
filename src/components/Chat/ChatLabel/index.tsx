@@ -5,6 +5,7 @@ import {
   formatDateDDMMYYYY,
   formatLastMessageAt,
 } from "../../../common/contexts/format";
+import { MessageType } from "../../../common/constants/constants";
 
 export interface ChatLabelProps {
   isYour: boolean;
@@ -12,6 +13,7 @@ export interface ChatLabelProps {
   timeLine: string;
   content: string;
   avartar: string;
+  type?: string;
 }
 
 export const ChatLabel = (props: ChatLabelProps) => {
@@ -22,7 +24,14 @@ export const ChatLabel = (props: ChatLabelProps) => {
       </div>
       <div className="chat__label-content">
         <div className="row-1">
-          <p className="chat__label-content-text">{props.content}</p>
+          {props.type === MessageType.SYSTEM ? (
+            <p
+              className="chat__label-content-text"
+              dangerouslySetInnerHTML={{ __html: props.content as string }}
+            />
+          ) : (
+            <p className="chat__label-content-text">{props.content}</p>
+          )}
         </div>
         <div className="row-2">
           <p className="chat__label-timeLine">

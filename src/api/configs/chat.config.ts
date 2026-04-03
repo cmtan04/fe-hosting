@@ -1,5 +1,8 @@
 import axiosClient from "../axiosClient";
-import type { ConversationResponseDto } from "../dtos/chat.dto";
+import type {
+  ConversationCreateResponseDto,
+  ConversationResponseDto,
+} from "../dtos/chat.dto";
 import { ConverationEndpoint } from "../endpoints/chat.endpoint";
 
 export const getAllConversation = async (): Promise<
@@ -19,6 +22,22 @@ export const getConversationMessages = async (
     ConverationEndpoint.GET_CHAT_CONVERSATION_MESSAGE,
     {
       params: { conversationId: conversationId, ...filter },
+    },
+  );
+  return response.data;
+};
+
+export const createConversation = async (
+  toUserCd: string,
+  type: string,
+  locationCd?: string,
+): Promise<ConversationCreateResponseDto> => {
+  const response = await axiosClient.post(
+    ConverationEndpoint.CREATE_CONVERSATION,
+    {
+      toUserCd,
+      type,
+      locationCd,
     },
   );
   return response.data;

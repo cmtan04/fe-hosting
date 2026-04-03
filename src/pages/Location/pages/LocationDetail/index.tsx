@@ -1,16 +1,29 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Col, Rate, Row } from "antd";
+import { isAxiosError } from "axios";
 import { useEffect } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
+import { createConversation } from "../../../../api/configs/chat.config";
 import { getLocationByCode } from "../../../../api/configs/location.config";
 import { LocationEndpoint } from "../../../../api/endpoints/location.endpoint";
+import address from "../../../../assets/images/address.svg";
+import mail from "../../../../assets/images/mail.svg";
+import phone from "../../../../assets/images/phone.svg";
+import profileIcn from "../../../../assets/images/profile/icn_profile.svg";
+import pin from "../../../../assets/svg/home/pin.svg";
+import message from "../../../../assets/svg/profile/chat.svg";
 import type { MediaItem } from "../../../../common/config/common-config";
+import {
+  DEFAULT_MESSAGE,
+  MessageTypeEnum,
+  NOTI_ERROR,
+} from "../../../../common/constants/constants";
+import { formatMoney } from "../../../../common/contexts/format";
 import { MediaGallery } from "../../../../components/MediaComponent";
 import { useLoading } from "../../../../providers/loadingProvider";
-import pin from "../../../../assets/svg/home/pin.svg";
-import { MapViewCommon } from "../../../../components/MapViewCommon";
+import { useNotification } from "../../../../providers/notificationProvider";
+import { ROUTER_PATH } from "../../../../router/Route";
 import { ServiceTag } from "../../../Renter/components/ServiceTag/intex";
-import { formatMoney } from "../../../../common/contexts/format";
 export const LocationDetail = () => {
   const media: MediaItem[] = [
     {
@@ -30,6 +43,8 @@ export const LocationDetail = () => {
   const location = useLocation();
   const locationCode = location?.state?.code;
   const { setLoading } = useLoading();
+  const navigate = useNavigate();
+  const { showNotification } = useNotification();
 
   const {
     data: locationDetail,
@@ -44,6 +59,49 @@ export const LocationDetail = () => {
   useEffect(() => {
     setLoading(isLoading);
   }, [isLoading]);
+
+  const contactMutation = useMutation({
+    mutationFn: ({
+      toUserCd,
+      type,
+      locationCd,
+    }: {
+      toUserCd: string;
+      type: string;
+      locationCd?: string;
+    }) => createConversation(toUserCd, type, locationCd),
+    onSuccess: (data) => {
+      navigate(ROUTER_PATH.PROFILE_CHAT, {
+        state: { id: data?.id },
+      });
+    },
+    onError: (error) => {
+      let message = DEFAULT_MESSAGE;
+      if (isAxiosError(error)) {
+        const apiMessage = error.response?.data?.message;
+        if (typeof apiMessage === "string") {
+          message = apiMessage;
+        } else if (Array.isArray(apiMessage) && apiMessage[0]) {
+          message = apiMessage[0];
+        }
+      }
+      showNotification(message, NOTI_ERROR);
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+
+  const handleContactOwner = (
+    toUserCd: string,
+    type: string,
+    locationCd?: string,
+  ) => {
+    contactMutation.mutate({ toUserCd, type, locationCd });
+  };
 
   console.log("locationDetail", locationDetail);
   return (
@@ -76,6 +134,7 @@ export const LocationDetail = () => {
           </div>
         </Col>
       </Row>
+
       <Row gutter={[16, 16]} className="location__detail-row-2">
         <Col span={16}>
           <Row gutter={[16, 16]} className="row-wrap-1">
@@ -143,6 +202,21 @@ export const LocationDetail = () => {
                     active={true}
                   />
                 ))}
+              </div>
+            </Col>
+          </Row>
+          <Row gutter={[16, 16]} className="row-wrap">
+            <Col span={24}>
+              <p className="row-3-label">Đánh giá</p>
+              <p className="row-3-note">
+                {locationDetail?.locationRate > 0 ? (
+                  <Rate disabled defaultValue={locationDetail?.locationRate} />
+                ) : (
+                  <span>Chưa có đánh giá nào</span>
+                )}
+              </p>
+              <div className="row-wrap-content">
+                <h1 className="wrap-title">Bình luận</h1>
               </div>
             </Col>
           </Row>
@@ -217,6 +291,13 @@ export const LocationDetail = () => {
                 type="primary"
                 block
                 disabled={locationDetail?.renterCode !== null}
+                onClick={() =>
+                  handleContactOwner(
+                    locationDetail?.ownerCode as string,
+                    MessageTypeEnum.RENT,
+                    locationDetail?.locationCode,
+                  )
+                }
               >
                 Thuê ngay
               </Button>
@@ -226,10 +307,49 @@ export const LocationDetail = () => {
           <div className="col-owner">
             <img src={locationDetail?.ownerAvatar as string} alt="Owner" />
             <div className="owner-info">
-              <p className="owner-name">{locationDetail?.ownerName}</p>
-              <p className="owner-phone">{locationDetail?.ownerPhone}</p>
-              <p className="owner-email">{locationDetail?.ownerEmail}</p>
-              <p className="owner-address">{locationDetail?.ownerAddress}</p>
+              <h1 className="title">Liên hệ</h1>
+              <p className="owner-name">
+                <span>
+                  <img src={profileIcn} alt="Profile" />
+                </span>
+                <span>{locationDetail?.ownerName}</span>
+              </p>
+              <p className="owner-address">
+                <span>
+                  <img src={address} alt="Address" />
+                </span>
+                <span>{locationDetail?.ownerAddress}</span>
+              </p>
+              <p className="owner-phone">
+                <span>
+                  <img src={phone} alt="Phone" />
+                </span>
+                <span>{locationDetail?.ownerPhone}</span>
+              </p>
+              <p className="owner-email">
+                <span>
+                  <img src={mail} alt="Email" />
+                </span>
+                <span>{locationDetail?.ownerEmail}</span>
+              </p>
+            </div>
+
+            <div className="owner-contact">
+              <Button
+                type="primary"
+                onClick={() =>
+                  handleContactOwner(
+                    locationDetail?.ownerCode as string,
+                    MessageTypeEnum.CONTACT,
+                    locationDetail?.locationCode,
+                  )
+                }
+              >
+                <span>
+                  <img src={message} alt="Message" />
+                </span>
+                <span>Liên hệ</span>
+              </Button>
             </div>
           </div>
         </Col>

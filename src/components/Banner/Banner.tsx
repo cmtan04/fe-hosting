@@ -22,7 +22,9 @@ export const Banner = (props: BannerProps) => {
           label=""
           name="search"
           placeholder="Tìm kiếm theo tên, địa chỉ..."
-          onSearch={props.onSearch}
+          onSearch={(value) => {
+            props.onSearch(value);
+          }}
           formItemProps={{
             className: "banner__content-search",
           }}

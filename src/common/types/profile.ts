@@ -6,6 +6,7 @@ export interface ProfileItem {
 }
 
 export interface ProfileLocationFilter {
+  searchValue?: string;
   locationName?: string;
   ownerName?: string;
   ownerEmail?: string;
