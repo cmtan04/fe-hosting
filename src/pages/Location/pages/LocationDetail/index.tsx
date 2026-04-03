@@ -103,6 +103,7 @@ export const LocationDetail = () => {
     contactMutation.mutate({ toUserCd, type, locationCd });
   };
 
+  console.log("locationDetail", locationDetail);
   return (
     <div className="location__detail">
       <Row gutter={[16, 16]} className="location__detail-row-1">
@@ -133,6 +134,7 @@ export const LocationDetail = () => {
           </div>
         </Col>
       </Row>
+
       <Row gutter={[16, 16]} className="location__detail-row-2">
         <Col span={16}>
           <Row gutter={[16, 16]} className="row-wrap-1">
@@ -200,6 +202,21 @@ export const LocationDetail = () => {
                     active={true}
                   />
                 ))}
+              </div>
+            </Col>
+          </Row>
+          <Row gutter={[16, 16]} className="row-wrap">
+            <Col span={24}>
+              <p className="row-3-label">Đánh giá</p>
+              <p className="row-3-note">
+                {locationDetail?.locationRate > 0 ? (
+                  <Rate disabled defaultValue={locationDetail?.locationRate} />
+                ) : (
+                  <span>Chưa có đánh giá nào</span>
+                )}
+              </p>
+              <div className="row-wrap-content">
+                <h1 className="wrap-title">Bình luận</h1>
               </div>
             </Col>
           </Row>
