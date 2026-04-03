@@ -21,6 +21,7 @@ export const ChatInput = () => {
   const emojiPickerRef = useRef<HTMLDivElement | null>(null);
 
   const handleUploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("click");
     const selectedFiles = e.target.files;
     if (!selectedFiles || selectedFiles.length === 0) return;
 
@@ -81,12 +82,11 @@ export const ChatInput = () => {
                   alt={`preview-${index}`}
                   className="image_container-item"
                 />
-                <button
+                <img
                   className="image_container-action"
+                  src={remove}
                   onClick={() => removeImage(index)}
-                >
-                  <img src={remove} />
-                </button>
+                />
               </div>
             ))}
           </figure>
