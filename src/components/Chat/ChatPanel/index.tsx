@@ -1,7 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getConversationMessages } from "../../../api/configs/chat.config";
-import type { ConversationResponseDto } from "../../../api/dtos/chat.dto";
+import type {
+  ConversationResponseDto,
+  MessageResponseDto,
+} from "../../../api/dtos/chat.dto";
 import { ConverationEndpoint } from "../../../api/endpoints/chat.endpoint";
 import { ChatInput } from "../ChatInput";
 import { ChatLabel } from "../ChatLabel";
@@ -11,7 +14,7 @@ import bioIcn from "../../../assets/svg/profile/bio.svg";
 import bellOffIcn from "../../../assets/svg/profile/bellOff.svg";
 import hideIcn from "../../../assets/svg/profile/hide.svg";
 import threeDotIcn from "../../../assets/svg/three-dots.svg";
-import { Dropdown, Space } from "antd";
+import { Dropdown } from "antd";
 export interface ChatPanelProps {
   data?: ConversationResponseDto;
 }
@@ -66,7 +69,7 @@ export const ChatPanel = (props: ChatPanelProps) => {
     }
   }, [props?.data?.conversationId]);
 
-  const { data: message } = useQuery({
+  const { data: message } = useQuery<MessageResponseDto[]>({
     queryKey: [ConverationEndpoint.GET_CHAT_CONVERSATION_MESSAGE, conversation],
     queryFn: () =>
       getConversationMessages(conversation.id, {
@@ -165,7 +168,7 @@ export const ChatPanel = (props: ChatPanelProps) => {
                       isRead={item.isRead}
                       timeLine={item.createdAt}
                       content={item.content}
-                      avartar={item.avartarUrl}
+                      avartar={item.senderAvatarUrl || ""}
                       type={item.type}
                     />
                   ))}

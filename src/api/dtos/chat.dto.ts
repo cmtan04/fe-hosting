@@ -17,31 +17,57 @@ export interface ParticipantDto {
   userId: number;
   unreadCount: number;
   lastReadMessageId: number | null;
-  isMuted: boolean;
+  lastReadAt: string | null;
+  muteUntil: string | null;
   isPinned: boolean;
-  isDeleted: boolean;
+  deletedAt: string | null;
+  joinedAt: string;
 }
 export interface ConversationResponseDto {
   conversationId: number;
   conversationType: string;
-  conversationName: string;
-  conversationAvatar: string;
-  lastMessage: string;
-  lastMessageAt: string;
-  lastMessageType: string;
+  conversationStatus: string;
+  conversationName: string | null;
+  conversationAvatar: string | null;
+  lastMessageId: number | null;
+  lastMessagePreview: string | null;
+  lastMessageAt: string | null;
+  lastMessageType: string | null;
   conversationCreatedAt: string;
+  unreadCount: number;
+  lastReadMessageId: number | null;
   participants: ParticipantDto[];
-  toUser: UserResponseDto;
+  toUser: UserResponseDto | null;
 }
 
 export interface ConversationCreateResponseDto {
   id: number;
+  createdByUserId: number;
+  status: string;
   type: string;
-  name: string;
-  avatar: string;
-  lastMessage: string;
-  lastMessageAt: string;
-  conversationCreatedAt: string;
-  participants: ParticipantDto[];
-  toUser: UserResponseDto;
+  name: string | null;
+  avatar: string | null;
+  lastMessageId: number | null;
+  lastMessagePreview: string | null;
+  lastMessageAt: string | null;
+  lastMessageType: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MessageResponseDto {
+  id: number;
+  conversationId: number;
+  senderId: number;
+  senderAvatarUrl?: string;
+  type: string;
+  content?: string | null;
+  status?: string;
+  replyToMessageId?: number | null;
+  metadata?: Record<string, unknown> | null;
+  editedAt?: string | null;
+  deletedAt?: string | null;
+  deletedByUserId?: number | null;
+  createdAt: string;
+  updatedAt?: string;
 }

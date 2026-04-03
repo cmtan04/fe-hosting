@@ -1,4 +1,3 @@
-import { Button } from "antd";
 import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
 import { useRef, useState } from "react";
 import emoji from "../../../assets/svg/emoji.svg";
@@ -59,7 +58,7 @@ export const ChatInput = () => {
   const sendMessage = () => {};
   return (
     <div className="chat__input">
-      <div className="chat__input-col-1">
+      <span className="chat__input-col-1">
         <label htmlFor="upload" className="btn-upload">
           <input
             id="upload"
@@ -70,7 +69,7 @@ export const ChatInput = () => {
             onChange={handleUploadImage}
           />
         </label>
-      </div>
+      </span>
       <div className="chat__input-col-2">
         {previews.length > 0 && (
           <figure className="image_container">
@@ -123,16 +122,7 @@ export const ChatInput = () => {
         />
 
         {showEmojiPicker && (
-          <div
-            ref={emojiPickerRef}
-            style={{
-              position: "absolute",
-              bottom: "100%",
-              right: 0,
-              marginBottom: "8px",
-              zIndex: 1000,
-            }}
-          >
+          <div ref={emojiPickerRef} className="chat__input-emoji-picker">
             <EmojiPicker
               onEmojiClick={handleEmojiClick}
               autoFocusSearch={false}

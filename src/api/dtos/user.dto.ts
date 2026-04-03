@@ -1,4 +1,5 @@
 export interface UserProfileResponseDto {
+  id?: number;
   avatarUrl: string;
   bio: string;
   coverUrl: string;

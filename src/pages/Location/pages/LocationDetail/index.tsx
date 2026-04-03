@@ -69,16 +69,32 @@ export const LocationDetail = () => {
       toUserCd: string;
       type: string;
       locationCd?: string;
-    }) => createConversation(toUserCd, type, locationCd),
+    }) => {
+      console.log("[LocationDetail] createConversation payload", {
+        toUserCd,
+        type,
+        locationCd,
+      });
+      return createConversation(toUserCd, type, locationCd);
+    },
     onSuccess: (data) => {
+      console.log("[LocationDetail] createConversation success", data);
       navigate(ROUTER_PATH.PROFILE_CHAT, {
-        state: { id: data?.id },
+        state: {
+          conversationId: data?.id,
+          source: "location-detail",
+        },
       });
     },
     onError: (error) => {
+      console.error("[LocationDetail] createConversation error", error);
       let message = DEFAULT_MESSAGE;
       if (isAxiosError(error)) {
         const apiMessage = error.response?.data?.message;
+        console.error("[LocationDetail] createConversation error response", {
+          status: error.response?.status,
+          data: error.response?.data,
+        });
         if (typeof apiMessage === "string") {
           message = apiMessage;
         } else if (Array.isArray(apiMessage) && apiMessage[0]) {
@@ -100,6 +116,14 @@ export const LocationDetail = () => {
     type: string,
     locationCd?: string,
   ) => {
+    console.log("[LocationDetail] handleContactOwner", {
+      toUserCd,
+      type,
+      locationCd,
+      locationCode,
+      ownerCode: locationDetail?.ownerCode,
+      ownerName: locationDetail?.ownerName,
+    });
     contactMutation.mutate({ toUserCd, type, locationCd });
   };
 

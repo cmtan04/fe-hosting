@@ -76,29 +76,47 @@
     height: auto;
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    padding: 12px 0px;
+    padding: 12px 16px;
     gap: 12px;
     border: 1px solid $primary_color;
-    border-radius: 30px;
+    border-radius: 24px;
     position: relative;
+    box-sizing: border-box;
     &-emoji {
       width: 24px;
       height: 24px;
       cursor: pointer;
+      flex-shrink: 0;
     }
 
     &-send {
       width: 24px;
       height: 24px;
       cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    &-emoji-picker {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 0;
+      z-index: 1000;
+      max-width: min(320px, calc(100vw - 32px));
+
+      aside.EmojiPickerReact {
+        width: 100% !important;
+        max-width: 100%;
+      }
     }
 
     &-col {
       &-1 {
         background: #ffffff;
         cursor: pointer;
+        flex-shrink: 0;
+        align-self: center;
 
         &::before {
           content: "";
@@ -106,6 +124,7 @@
           width: 18px;
           height: 18px;
           flex-shrink: 0;
+          margin-left: 6px;
           background: url("../../assets/svg/file.svg") no-repeat center;
           background-size: cover;
           pointer-events: none;
@@ -122,12 +141,59 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        width: 90%;
+        flex: 1 1 auto;
+        min-width: 0;
         height: 100%;
+
+        .image_container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-bottom: 8px !important;
+
+          &-item {
+            width: 72px;
+            height: 72px;
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              display: block;
+            }
+          }
+
+          &-action {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 0;
+            cursor: pointer;
+
+            img {
+              width: 12px;
+              height: 12px;
+            }
+          }
+        }
+
         &-textarea {
+          width: 100%;
           min-height: 20px !important;
           height: fit-content;
-          max-height: 70px;
+          max-height: 96px;
           overflow-y: auto;
           overflow-x: hidden;
           resize: none;
@@ -170,6 +236,8 @@
         display: flex;
         flex-direction: row;
         gap: 8px;
+        align-items: center;
+        flex-shrink: 0;
       }
     }
   }
@@ -344,6 +412,108 @@
       position: absolute;
       bottom: 0px;
       z-index: 12px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .chat {
+    &__input {
+      padding: 10px 12px;
+      gap: 10px;
+      border-radius: 20px;
+
+      &-emoji-picker {
+        right: 0;
+        left: auto;
+        max-width: min(320px, calc(100vw - 24px));
+      }
+
+      &-col {
+        &-2 {
+          .image_container {
+            &-item {
+              width: 64px;
+              height: 64px;
+            }
+          }
+
+          &-textarea {
+            font-size: 14px;
+            max-height: 88px;
+            padding: 6px 0;
+          }
+        }
+
+        &-3 {
+          gap: 6px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .chat {
+    &__input {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 18px;
+
+      &-emoji,
+      &-send {
+        width: 22px;
+        height: 22px;
+      }
+
+      &-emoji-picker {
+        left: 0;
+        right: 0;
+        max-width: 100%;
+
+        aside.EmojiPickerReact {
+          height: min(360px, 55vh) !important;
+        }
+      }
+
+      &-col {
+        &-1 {
+          &::before {
+            width: 16px;
+            height: 16px;
+            margin-left: 2px;
+          }
+        }
+
+        &-2 {
+          width: 100%;
+
+          .image_container {
+            gap: 6px;
+
+            &-item {
+              width: 56px;
+              height: 56px;
+              border-radius: 8px;
+            }
+          }
+
+          &-textarea {
+            min-height: 18px !important;
+            max-height: 80px;
+            font-size: 13px;
+          }
+        }
+
+        &-3 {
+          gap: 8px;
+          justify-content: flex-end;
+          align-self: end;
+        }
+      }
     }
   }
 }
