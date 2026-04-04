@@ -73,6 +73,24 @@ export interface MessageResponseDto {
   updatedAt?: string;
 }
 
+export interface SendMessageAttachmentDto {
+  fileName: string;
+  mimeType: string;
+  size: number;
+  url: string;
+  storageKey?: string;
+  width?: number;
+  height?: number;
+}
+
+export interface SendMessagePayloadDto {
+  conversationId: number;
+  content?: string;
+  type?: string;
+  replyToMessageId?: number | null;
+  attachments?: SendMessageAttachmentDto[];
+}
+
 export type MuteConversationPreset =
   | "15m"
   | "1h"

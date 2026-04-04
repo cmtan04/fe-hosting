@@ -1,22 +1,29 @@
 import "../style.scss";
 import tick from "../../../assets/svg/tick.svg";
 import doubleTick from "../../../assets/svg/doubleTick.svg";
-import {
-  formatDateDDMMYYYY,
-  formatLastMessageAt,
-} from "../../../common/contexts/format";
+import { formatLastMessageAt } from "../../../common/contexts/format";
 import { MessageType } from "../../../common/constants/constants";
 
 export interface ChatLabelProps {
   isYour: boolean;
-  isRead: boolean;
   timeLine: string;
   content: string;
   avartar: string;
   type?: string;
+  messageStatus?: "SENT" | "DELIVERED" | "READ";
+  showStatus?: boolean;
 }
 
 export const ChatLabel = (props: ChatLabelProps) => {
+  const statusLabel =
+    props.messageStatus === "READ"
+      ? "Đã đọc"
+      : props.messageStatus === "DELIVERED"
+        ? "Đã nhận"
+        : props.messageStatus === "SENT"
+          ? "Đã gửi"
+          : "";
+
   return (
     <div className={`chat__label ${props.isYour && "yours"}`}>
       <div className="chat__label-avatar">
@@ -36,13 +43,21 @@ export const ChatLabel = (props: ChatLabelProps) => {
         <div className="row-2">
           <p className="chat__label-timeLine">
             {formatLastMessageAt(props.timeLine)}
-            <span>
-              {props.isRead ? (
-                <img src={doubleTick} alt={"read"} />
-              ) : (
-                <img src={tick} alt={"unread"} />
-              )}
-            </span>
+            {props.showStatus && props.messageStatus && (
+              <>
+                <span>
+                  {props.messageStatus === "SENT" ? (
+                    <img src={tick} alt={"sent"} />
+                  ) : (
+                    <img
+                      src={doubleTick}
+                      alt={props.messageStatus.toLowerCase()}
+                    />
+                  )}
+                </span>
+                <span>{statusLabel}</span>
+              </>
+            )}
           </p>
         </div>
       </div>

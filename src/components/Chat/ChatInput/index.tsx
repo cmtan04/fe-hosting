@@ -1,18 +1,23 @@
 import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
 import { useRef, useState } from "react";
+import type { MessageResponseDto } from "../../../api/dtos/chat.dto";
 import emoji from "../../../assets/svg/emoji.svg";
 import remove from "../../../assets/svg/remove.svg";
 import send from "../../../assets/svg/send.svg";
+import { chatSocket } from "../../../socket/domains/chat.socket";
 
 export interface ChatInputProps {
-  onSubmit?: (value: any) => void;
+  conversationId: number;
+  disabled?: boolean;
+  onMessageSent?: (message: MessageResponseDto) => void;
 }
 
-export const ChatInput = () => {
+export const ChatInput = (props: ChatInputProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const cursorPositionRef = useRef<number>(0);
@@ -55,7 +60,37 @@ export const ChatInput = () => {
     }, 0);
   };
 
-  const sendMessage = () => {};
+  const resetComposer = () => {
+    previews.forEach((preview) => URL.revokeObjectURL(preview));
+    setFiles([]);
+    setPreviews([]);
+    setMessage("");
+  };
+
+  const sendMessage = async () => {
+    const trimmedMessage = message.trim();
+    if (!trimmedMessage || !props.conversationId) {
+      return;
+    }
+
+    setIsSending(true);
+
+    try {
+      const createdMessage = await chatSocket.sendMessage({
+        conversationId: props.conversationId,
+        content: trimmedMessage || undefined,
+      });
+
+      if (createdMessage) {
+        props.onMessageSent?.(createdMessage);
+      }
+
+      resetComposer();
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   return (
     <div className="chat__input">
       <span className="chat__input-col-1">
@@ -67,6 +102,7 @@ export const ChatInput = () => {
             multiple
             ref={fileInputRef}
             onChange={handleUploadImage}
+            disabled={props.disabled || isSending}
           />
         </label>
       </span>
@@ -81,8 +117,10 @@ export const ChatInput = () => {
                   className="image_container-item"
                 />
                 <button
+                  type="button"
                   className="image_container-action"
                   onClick={() => removeImage(index)}
+                  disabled={props.disabled || isSending}
                 >
                   <img src={remove} />
                 </button>
@@ -97,11 +135,18 @@ export const ChatInput = () => {
           className="chat__input-col-2-textarea"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          disabled={props.disabled || isSending}
           onSelect={(e) => {
             cursorPositionRef.current = e.currentTarget.selectionStart;
           }}
           onClick={(e) => {
             cursorPositionRef.current = e.currentTarget.selectionStart;
+          }}
+          onKeyDown={async (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              await sendMessage();
+            }
           }}
           rows={1}
         />

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAllConversation } from "../../../../api/configs/chat.config";
@@ -6,6 +6,7 @@ import { getUserPRofile } from "../../../../api/configs/user.config";
 import type { ConversationResponseDto } from "../../../../api/dtos/chat.dto";
 import { ConverationEndpoint } from "../../../../api/endpoints/chat.endpoint";
 import { UserEndpoint } from "../../../../api/endpoints/user.endpoint";
+import { chatSocket } from "../../../../socket/domains/chat.socket";
 
 import { ChatItem } from "../../../../components/Chat/ChatItem";
 import { ChatPanel } from "../../../../components/Chat/ChatPanel";
@@ -17,6 +18,7 @@ type ProfileChatLocationState = {
 };
 
 export const ProfileChat = () => {
+  const queryClient = useQueryClient();
   const [active, setActive] = useState<number>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,6 +47,55 @@ export const ProfileChat = () => {
     queryKey: [ConverationEndpoint.GET_CHAT_CONVERSATION],
     queryFn: () => getAllConversation(),
   });
+
+  useEffect(() => {
+    const unsubscribe = chatSocket.subscribeConversationUpdated((event) => {
+      const nextConversation = event.data;
+      if (!nextConversation) return;
+
+      queryClient.setQueryData<ConversationResponseDto[]>(
+        [ConverationEndpoint.GET_CHAT_CONVERSATION],
+        (currentConversations = []) => {
+          const existed = currentConversations.some(
+            (conversation) =>
+              conversation.conversationId === nextConversation.conversationId,
+          );
+
+          const updatedConversations = existed
+            ? currentConversations.map((conversation) =>
+                conversation.conversationId === nextConversation.conversationId
+                  ? nextConversation
+                  : conversation,
+              )
+            : [nextConversation, ...currentConversations];
+
+          return [...updatedConversations].sort((left, right) => {
+            const leftPinned = left.participants.some(
+              (participant) =>
+                participant.userId === currentUser?.id && participant.isPinned,
+            );
+            const rightPinned = right.participants.some(
+              (participant) =>
+                participant.userId === currentUser?.id && participant.isPinned,
+            );
+
+            if (leftPinned !== rightPinned) {
+              return leftPinned ? -1 : 1;
+            }
+
+            return (
+              new Date(right.lastMessageAt || 0).getTime() -
+              new Date(left.lastMessageAt || 0).getTime()
+            );
+          });
+        },
+      );
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [currentUser?.id, queryClient]);
 
   useEffect(() => {
     if (!conversations?.length) return;

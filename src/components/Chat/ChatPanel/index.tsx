@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Dropdown, type MenuProps } from "antd";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   getConversationMessages,
   muteConversation,
@@ -19,7 +19,9 @@ import deleteIcn from "../../../assets/svg/profile/delete.svg";
 import hideIcn from "../../../assets/svg/profile/hide.svg";
 import penIcn from "../../../assets/svg/profile/pen.svg";
 import pinIcn from "../../../assets/svg/profile/pin.svg";
+import unpinIcn from "../../../assets/svg/profile/unpin.svg";
 import threeDotIcn from "../../../assets/svg/three-dots.svg";
+import { chatSocket } from "../../../socket/domains/chat.socket";
 import { ChatInput } from "../ChatInput";
 import { ChatLabel } from "../ChatLabel";
 
@@ -39,19 +41,21 @@ const mutePresetItems: {
   preset: MuteConversationPreset;
   label: string;
 }[] = [
-  { key: "mute-15m", preset: "15m", label: "15 phút" },
-  { key: "mute-1h", preset: "1h", label: "1 giờ" },
-  { key: "mute-8h", preset: "8h", label: "8 giờ" },
-  { key: "mute-24h", preset: "24h", label: "24 giờ" },
+  { key: "mute-15m", preset: "15m", label: "15 phÃºt" },
+  { key: "mute-1h", preset: "1h", label: "1 giá»" },
+  { key: "mute-8h", preset: "8h", label: "8 giá»" },
+  { key: "mute-24h", preset: "24h", label: "24 giá»" },
   {
     key: "mute-no-end-time-yet",
     preset: "no end time yet",
-    label: "Cho đến khi tôi bật lại",
+    label: "Cho Ä‘áº¿n khi tÃ´i báº­t láº¡i",
   },
 ];
 
 export const ChatPanel = (props: ChatPanelProps) => {
   const queryClient = useQueryClient();
+  const messageBodyRef = useRef<HTMLDivElement | null>(null);
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
   const [conversation, setConversation] = useState<Conversation>({
     id: props?.data?.conversationId || 0,
     page: 1,
@@ -74,7 +78,7 @@ export const ChatPanel = (props: ChatPanelProps) => {
     props.data?.conversationName ||
     props.data?.toUser?.fullName ||
     props.data?.toUser?.username ||
-    "Cuộc trò chuyện";
+    "Cuá»™c trÃ² chuyá»‡n";
 
   const displayName = currentParticipant?.nickname || fallbackName;
   const displayAvatar =
@@ -139,6 +143,120 @@ export const ChatPanel = (props: ChatPanelProps) => {
     enabled: !!props.data?.conversationId,
   });
 
+  const sortedMessages = useMemo(
+    () =>
+      [...(message ?? [])].sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      ),
+    [message],
+  );
+  const latestMessage = sortedMessages[sortedMessages.length - 1];
+  const lastMessageId = latestMessage?.id;
+  const lastOwnMessageId = useMemo(
+    () =>
+      [...sortedMessages]
+        .reverse()
+        .find((item) => item.senderId === props.currentUserId)?.id,
+    [props.currentUserId, sortedMessages],
+  );
+
+  useEffect(() => {
+    if (!props.data?.conversationId) return;
+
+    void chatSocket.joinConversation(props.data.conversationId);
+
+    return () => {
+      void chatSocket.leaveConversation(props.data!.conversationId);
+    };
+  }, [props.data?.conversationId]);
+
+  useEffect(() => {
+    const unsubscribeMessage = chatSocket.subscribeMessageSent((event) => {
+      if (event.data.conversationId !== props.data?.conversationId) return;
+
+      queryClient.setQueryData<MessageResponseDto[]>(
+        [ConverationEndpoint.GET_CHAT_CONVERSATION_MESSAGE, conversation],
+        (currentMessages = []) => {
+          if (currentMessages.some((item) => item.id === event.data.id)) {
+            return currentMessages;
+          }
+
+          return [event.data, ...currentMessages];
+        },
+      );
+    });
+
+    const unsubscribeConversation = chatSocket.subscribeConversationUpdated(
+      (event) => {
+        queryClient.setQueryData<ConversationResponseDto[]>(
+          [ConverationEndpoint.GET_CHAT_CONVERSATION],
+          (currentConversations = []) =>
+            currentConversations.map((item) =>
+              item.conversationId === event.data.conversationId
+                ? event.data
+                : item,
+            ),
+        );
+      },
+    );
+
+    const unsubscribeStatus = chatSocket.subscribeMessageStatusUpdated(
+      (event) => {
+        if (event.data.conversationId !== props.data?.conversationId) return;
+
+        queryClient.setQueryData<MessageResponseDto[]>(
+          [ConverationEndpoint.GET_CHAT_CONVERSATION_MESSAGE, conversation],
+          (currentMessages = []) =>
+            currentMessages.map((item) =>
+              item.id === event.data.messageId
+                ? {
+                    ...item,
+                    status: event.data.status,
+                    updatedAt: event.data.updatedAt,
+                  }
+                : item,
+            ),
+        );
+      },
+    );
+
+    return () => {
+      unsubscribeMessage();
+      unsubscribeConversation();
+      unsubscribeStatus();
+    };
+  }, [conversation, props.data?.conversationId, queryClient]);
+
+  useEffect(() => {
+    if (!messageBodyRef.current) return;
+
+    messageBodyRef.current.scrollTo({
+      top: messageBodyRef.current.scrollHeight,
+      behavior: "auto",
+    });
+  }, [props.data?.conversationId]);
+
+  useEffect(() => {
+    if (!lastMessageId) return;
+
+    messageEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
+  }, [lastMessageId]);
+
+  useEffect(() => {
+    if (!props.data?.conversationId || !latestMessage) return;
+    if (latestMessage.senderId === props.currentUserId) return;
+    if (latestMessage.status === "READ") return;
+
+    void chatSocket.markConversationAsRead({
+      conversationId: props.data.conversationId,
+      messageId: latestMessage.id,
+    });
+  }, [latestMessage, props.currentUserId, props.data?.conversationId]);
+
   const commitNickname = async () => {
     const trimmedNickname = nicknameInput.trim();
     const currentNickname = currentParticipant?.nickname?.trim() || "";
@@ -173,22 +291,24 @@ export const ChatPanel = (props: ChatPanelProps) => {
   const chatMenuAction: MenuProps["items"] = [
     {
       key: "nickname",
-      label: "Biệt danh",
+      label: "Biá»‡t danh",
       icon: <img src={penIcn} alt="pen" />,
     },
     {
       key: "profile",
-      label: "Xem trang cá nhân",
+      label: "Xem trang cÃ¡ nhÃ¢n",
       icon: <img src={bioIcn} alt="bio" />,
     },
     {
       key: "pin",
-      label: isPinned ? "Bỏ ghim cuộc trò chuyện" : "Ghim cuộc trò chuyện",
-      icon: <img src={pinIcn} alt="pin" />,
+      label: isPinned ? "Bá» ghim cuá»™c trÃ² chuyá»‡n" : "Ghim cuá»™c trÃ² chuyá»‡n",
+      icon: (
+        <img src={isPinned ? unpinIcn : pinIcn} alt={isPinned ? "unpin" : "pin"} />
+      ),
     },
     {
       key: "mute",
-      label: "Tắt thông báo",
+      label: "Táº¯t thÃ´ng bÃ¡o",
       icon: <img src={bellOffIcn} alt="bell-off" />,
       children: mutePresetItems.map((item) => ({
         key: item.key,
@@ -197,12 +317,12 @@ export const ChatPanel = (props: ChatPanelProps) => {
     },
     {
       key: "hide",
-      label: "Ẩn cuộc trò chuyện",
+      label: "áº¨n cuá»™c trÃ² chuyá»‡n",
       icon: <img src={hideIcn} alt="hide" />,
     },
     {
       key: "delete",
-      label: "Xóa cuộc trò chuyện",
+      label: "XÃ³a cuá»™c trÃ² chuyá»‡n",
       icon: <img src={deleteIcn} alt="delete" />,
     },
   ];
@@ -256,43 +376,43 @@ export const ChatPanel = (props: ChatPanelProps) => {
               </div>
             </div>
           </div>
-          <div className="chat__panel-body">
+          <div ref={messageBodyRef} className="chat__panel-body">
             {message && message.length > 0 ? (
               <>
-                {message
-                  .sort(
-                    (a, b) =>
-                      new Date(a.createdAt).getTime() -
-                      new Date(b.createdAt).getTime(),
-                  )
-                  .map((item) => (
-                    <ChatLabel
-                      key={item.id}
-                      isYour={
-                        props.data?.toUser?.id != null
-                          ? props.data.toUser.id !== item.senderId
-                          : false
-                      }
-                      isRead={item.status === "READ"}
-                      timeLine={item.createdAt}
-                      content={item.content || ""}
-                      avartar={item.senderAvatarUrl || displayAvatar}
-                      type={item.type}
-                    />
-                  ))}
+                {sortedMessages.map((item) => (
+                  <ChatLabel
+                    key={item.id}
+                    isYour={item.senderId === props.currentUserId}
+                    timeLine={item.createdAt}
+                    content={item.content || ""}
+                    avartar={item.senderAvatarUrl || displayAvatar}
+                    type={item.type}
+                    messageStatus={
+                      item.status === "SENT" ||
+                      item.status === "DELIVERED" ||
+                      item.status === "READ"
+                        ? item.status
+                        : undefined
+                    }
+                    showStatus={
+                      item.senderId === props.currentUserId &&
+                      item.id === lastOwnMessageId
+                    }
+                  />
+                ))}
               </>
             ) : (
               <ChatLabel
                 isYour={true}
-                isRead={false}
                 timeLine={props.data.conversationCreatedAt}
-                content={props.data.lastMessagePreview || "Không có tin nhắn nào"}
+                content={props.data.lastMessagePreview || "KhÃ´ng cÃ³ tin nháº¯n nÃ o"}
                 avartar={displayAvatar}
               />
             )}
+            <div ref={messageEndRef} />
           </div>
           <div className="chat__panel-footer">
-            <ChatInput />
+            <ChatInput conversationId={props.data.conversationId} />
           </div>
         </div>
       )}
