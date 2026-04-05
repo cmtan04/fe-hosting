@@ -65,7 +65,7 @@ export const getComment = async (
   const response = await axiosClient.get(
     LocationEndpoint.GET_LOCATION_COMMENT,
     {
-      payload,
+      params: payload,
     },
   );
   return response.data;

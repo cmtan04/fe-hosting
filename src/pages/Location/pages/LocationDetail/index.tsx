@@ -1,10 +1,13 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Col, Rate, Row } from "antd";
 import { isAxiosError } from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { createConversation } from "../../../../api/configs/chat.config";
-import { getLocationByCode } from "../../../../api/configs/location.config";
+import {
+  getComment,
+  getLocationByCode,
+} from "../../../../api/configs/location.config";
 import { LocationEndpoint } from "../../../../api/endpoints/location.endpoint";
 import address from "../../../../assets/images/address.svg";
 import mail from "../../../../assets/images/mail.svg";
@@ -25,74 +28,7 @@ import { useNotification } from "../../../../providers/notificationProvider";
 import { ROUTER_PATH } from "../../../../router/Route";
 import { ServiceTag } from "../../../Renter/components/ServiceTag/intex";
 import { LocationComment } from "../../components/LocationComment";
-
-export const fakeComments = [
-  {
-    id: 1,
-    content: "Địa điểm rất đẹp, đáng để ghé thăm!",
-    type: "REVIEW",
-    createdAt: "2026-04-03T10:15:00Z",
-    user: {
-      name: "Nguyễn Văn A",
-      avatar: "https://i.pravatar.cc/150?img=1",
-    },
-    replies: [
-      {
-        id: 11,
-        content: "Mình cũng thấy vậy 👍",
-        type: "REPLY",
-        createdAt: "2026-04-03T10:20:00Z",
-        user: {
-          name: "Trần Thị B",
-          avatar: "https://i.pravatar.cc/150?img=2",
-        },
-      },
-      {
-        id: 12,
-        content: "Cuối tuần đông không bạn?",
-        type: "REPLY",
-        createdAt: "2026-04-03T10:25:00Z",
-        user: {
-          name: "Lê Văn C",
-          avatar: "https://i.pravatar.cc/150?img=3",
-        },
-      },
-    ],
-  },
-  {
-    id: 2,
-    content: "Giá hơi cao nhưng dịch vụ ổn.",
-    type: "REVIEW",
-    createdAt: "2026-04-02T08:00:00Z",
-    user: {
-      name: "Phạm Minh D",
-      avatar: "https://i.pravatar.cc/150?img=4",
-    },
-    replies: [
-      {
-        id: 21,
-        content: "Chuẩn luôn, giá hơi chát 😅",
-        type: "REPLY",
-        createdAt: "2026-04-02T08:10:00Z",
-        user: {
-          name: "Hoàng Anh E",
-          avatar: "https://i.pravatar.cc/150?img=5",
-        },
-      },
-    ],
-  },
-  {
-    id: 3,
-    content: "Không gian yên tĩnh, thích hợp làm việc.",
-    type: "REVIEW",
-    createdAt: "2026-04-01T14:30:00Z",
-    user: {
-      name: "Đỗ Thu F",
-      avatar: "https://i.pravatar.cc/150?img=6",
-    },
-    replies: [],
-  },
-];
+import type { LocationParamDto } from "../../../../api/dtos/location.dto";
 
 export const LocationDetail = () => {
   const media: MediaItem[] = [
@@ -116,14 +52,21 @@ export const LocationDetail = () => {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
 
-  const {
-    data: locationDetail,
-    refetch,
-    isLoading,
-  } = useQuery({
+  const { data: locationDetail, isLoading } = useQuery({
     queryKey: [LocationEndpoint.GET_LOCATION_BY_CODE, locationCode],
     queryFn: () => getLocationByCode(locationCode),
     enabled: !!locationCode,
+  });
+
+  const [filter, setFilter] = useState<LocationParamDto>({
+    locationCode: locationCode,
+    page: 1,
+    limit: 10,
+  });
+
+  const { data: commentData } = useQuery({
+    queryKey: [LocationEndpoint.GET_LOCATION_COMMENT, filter],
+    queryFn: () => getComment(filter),
   });
 
   useEffect(() => {
@@ -173,6 +116,7 @@ export const LocationDetail = () => {
     contactMutation.mutate({ toUserCd, type, locationCd });
   };
 
+  console.log("comment", commentData);
   return (
     <div className="location__detail">
       <Row gutter={[16, 16]} className="location__detail-row-1">
@@ -288,7 +232,10 @@ export const LocationDetail = () => {
                 <p className="row-3-title">Bình luận</p>
                 <LocationComment
                   locationCode={locationDetail?.locationCode}
-                  data={fakeComments}
+                  data={commentData}
+                  onShowMore={(nextPage) =>
+                    setFilter((prev) => ({ ...prev, page: nextPage }))
+                  }
                 />
               </div>
             </Col>

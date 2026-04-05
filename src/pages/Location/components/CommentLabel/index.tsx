@@ -4,6 +4,7 @@ import "../style.scss";
 
 interface CommentLabelProps {
   data: any;
+  onReply?: () => void;
 }
 
 export const CommentLabel = (props: CommentLabelProps) => {
@@ -23,7 +24,9 @@ export const CommentLabel = (props: CommentLabelProps) => {
         </p>
         <p className="comment-content">{props?.data?.content}</p>
         <p className="comment-type">
-          <span className="comment-type-label">{props?.data?.type}</span>
+          <span className="comment-type-label" onClick={() => props?.onReply()}>
+            Trả lời
+          </span>
           <span>-</span>
           <span className="comment-type-time">
             {formatLastMessageAt(props?.data?.createdAt)}
