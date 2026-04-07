@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getUserPRofile } from "../../../../api/configs/user.config";
 import { UserEndpoint } from "../../../../api/endpoints/user.endpoint";
@@ -11,15 +11,25 @@ import "../style.scss";
 import type { ChatAndCommentDto } from "../../../../api/dtos/common.dto";
 import type { LocationCommentPayloadDto } from "../../../../api/dtos/location.dto";
 import reply from "../../../../assets/svg/location/reply.svg";
+import { createNewComment } from "../../../../api/configs/location.config";
+import {
+  DEFAULT_MESSAGE,
+  NOTI_ERROR,
+  NOTI_SUCCESS,
+} from "../../../../common/constants/constants";
+import { isAxiosError } from "axios";
+import { useNotification } from "../../../../providers/notificationProvider";
 
 interface LocationCommentProps {
   locationCode: string;
   data: any;
+  onRefetch?: () => void;
   onShowMore?: (value: number) => void;
 }
 
 export const LocationComment = (props: LocationCommentProps) => {
   const { setLoading } = useLoading();
+  const { showNotification } = useNotification();
   const [showReply, setShowReply] = useState<number>();
   const [commentId, setCommentId] = useState<number>();
 
@@ -33,6 +43,33 @@ export const LocationComment = (props: LocationCommentProps) => {
     props.onShowMore?.(nextPage);
   };
 
+  const createNewCommentMutate = useMutation({
+    mutationFn: (payload: LocationCommentPayloadDto) =>
+      createNewComment(payload),
+    onSuccess: (data) => {
+      props.onRefetch();
+      showNotification(data.message, NOTI_SUCCESS);
+    },
+    onError: (error) => {
+      let message = DEFAULT_MESSAGE;
+      if (isAxiosError(error)) {
+        const apiMessage = error.response?.data?.message;
+        if (typeof apiMessage === "string") {
+          message = apiMessage;
+        } else if (Array.isArray(apiMessage) && apiMessage[0]) {
+          message = apiMessage[0];
+        }
+      }
+      showNotification(message, NOTI_ERROR);
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+
   useEffect(() => {
     setLoading(locationLoading);
   }, [locationLoading]);
@@ -43,11 +80,8 @@ export const LocationComment = (props: LocationCommentProps) => {
       commentId: commentId,
       content: value,
     };
-
-    console.log("comment", payload);
+    createNewCommentMutate.mutate(payload);
   };
-
-  console.log("props.data.data", props?.data?.data);
 
   return (
     <div className="location__comment">

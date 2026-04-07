@@ -64,7 +64,7 @@ export const LocationDetail = () => {
     limit: 10,
   });
 
-  const { data: commentData } = useQuery({
+  const { data: commentData, refetch } = useQuery({
     queryKey: [LocationEndpoint.GET_LOCATION_COMMENT, filter],
     queryFn: () => getComment(filter),
   });
@@ -233,6 +233,7 @@ export const LocationDetail = () => {
                 <LocationComment
                   locationCode={locationDetail?.locationCode}
                   data={commentData}
+                  onRefetch={() => refetch()}
                   onShowMore={(nextPage) =>
                     setFilter((prev) => ({ ...prev, page: nextPage }))
                   }

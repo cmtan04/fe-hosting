@@ -20,7 +20,9 @@ export const CommentLabel = (props: CommentLabelProps) => {
       <div className="comment-right">
         <p className="comment-user-name">{props?.data?.user?.name}</p>
         <p className="comment-rate">
-          <Rate disabled defaultValue={props?.data?.rating} />
+          {props?.data?.rate && (
+            <Rate disabled defaultValue={props?.data?.rate} />
+          )}
         </p>
         <p className="comment-content">{props?.data?.content}</p>
         <p className="comment-type">
