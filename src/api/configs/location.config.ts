@@ -59,9 +59,7 @@ export const createNewComment = async (
   return response.data;
 };
 
-export const getComment = async (
-  payload: LocationParamDto,
-): Promise<LocationResponseDto> => {
+export const getComment = async (payload: LocationParamDto): Promise<any> => {
   const response = await axiosClient.get(
     LocationEndpoint.GET_LOCATION_COMMENT,
     {

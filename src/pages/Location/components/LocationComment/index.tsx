@@ -105,12 +105,14 @@ export const LocationComment = (props: LocationCommentProps) => {
                 <div className="comment-reply">
                   {showReply === comment.id ? (
                     <div className={showReply === comment.id ? "show" : "hide"}>
-                      {comment.replies?.map((reply: any) => (
-                        <CommentLabel
-                          data={reply}
-                          onReply={() => setCommentId(comment.id)}
-                        />
-                      ))}
+                      {comment.replies?.map((reply: any) => {
+                        return (
+                          <CommentLabel
+                            data={reply}
+                            onReply={() => setCommentId(comment.id)}
+                          />
+                        );
+                      })}
 
                       <p
                         className="comment-reply-action"

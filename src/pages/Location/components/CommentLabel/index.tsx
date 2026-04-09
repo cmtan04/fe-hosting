@@ -1,6 +1,7 @@
 import { Rate } from "antd";
 import { formatLastMessageAt } from "../../../../common/contexts/format";
 import "../style.scss";
+import type { MetaDataDto } from "../../../../api/dtos/common.dto";
 
 interface CommentLabelProps {
   data: any;
@@ -8,6 +9,8 @@ interface CommentLabelProps {
 }
 
 export const CommentLabel = (props: CommentLabelProps) => {
+  const metaData = JSON.parse(props?.data?.metaData || "[]") as MetaDataDto[];
+
   return (
     <div className="comment">
       <div className="comment-left">
@@ -25,6 +28,19 @@ export const CommentLabel = (props: CommentLabelProps) => {
           )}
         </p>
         <p className="comment-content">{props?.data?.content}</p>
+        {metaData.length > 0 && (
+          <figure className="image_container">
+            {metaData.map((item, index) => (
+              <div key={index} className="image_container-item">
+                <img
+                  src={item.url}
+                  alt={`image-${index}`}
+                  className="image_container-item"
+                />
+              </div>
+            ))}
+          </figure>
+        )}
         <p className="comment-type">
           <span className="comment-type-label" onClick={() => props?.onReply()}>
             Trả lời

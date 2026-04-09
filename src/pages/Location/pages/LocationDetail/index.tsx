@@ -116,7 +116,6 @@ export const LocationDetail = () => {
     contactMutation.mutate({ toUserCd, type, locationCd });
   };
 
-  console.log("comment", commentData);
   return (
     <div className="location__detail">
       <Row gutter={[16, 16]} className="location__detail-row-1">
