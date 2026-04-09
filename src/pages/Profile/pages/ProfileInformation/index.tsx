@@ -182,17 +182,18 @@ export const ProfileInformation = () => {
 
   return (
     <div className="profile__information">
+      <h1 className="title">Thông tin cá nhân</h1>
       <Col className="profile__information-header">
         <img
           className="image-background"
           crossOrigin="anonymous"
-          src={user?.avatarUrl}
+          src={user?.coverUrl}
           alt=""
         />
 
         <div className="blur-blender"></div>
         <Col className="profile__information-header-content">
-          <h1 className="title">Thông tin cá nhân</h1>
+          
           <div className="content">
             <div className="content__avatar">
               <figure style={{ margin: 0 }}>

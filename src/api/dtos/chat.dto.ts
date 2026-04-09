@@ -65,12 +65,19 @@ export interface MessageResponseDto {
   content?: string | null;
   status?: string;
   replyToMessageId?: number | null;
+  attachments?: MessageAttachmentResponseDto[];
   metadata?: Record<string, unknown> | null;
   editedAt?: string | null;
   deletedAt?: string | null;
   deletedByUserId?: number | null;
   createdAt: string;
   updatedAt?: string;
+}
+
+export interface MessageAttachmentResponseDto extends SendMessageAttachmentDto {
+  id?: number;
+  messageId?: number;
+  createdAt?: string;
 }
 
 export interface SendMessageAttachmentDto {
@@ -113,5 +120,4 @@ export interface MuteConversationPayloadDto {
   preset: MuteConversationPreset;
 }
 
-export interface ConversationParticipantSettingsResponseDto
-  extends ParticipantDto {}
+export interface ConversationParticipantSettingsResponseDto extends ParticipantDto {}
