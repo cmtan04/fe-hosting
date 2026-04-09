@@ -21,6 +21,8 @@ export const CommentInput = (props: CommentInputProps) => {
     };
 
     props?.onSubmit(payload);
+
+    setRate(0);
   };
   return (
     <div className="comment__input">

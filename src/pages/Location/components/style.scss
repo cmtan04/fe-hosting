@@ -368,6 +368,7 @@
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
+      position: relative;
       align-items: center;
       gap: 8px;
 
@@ -385,6 +386,12 @@
       img {
         width: 12px;
         height: 12px;
+      }
+
+      .remove {
+        position: absolute;
+        right: 12px;
+        cursor: pointer;
       }
     }
 

@@ -19,7 +19,7 @@ import {
 } from "../../../../common/constants/constants";
 import { isAxiosError } from "axios";
 import { useNotification } from "../../../../providers/notificationProvider";
-
+import remove from "../../../../assets/svg/remove.svg";
 interface LocationCommentProps {
   locationCode: string;
   data: any;
@@ -48,6 +48,7 @@ export const LocationComment = (props: LocationCommentProps) => {
       createNewComment(payload),
     onSuccess: (data) => {
       props.onRefetch();
+      setCommentId(null);
       showNotification(data.message, NOTI_SUCCESS);
     },
     onError: (error) => {
@@ -159,6 +160,11 @@ export const LocationComment = (props: LocationCommentProps) => {
                 }
               </span>
             </p>
+            <img
+              className="remove"
+              src={remove}
+              onClick={() => setCommentId(null)}
+            />
           </div>
         )}
         <CommentInput
