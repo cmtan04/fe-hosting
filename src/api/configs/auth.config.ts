@@ -7,6 +7,7 @@ import type {
   SendOtpPayloadDto,
   SendOtpResponseDto,
   SignInPayloadDto,
+  SignInResponseDto,
   SignUpPayloadDto,
   SignUpResponseDto,
   VerifyEmailPayloadDto,
@@ -23,7 +24,7 @@ export const signUp = async (
 
 export const signIn = async (
   payload: SignInPayloadDto,
-): Promise<SignUpResponseDto> => {
+): Promise<SignInResponseDto> => {
   const response = await axiosClient.post(AuthEndPoints.SIGN_IN, payload);
   return response.data;
 };

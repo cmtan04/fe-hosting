@@ -32,9 +32,9 @@ axiosClient.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       console.error("Unauthorized access. Redirecting to login.");
-      window.location.href = ROUTER_PATH.SIGN_IN;
+      globalThis.location.href = ROUTER_PATH.SIGN_IN;
     }
-    return Promise.reject(error);
+    throw error;
   },
 );
 

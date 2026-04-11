@@ -117,13 +117,10 @@ export const VerifyEmail = () => {
       <div className="verify_email">
         <div className="verify_email-wrapper">
           <div className="verify_email-section-1">
-            <img
-              src={back}
-              alt=""
-              onClick={() => {
-                navigate(-1);
-              }}
-            />
+            <button onClick={() => navigate(-1)} style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}>
+              <img src={back} alt="" />
+            </button>
+
             <p className="title">Xác nhận Email</p>
           </div>
           <div className="verify_email-section-2">

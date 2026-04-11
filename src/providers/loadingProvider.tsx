@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useMemo } from 'react';
 
 const LoadingContext = createContext<{
     isLoading: boolean;
@@ -26,8 +26,10 @@ export const LoadingProvider = ({
         }
     };
 
+    const contextValue = useMemo(() => ({ isLoading, setLoading }), [isLoading, setLoading]);
+
     return (
-        <LoadingContext.Provider value={{ isLoading, setLoading }}>
+        <LoadingContext.Provider value={contextValue}>
             {children}
 
             {shouldRender && (

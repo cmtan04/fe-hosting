@@ -10,6 +10,7 @@ import {
   USER_ROLE,
 } from "../../common/constants/constants";
 import type { ProfileItem } from "../../common/types/profile";
+import { useAuth } from "../../common/contexts/authContext";
 import { useNotification } from "../../providers/notificationProvider";
 import { ROUTER_PATH } from "../../router/Route";
 import "./topbar.scss";
@@ -17,13 +18,12 @@ import "./topbar.scss";
 export const TopBar = () => {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
-  const userRole = localStorage.getItem("userRole");
+  const { userRole, signOut } = useAuth();
   const [showProfile, setShowProfile] = useState<boolean>();
 
   const handleProfileClick = (data: ProfileItem) => {
     if (data.key === TYPE_LOG_OUT) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("userRole");
+      signOut();
       showNotification("Đăng xuất thành công!", NOTI_SUCCESS);
       navigate(ROUTER_PATH.SIGN_IN);
     } else {
@@ -58,7 +58,8 @@ export const TopBar = () => {
             )}
           </span>
         </div>
-        <div
+        <button
+          type="button"
           className="top__bar-account"
           onClick={() => {
             setShowProfile(!showProfile);
@@ -66,12 +67,13 @@ export const TopBar = () => {
         >
           <img src={background} alt="" className="avartar" />
           <img src={menu} alt="" className="menu" />
-        </div>
+        </button>
 
         {showProfile && (
           <div className="profile__dropdown">
             {profileItems.map((item: ProfileItem) => (
               <Row
+                key={item.key}
                 gutter={[16, 16]}
                 className="profile__dropdown-item"
                 onClick={() => handleProfileClick(item)}

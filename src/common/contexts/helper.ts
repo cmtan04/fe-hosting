@@ -4,7 +4,7 @@ export const childrenPath = (path: string, param?: string) =>
 export const validString = (value: string) => {
   if (!value) {
     return false;
-  } else if (!value.trim()) {
+  } else if (value.trim() === "") {
     return false;
   } else {
     return true;

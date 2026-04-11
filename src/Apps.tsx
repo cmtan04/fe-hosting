@@ -4,6 +4,7 @@ import RouterWeb from "./router/Routers";
 import { LoadingProvider } from "./providers/loadingProvider";
 import { NotificationProvider } from "./providers/notificationProvider";
 import { SocketProvider } from "./providers/SocketProvider";
+import { AuthProvider } from "./common/contexts/authContext";
 
 const App = () => {
   const queryClient = new QueryClient({
@@ -22,15 +23,17 @@ const App = () => {
           },
         }}
       >
-        <LoadingProvider>
-          <SocketProvider>
-            <NotificationProvider>
-              <AntdApp>
-                <RouterWeb />
-              </AntdApp>
-            </NotificationProvider>
-          </SocketProvider>
-        </LoadingProvider>
+        <AuthProvider>
+          <LoadingProvider>
+            <SocketProvider>
+              <NotificationProvider>
+                <AntdApp>
+                  <RouterWeb />
+                </AntdApp>
+              </NotificationProvider>
+            </SocketProvider>
+          </LoadingProvider>
+        </AuthProvider>
       </ConfigProvider>
     </QueryClientProvider>
   );

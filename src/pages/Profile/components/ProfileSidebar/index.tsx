@@ -11,17 +11,18 @@ import {
 import { ROUTER_PATH } from "../../../../router/Route";
 import "./style.scss";
 import { useState } from "react";
+import { useAuth } from "../../../../common/contexts/authContext";
 
 export const ProfileSideBar = () => {
   const [tabActive, setTabActive] = useState<number>();
   const [colaspe, setColaspe] = useState<boolean>();
   const navigate = useNavigate();
   const { showNotification } = useNotification();
+  const { signOut } = useAuth();
 
   const handleProfileClick = (data: ProfileItem) => {
     if (data.key === TYPE_LOG_OUT) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("userRole");
+      signOut();
       showNotification("Đăng xuất thành công!", NOTI_SUCCESS);
       navigate(ROUTER_PATH.SIGN_IN);
     } else {
@@ -32,11 +33,18 @@ export const ProfileSideBar = () => {
   return (
     <div className={`profile__sideBar ${colaspe ? "colaspe" : ""}`}>
       <div className="profile__sideBar-header">
-        <img src={barLeft} alt="Close" onClick={() => setColaspe(!colaspe)} />
+        <button
+          type="button"
+          className="profile__sideBar-close"
+          onClick={() => setColaspe(!colaspe)}
+        >
+          <img src={barLeft} alt="Close" />
+        </button>
       </div>
       <div className="profile__sideBar-body">
         {profileItems.map((item: ProfileItem) => (
           <Row
+            key={item.key}
             gutter={[16, 16]}
             className={`profile__sideBar-body-item ${tabActive === item.key && "active"}`}
             onClick={() => handleProfileClick(item)}

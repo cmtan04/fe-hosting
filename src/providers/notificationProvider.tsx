@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
 import clear from "../../src/assets/svg/icn-clear.svg";
 import "../index.scss";
 interface Notification {
@@ -46,11 +46,14 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   const hideNotification = useCallback((id: string) => {
     setNotifications((prev) => prev.filter((notif) => notif.id !== id));
   }, []);
+  const contextValue = useMemo(() => ({ showNotification, hideNotification }), [
+    showNotification,
+    hideNotification,
+  ]);
 
   return (
-    <NotificationContext.Provider
-      value={{ showNotification, hideNotification }}
-    >
+    <NotificationContext.Provider value={contextValue}>
+
       {children}
       <div className="notification-container">
         {notifications.map((notification) => (
@@ -59,13 +62,17 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
             className={`${notification.type} notification`}
           >
             <p className="flex-1 text-sm font-medium">{notification.message}</p>
-            <img
-              crossOrigin="anonymous"
-              src={clear}
+            <button
               onClick={() => hideNotification(notification.id)}
-              alt=""
               className="notification-close"
-            />
+              aria-label="Close notification"
+            >
+              <img
+                crossOrigin="anonymous"
+                src={clear}
+                alt=""
+              />
+            </button>
           </div>
         ))}
       </div>

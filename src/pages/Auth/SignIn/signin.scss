@@ -58,10 +58,6 @@
               width: 100%;
             }
           }
-
-          // input {
-          //   width: 450px;
-          // }
         }
 
         &-3 {
@@ -94,9 +90,13 @@
             color: $primary-color;
             font-family: $font_family_1;
 
-            span {
+            .sign-up-link {
+              background: transparent;
+              border: none;
+              padding: 0;
               font-weight: 700;
               cursor: pointer;
+              color: inherit;
 
               &:hover {
                 text-decoration: underline;

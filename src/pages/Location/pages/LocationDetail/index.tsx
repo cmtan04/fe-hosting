@@ -24,6 +24,7 @@ import { useLoading } from "../../../../providers/loadingProvider";
 import { useNotification } from "../../../../providers/notificationProvider";
 import { ROUTER_PATH } from "../../../../router/Route";
 import { ServiceTag } from "../../../Renter/components/ServiceTag/intex";
+import { useRequireLoginAction } from "../../../../common/hooks/useRequireLoginAction";
 export const LocationDetail = () => {
   const media: MediaItem[] = [
     {
@@ -45,6 +46,7 @@ export const LocationDetail = () => {
   const { setLoading } = useLoading();
   const navigate = useNavigate();
   const { showNotification } = useNotification();
+  const { requireLoginAction } = useRequireLoginAction();
 
   const {
     data: locationDetail,
@@ -116,15 +118,22 @@ export const LocationDetail = () => {
     type: string,
     locationCd?: string,
   ) => {
-    console.log("[LocationDetail] handleContactOwner", {
-      toUserCd,
-      type,
-      locationCd,
-      locationCode,
-      ownerCode: locationDetail?.ownerCode,
-      ownerName: locationDetail?.ownerName,
-    });
-    contactMutation.mutate({ toUserCd, type, locationCd });
+    requireLoginAction(
+      () => {
+        console.log("[LocationDetail] handleContactOwner", {
+          toUserCd,
+          type,
+          locationCd,
+          locationCode,
+          ownerCode: locationDetail?.ownerCode,
+          ownerName: locationDetail?.ownerName,
+        });
+        contactMutation.mutate({ toUserCd, type, locationCd });
+      },
+      {
+        message: "Bạn cần đăng nhập để liên hệ chủ địa điểm.",
+      },
+    );
   };
 
   console.log("locationDetail", locationDetail);

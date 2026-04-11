@@ -8,29 +8,33 @@ import "./signin.scss";
 import { EMAIL_REGEX, PASSWORD_REGEX } from "../../../common/constants/regexs";
 import { useLoading } from "../../../providers/loadingProvider";
 import { useNotification } from "../../../providers/notificationProvider";
-import { useMutation } from "@tanstack/react-query";
 import type { SignInPayloadDto } from "../../../api/dtos/auth.dto";
-import { signIn } from "../../../api/configs/auth.config";
 import {
   DEFAULT_MESSAGE,
   NOTI_ERROR,
   NOTI_SUCCESS,
 } from "../../../common/constants/constants";
 import { isAxiosError } from "axios";
+import { useAuth } from "../../../common/contexts/authContext";
 export const SignIn = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { setLoading } = useLoading();
   const { showNotification } = useNotification();
+  const { signIn } = useAuth();
 
-  const signInMutation = useMutation({
-    mutationFn: (payload: SignInPayloadDto) => signIn(payload),
-    onSuccess: (data) => {
-      showNotification(data.message, NOTI_SUCCESS);
+  const onSubmit = async () => {
+    const payload: SignInPayloadDto = {
+      email: form.getFieldValue("email"),
+      password: form.getFieldValue("password"),
+    };
+
+    setLoading(true);
+    try {
+      const data = await signIn(payload);
+      showNotification(data.message ?? "Đăng nhập thành công!", NOTI_SUCCESS);
       navigate(ROUTER_PATH.HOME);
-      localStorage.setItem("token", data.access_token);
-    },
-    onError: (error) => {
+    } catch (error) {
       let message = DEFAULT_MESSAGE;
       if (isAxiosError(error)) {
         const apiMessage = error.response?.data?.message;
@@ -41,23 +45,11 @@ export const SignIn = () => {
         }
       }
       showNotification(message, NOTI_ERROR);
-    },
-    onMutate: () => {
-      setLoading(true);
-    },
-    onSettled: () => {
+    } finally {
       setLoading(false);
-    },
-  });
-
-  const onSubmit = () => {
-    const payload: SignInPayloadDto = {
-      email: form.getFieldValue("email"),
-      password: form.getFieldValue("password"),
-    };
-
-    signInMutation.mutate(payload);
+    }
   };
+
   return (
     <div className="auth">
       <div className="auth__banner">
@@ -111,12 +103,13 @@ export const SignIn = () => {
           <div className="form-row-4">
             <p className="description">
               Bạn chưa có tài khoản?{" "}
-              <span
+              <button
+                type="button"
                 className="sign-up-link"
                 onClick={() => navigate(ROUTER_PATH.SIGN_UP)}
               >
                 Đăng ký ngay
-              </span>
+              </button>
             </p>
           </div>
         </Form>

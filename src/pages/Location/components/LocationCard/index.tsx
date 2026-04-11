@@ -4,6 +4,7 @@ import favouriteblack from "../../../../assets/svg/location/favourite-black.svg"
 import favouritered from "../../../../assets/svg/location/favourite-red.svg";
 import { Col, Rate, Row, Tooltip } from "antd";
 import { useState } from "react";
+import { useRequireLoginAction } from "../../../../common/hooks/useRequireLoginAction";
 
 interface LocationCardProps {
   code: string;
@@ -21,11 +22,19 @@ interface LocationCardProps {
 
 export const LocationCard = (props: LocationCardProps) => {
   const [isFavourite, setIsFavourite] = useState(props.isFavourite);
+  const { requireLoginAction } = useRequireLoginAction();
 
   const handleFavourite = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    setIsFavourite((prev) => !prev);
-    props.onFavouriteToggle?.(props.code);
+    requireLoginAction(
+      () => {
+        setIsFavourite((prev) => !prev);
+        props.onFavouriteToggle?.(props.code);
+      },
+      {
+        message: "Bạn cần đăng nhập để thêm địa điểm vào danh sách yêu thích.",
+      },
+    );
   };
 
   const handleShare = (e: React.MouseEvent<HTMLButtonElement>) => {

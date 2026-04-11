@@ -88,9 +88,13 @@
             flex-direction: row;
             gap: 4px;
 
-            span {
+            .sign-up-link {
+              background: transparent;
+              border: none;
+              padding: 0;
               font-weight: 700;
               cursor: pointer;
+              color: inherit;
               &:hover {
                 text-decoration: underline;
               }

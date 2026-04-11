@@ -8,36 +8,42 @@ import { ROUTER_PATH } from "../../../router/Route";
 import { useNavigate } from "react-router";
 import { EMAIL_REGEX, PASSWORD_REGEX } from "../../../common/constants/regexs";
 import {
-  AUTH_FLOWTYPE,
   DEFAULT_MESSAGE,
   NOTI_ERROR,
   NOTI_SUCCESS,
 } from "../../../common/constants/constants";
-import { useMutation } from "@tanstack/react-query";
 import type { SignUpPayloadDto } from "../../../api/dtos/auth.dto";
-import { signUp } from "../../../api/configs/auth.config";
 import { useLoading } from "../../../providers/loadingProvider";
 import { isAxiosError } from "axios";
 import { useNotification } from "../../../providers/notificationProvider";
+import { useAuth } from "../../../common/contexts/authContext";
 
 export const SignUp = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { setLoading } = useLoading();
   const { showNotification } = useNotification();
+  const { signUp } = useAuth();
 
-  const signUpMutation = useMutation({
-    mutationFn: (payload: SignUpPayloadDto) => signUp(payload),
-    onSuccess: (data) => {
+  const onSubmit = async () => {
+    const payload: SignUpPayloadDto = {
+      userName: form.getFieldValue("name"),
+      email: form.getFieldValue("account"),
+      password: form.getFieldValue("password"),
+    };
+
+    setLoading(true);
+    try {
+      const data = await signUp(payload);
       showNotification(data.message, NOTI_SUCCESS);
-      navigate(ROUTER_PATH.VERIFY_EMAIL, {
-        state: {
-          email: form.getFieldValue("account"),
-          type: AUTH_FLOWTYPE.SIGN_UP,
-        },
-      });
-    },
-    onError: (error) => {
+      // Keep current flow until backend supports auto-send OTP after sign up.
+      // navigate(ROUTER_PATH.VERIFY_EMAIL, {
+      //   state: {
+      //     email: form.getFieldValue("account"),
+      //     type: 3,
+      //   },
+      // });
+    } catch (error) {
       let message = DEFAULT_MESSAGE;
       if (isAxiosError(error)) {
         const apiMessage = error.response?.data?.message;
@@ -48,22 +54,9 @@ export const SignUp = () => {
         }
       }
       showNotification(message, NOTI_ERROR);
-    },
-    onMutate: () => {
-      setLoading(true);
-    },
-    onSettled: () => {
+    } finally {
       setLoading(false);
-    },
-  });
-
-  const onSubmit = () => {
-    const payload: SignUpPayloadDto = {
-      userName: form.getFieldValue("name"),
-      email: form.getFieldValue("account"),
-      password: form.getFieldValue("password"),
-    };
-    signUpMutation.mutate(payload);
+    }
   };
 
   return (
@@ -122,13 +115,14 @@ export const SignUp = () => {
           </div>
           <div className="form-row-4">
             <p className="description">
-              Bạn đã có tài khoản?
-              <span
+              Bạn đã có tài khoản?{" "}
+              <button
+                type="button"
                 className="sign-up-link"
                 onClick={() => navigate(ROUTER_PATH.SIGN_IN)}
               >
                 Đăng nhập
-              </span>
+              </button>
             </p>
           </div>
         </Form>

@@ -16,6 +16,7 @@ export interface SignInPayloadDto {
 
 export interface SignInResponseDto {
   access_token: string;
+  message?: string;
 }
 
 export interface ForgotPasswordPayloadDto {

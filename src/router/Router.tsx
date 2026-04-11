@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { ForgotPassword } from "../pages/Auth/ForgotPassword/ForgotPassword";
 import { ResetPassword } from "../pages/Auth/ResetPassword/ResetPassword";
 import { SignIn } from "../pages/Auth/SignIn/SignIn";
@@ -19,6 +19,7 @@ import { LocationDetail } from "../pages/Location/pages/LocationDetail";
 
 export const WebRouter = () => (
   <Routes>
+    <Route path="/" element={<Navigate to={ROUTER_PATH.HOME} replace />} />
     {/* Auth */}
     <Route path={ROUTER_PATH.SIGN_IN} element={<SignIn />}></Route>
     <Route path={ROUTER_PATH.SIGN_UP} element={<SignUp />}></Route>
@@ -33,18 +34,19 @@ export const WebRouter = () => (
     ></Route>
     {/* Auth */}
 
+    {/* Home */}
+    <Route path={ROUTER_PATH.HOME} element={<Home />}>
+      <Route path={ROUTER_PATH.HOME} element={<HomePage />}></Route>
+      <Route path={ROUTER_PATH.LOCATIONS} element={<LocationList />}></Route>
+      <Route
+        path={ROUTER_PATH.LOCATION_DETAIL}
+        element={<LocationDetail />}
+      ></Route>
+    </Route>
+    {/* Home */}
+
     {/* Protected Router */}
     <Route element={<ProtectedRoute />}>
-      {/* Home */}
-      <Route path={ROUTER_PATH.HOME} element={<Home />}>
-        <Route path={ROUTER_PATH.HOME} element={<HomePage />}></Route>
-        <Route path={ROUTER_PATH.LOCATIONS} element={<LocationList />}></Route>
-        <Route
-          path={ROUTER_PATH.LOCATION_DETAIL}
-          element={<LocationDetail />}
-        ></Route>
-      </Route>
-      {/* Home */}
       {/* PROFILE */}
       <Route path={ROUTER_PATH.PROFILE} element={<Profile />}>
         <Route
