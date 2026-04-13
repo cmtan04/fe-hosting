@@ -69,7 +69,6 @@ export const LocationDetail = () => {
     limit: 10,
   });
 
-  // ✅ Fix: Sync filter khi locationCode thay đổi (khi navigate sang location mới)
   useEffect(() => {
     if (locationCode) {
       setFilter({
@@ -106,7 +105,7 @@ export const LocationDetail = () => {
 
   useEffect(() => {
     setLoading(locationLoading);
-  }, [locationLoading]); // ✅ Fix: đổi dependency từ isLoading → locationLoading
+  }, [locationLoading]);
 
   const contactMutation = useMutation({
     mutationFn: ({
@@ -151,8 +150,6 @@ export const LocationDetail = () => {
     contactMutation.mutate({ toUserCd, type, locationCd });
   };
 
-  // ✅ Fix: Bỏ các refetch thủ công, chỉ navigate
-  // useEffect sync filter sẽ tự trigger lại query comment & detail
   const handleCardClick = (code: string) => {
     const url = ROUTER_PATH.LOCATION_DETAIL.replace(":code", code);
     navigate(url, { state: { code } });
