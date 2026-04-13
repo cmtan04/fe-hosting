@@ -7,7 +7,12 @@ import { createConversation } from "../../../../api/configs/chat.config";
 import {
   getComment,
   getLocationByCode,
+  getLocationByFilter,
 } from "../../../../api/configs/location.config";
+import type {
+  LocationDto,
+  LocationParamDto,
+} from "../../../../api/dtos/location.dto";
 import { LocationEndpoint } from "../../../../api/endpoints/location.endpoint";
 import address from "../../../../assets/images/address.svg";
 import mail from "../../../../assets/images/mail.svg";
@@ -22,13 +27,14 @@ import {
   NOTI_ERROR,
 } from "../../../../common/constants/constants";
 import { formatMoney } from "../../../../common/contexts/format";
+import type { ProfileLocationFilter } from "../../../../common/types/profile";
 import { MediaGallery } from "../../../../components/MediaComponent";
 import { useLoading } from "../../../../providers/loadingProvider";
 import { useNotification } from "../../../../providers/notificationProvider";
 import { ROUTER_PATH } from "../../../../router/Route";
 import { ServiceTag } from "../../../Renter/components/ServiceTag/intex";
+import { LocationCard } from "../../components/LocationCard";
 import { LocationComment } from "../../components/LocationComment";
-import type { LocationParamDto } from "../../../../api/dtos/location.dto";
 
 export const LocationDetail = () => {
   const media: MediaItem[] = [
@@ -52,10 +58,9 @@ export const LocationDetail = () => {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
 
-  const { data: locationDetail, isLoading } = useQuery({
-    queryKey: [LocationEndpoint.GET_LOCATION_BY_CODE, locationCode],
-    queryFn: () => getLocationByCode(locationCode),
-    enabled: !!locationCode,
+  const [otherFilter, setOtherFilter] = useState<ProfileLocationFilter>({
+    page: 1,
+    limit: 20,
   });
 
   const [filter, setFilter] = useState<LocationParamDto>({
@@ -64,14 +69,44 @@ export const LocationDetail = () => {
     limit: 10,
   });
 
-  const { data: commentData, refetch } = useQuery({
+  // ✅ Fix: Sync filter khi locationCode thay đổi (khi navigate sang location mới)
+  useEffect(() => {
+    if (locationCode) {
+      setFilter({
+        locationCode: locationCode,
+        page: 1,
+        limit: 10,
+      });
+    }
+  }, [locationCode]);
+
+  const {
+    data: locationDetail,
+    isLoading,
+    refetch: refetchDetail,
+  } = useQuery({
+    queryKey: [LocationEndpoint.GET_LOCATION_BY_CODE, locationCode],
+    queryFn: () => getLocationByCode(locationCode),
+    enabled: !!locationCode,
+  });
+
+  const { data: commentData, refetch: refetchComment } = useQuery({
     queryKey: [LocationEndpoint.GET_LOCATION_COMMENT, filter],
     queryFn: () => getComment(filter),
+  });
+
+  const { data: locationData, isLoading: locationLoading } = useQuery({
+    queryKey: [LocationEndpoint.GET_LOCATION_BY_FILTER, otherFilter],
+    queryFn: () => getLocationByFilter(otherFilter),
   });
 
   useEffect(() => {
     setLoading(isLoading);
   }, [isLoading]);
+
+  useEffect(() => {
+    setLoading(locationLoading);
+  }, [locationLoading]); // ✅ Fix: đổi dependency từ isLoading → locationLoading
 
   const contactMutation = useMutation({
     mutationFn: ({
@@ -114,6 +149,13 @@ export const LocationDetail = () => {
     locationCd?: string,
   ) => {
     contactMutation.mutate({ toUserCd, type, locationCd });
+  };
+
+  // ✅ Fix: Bỏ các refetch thủ công, chỉ navigate
+  // useEffect sync filter sẽ tự trigger lại query comment & detail
+  const handleCardClick = (code: string) => {
+    const url = ROUTER_PATH.LOCATION_DETAIL.replace(":code", code);
+    navigate(url, { state: { code } });
   };
 
   return (
@@ -232,7 +274,7 @@ export const LocationDetail = () => {
                 <LocationComment
                   locationCode={locationDetail?.locationCode}
                   data={commentData}
-                  onRefetch={() => refetch()}
+                  onRefetch={() => refetchComment()}
                   onShowMore={(nextPage) =>
                     setFilter((prev) => ({ ...prev, page: nextPage }))
                   }
@@ -288,7 +330,7 @@ export const LocationDetail = () => {
                 </div>
 
                 <div className="detail-price-rent">
-                  <p className="detail-price-label">Giá thuê`</p>
+                  <p className="detail-price-label">Giá thuê</p>
                   <p className="detail-price-value">
                     <sup>đ</sup>
                     {formatMoney(
@@ -372,6 +414,28 @@ export const LocationDetail = () => {
               </Button>
             </div>
           </div>
+        </Col>
+      </Row>
+
+      <Row gutter={[16, 16]} className="location__detail-row-3">
+        <Col span={24}>
+          <h1 className="title">Các địa điểm khác</h1>
+          <Row gutter={[12, 12]} className="list">
+            {locationData?.data?.map((location: LocationDto) => (
+              <LocationCard
+                key={location.locationCode}
+                code={location.locationCode}
+                typeName={location.typeName}
+                name={location.locationName}
+                description={location.locationDescription}
+                address={location.address[0]?.fullAddress}
+                rate={location.locationRate}
+                image={location.locationLogo}
+                isFavourite={false}
+                onClick={handleCardClick}
+              />
+            ))}
+          </Row>
         </Col>
       </Row>
     </div>

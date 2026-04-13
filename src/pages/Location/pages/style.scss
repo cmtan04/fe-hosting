@@ -432,6 +432,45 @@
           }
         }
       }
+
+      &-3 {
+        padding: 12px 24px;
+        box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12);
+        margin-top: 32px;
+        border-radius: 12px;
+        &.title {
+          font-size: 22px;
+          font-weight: 500;
+          line-height: 1.4;
+          opacity: 0.8;
+          color: $primary_color;
+          font-family: $font_family_1 !important;
+        }
+
+        .list {
+          display: flex;
+          flex-wrap: nowrap;
+          gap: 32px;
+          overflow-x: auto;
+          align-items: stretch;
+          padding: 24px 0px;
+
+          &.ant-row {
+            flex-wrap: nowrap !important;
+            align-items: stretch !important;
+          }
+
+          & > * {
+            flex: 0 0 200px;
+            height: auto;
+          }
+
+          .ant-col {
+            display: flex;
+            flex-direction: column;
+          }
+        }
+      }
     }
 
     &-address {
