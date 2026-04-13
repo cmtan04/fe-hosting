@@ -1,26 +1,41 @@
-import { Button } from "antd";
+import { useMutation } from "@tanstack/react-query";
 import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
 import { useRef, useState } from "react";
+import { uploadImage } from "../../../api/configs/common.config";
+import type { ChatAndCommentDto } from "../../../api/dtos/common.dto";
 import emoji from "../../../assets/svg/emoji.svg";
 import remove from "../../../assets/svg/remove.svg";
 import send from "../../../assets/svg/send.svg";
+import { useLoading } from "../../../providers/loadingProvider";
 
 export interface ChatInputProps {
-  onSubmit?: (value: any) => void;
+  onSubmit?: (value: ChatAndCommentDto) => void;
 }
 
-export const ChatInput = () => {
+export const ChatInput = (props: ChatInputProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const { setLoading } = useLoading();
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const cursorPositionRef = useRef<number>(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const emojiPickerRef = useRef<HTMLDivElement | null>(null);
 
+  const uploadMutation = useMutation({
+    mutationFn: (payload: FormData) => uploadImage(payload),
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+
   const handleUploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("click");
     const selectedFiles = e.target.files;
     if (!selectedFiles || selectedFiles.length === 0) return;
 
@@ -56,7 +71,40 @@ export const ChatInput = () => {
     }, 0);
   };
 
-  const sendMessage = () => {};
+  const onPrepareFile = (): Promise<string[]> => {
+    if (files.length === 0) return Promise.resolve([]);
+    return Promise.all(
+      Array.from(files).map((file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        return uploadMutation
+          .mutateAsync(formData)
+          .then((data) => data.imageUrl);
+      }),
+    );
+  };
+
+  const sendMessage = async () => {
+    if (!message.trim() && files.length === 0) return;
+    const uploadedUrls = await onPrepareFile();
+    const resolvedPreviews = uploadedUrls.length > 0 ? uploadedUrls : previews;
+    const payload: ChatAndCommentDto = {
+      content: message,
+      metaData: resolvedPreviews.map((url, index) => ({
+        id: index,
+        url,
+      })),
+    };
+
+    props?.onSubmit?.(payload);
+
+    setMessage("");
+    setFiles([]);
+    setPreviews((prev) => {
+      prev.forEach((url) => URL.revokeObjectURL(url));
+      return [];
+    });
+  };
   return (
     <div className="chat__input">
       <div className="chat__input-col-1">
@@ -81,12 +129,11 @@ export const ChatInput = () => {
                   alt={`preview-${index}`}
                   className="image_container-item"
                 />
-                <button
+                <img
                   className="image_container-action"
+                  src={remove}
                   onClick={() => removeImage(index)}
-                >
-                  <img src={remove} />
-                </button>
+                />
               </div>
             ))}
           </figure>
