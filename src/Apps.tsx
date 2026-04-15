@@ -5,6 +5,7 @@ import { LoadingProvider } from "./providers/loadingProvider";
 import { NotificationProvider } from "./providers/notificationProvider";
 import { SocketProvider } from "./providers/SocketProvider";
 import { AuthProvider } from "./common/contexts/authContext";
+import { LoginRequiredModalProvider } from "./providers/loginRequiredModalProvider";
 
 const App = () => {
   const queryClient = new QueryClient({
@@ -28,7 +29,9 @@ const App = () => {
             <SocketProvider>
               <NotificationProvider>
                 <AntdApp>
-                  <RouterWeb />
+                  <LoginRequiredModalProvider>
+                    <RouterWeb />
+                  </LoginRequiredModalProvider>
                 </AntdApp>
               </NotificationProvider>
             </SocketProvider>

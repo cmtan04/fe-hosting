@@ -156,42 +156,121 @@
 
   &__information {
     &-header {
-      overflow: hidden;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow: visible;
+      border-radius: 25px;
+      border: 1px solid #dfe8ec;
+      background-color: #ffffff;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+
+      & .profile__information-cover {
+        width: 100%;
+        height: 286px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 25px 25px 0 0;
+      }
+
+      & .profile__information-avatar-bridge {
+        position: relative;
+        width: fit-content;
+        display: flex;
+        justify-content: flex-start;
+        padding-left: 0;
+        margin-left: 36px;
+        margin-top: -106px;
+        margin-bottom: -106px;
+        z-index: 1;
+
+        .content__avatar {
+          min-width: 220px;
+          min-height: auto;
+          position: relative;
+
+          &-url {
+            width: 212px;
+            height: 212px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid #ffffff;
+            background-color: #eef3f6;
+            box-shadow: 0 14px 26px rgba(0, 0, 0, 0.16);
+          }
+
+          &-upload {
+            display: flex;
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            width: 44px;
+            height: 44px;
+            z-index: 10;
+            cursor: pointer;
+
+            &::before {
+              width: 44px;
+              height: 44px;
+              z-index: 10;
+              content: "";
+              display: block;
+              flex-shrink: 0;
+              border-radius: 50%;
+              background: #00293a url("../../../assets/svg/profile/camera.svg")
+                no-repeat center;
+              background-size: 20px;
+              pointer-events: none;
+            }
+
+            & input {
+              position: absolute;
+              visibility: hidden;
+              z-index: -1;
+            }
+          }
+        }
+      }
+
       & .image-background {
         position: absolute;
-        top: 0;
+        inset: 0;
         width: 100%;
-        height: 250px;
-        background: rgba(0, 0, 0, 0.35);
-        box-shadow: inset 1px -1px 12px rgba(255, 255, 255, 0.24);
-        border-radius: 25px 25px 0 0;
+        height: 100%;
         object-fit: cover;
       }
 
       & .blur-blender {
         width: 100%;
-        height: 250px;
-        border-radius: 25px 25px 0 0;
+        height: 100%;
         position: absolute;
         inset: 0;
-        background: rgba(0, 0, 0, 0.35);
-        backdrop-filter: blur(30px);
-        box-shadow: inset 1px -1px 12px rgba(255, 255, 255, 0.24);
+        background: linear-gradient(
+          180deg,
+          rgba(9, 31, 42, 0.08) 0%,
+          rgba(9, 31, 42, 0.45) 100%
+        );
+        backdrop-filter: blur(2px);
+        box-shadow: inset 1px -1px 12px rgba(255, 255, 255, 0.2);
         pointer-events: none;
       }
 
       &-content {
         width: 100%;
-        height: 350px;
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-        z-index: 8;
         position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0 0 25px 25px;
+        border: none;
+        background-color: transparent;
+        box-shadow: none;
+        margin-top: 0;
+        padding: 16px 32px 24px;
 
         .title {
-          font-size: 32px;
+          font-size: 24px;
           font-weight: bold;
           color: $primary-color;
           font-family: $font_family_1 !important;
@@ -200,91 +279,99 @@
         .content {
           display: flex;
           flex-direction: row;
-          gap: 24px;
-          &__avatar {
-            min-width: 250px;
-            min-height: auto;
-            position: relative;
-
-            &-url {
-              width: 250px;
-              height: 250px;
-              object-fit: cover;
-              border-radius: 50%;
-              box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12);
-            }
-
-            &-upload {
-              display: flex;
-              position: absolute;
-              bottom: -15px;
-              right: 32%;
-              width: 44px;
-              height: 44px;
-              z-index: 10;
-              transform: translateX(-50%);
-              position: absolute;
-              cursor: pointer;
-              &::before {
-                width: 44px;
-                height: 44px;
-                z-index: 10;
-                content: "";
-                display: block;
-                flex-shrink: 0;
-                border-radius: 50%;
-                background-color: rgb(71, 71, 71) !important;
-                background: url("../../../assets/svg/profile/camera.svg")
-                  no-repeat center;
-                background-size: cover;
-                pointer-events: none;
-              }
-              & input {
-                position: absolute;
-                visibility: hidden;
-                z-index: -1;
-              }
-            }
-          }
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          gap: 0;
 
           &__info {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            &-icon {
-              width: 24px;
-              height: 24px;
-              position: relative;
+            gap: 8px;
+            min-width: 0;
+            align-items: center;
+            text-align: center;
+
+            &-head {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 16px;
             }
+
+            &-action {
+              width: 36px;
+              height: 36px;
+              border-radius: 50%;
+              border: 1px solid #e2e8ec;
+              background: #ffffff;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              flex-shrink: 0;
+
+              img {
+                width: 16px;
+                height: 16px;
+                opacity: 0.75;
+              }
+            }
+
+            &-icon {
+              width: 16px;
+              height: 16px;
+              position: relative;
+              flex-shrink: 0;
+              opacity: 0.78;
+            }
+
             &-text {
               font-size: 14px;
               font-weight: 500;
-              color: $primary-color;
+              color: #6f7e87;
               font-family: $font_family_1 !important;
               display: flex;
               align-items: center;
-              gap: 12px;
+              gap: 8px;
               margin: 0px !important;
-
-              mix-blend-mode: difference;
-              text-shadow:
-                -0.25px -0.25px 0 #fff,
-                0.25px -0.25px 0 #fff,
-                -0.25px 0.25px 0 #fff,
-                0.25px 0.25px 0 #fff;
 
               &.name {
                 font-weight: 700;
-                font-size: 24px;
+                font-size: 44px;
+                line-height: 1;
+                color: #0d1820;
+                margin-bottom: 0 !important;
+              }
+
+              &.subtitle {
+                font-size: 16px;
+                font-weight: 500;
+                color: #2d3b45;
+              }
+
+              &.meta-item {
+                font-size: 13px;
+                font-weight: 500;
+                color: #7d8b94;
+                white-space: nowrap;
               }
             }
+          }
+
+          &__meta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
           }
         }
       }
     }
 
     &-body {
-      padding-top: 50px;
+      padding-top: 24px;
 
       .time-wrapper {
         padding-bottom: 24px;

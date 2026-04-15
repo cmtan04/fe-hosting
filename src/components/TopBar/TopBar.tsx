@@ -18,8 +18,8 @@ import "./topbar.scss";
 export const TopBar = () => {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
-  const { userRole, signOut } = useAuth();
-  const [showProfile, setShowProfile] = useState<boolean>();
+  const { userRole, signOut, isAuthenticated } = useAuth();
+  const [showProfile, setShowProfile] = useState<boolean>(false);
 
   const handleProfileClick = (data: ProfileItem) => {
     if (data.key === TYPE_LOG_OUT) {
@@ -29,7 +29,7 @@ export const TopBar = () => {
     } else {
       navigate(data.href);
     }
-    setShowProfile(!showProfile);
+    setShowProfile(false);
   };
 
   return (
@@ -58,34 +58,47 @@ export const TopBar = () => {
             )}
           </span>
         </div>
-        <button
-          type="button"
-          className="top__bar-account"
-          onClick={() => {
-            setShowProfile(!showProfile);
-          }}
-        >
-          <img src={background} alt="" className="avartar" />
-          <img src={menu} alt="" className="menu" />
-        </button>
+        {isAuthenticated ? (
+          <>
+            <button
+              type="button"
+              className="top__bar-account"
+              onClick={() => {
+                setShowProfile((prev) => !prev);
+              }}
+            >
+              <img src={background} alt="" className="avartar" />
+              <img src={menu} alt="" className="menu" />
+            </button>
 
-        {showProfile && (
-          <div className="profile__dropdown">
-            {profileItems.map((item: ProfileItem) => (
-              <Row
-                key={item.key}
-                gutter={[16, 16]}
-                className="profile__dropdown-item"
-                onClick={() => handleProfileClick(item)}
-              >
-                <Col span={4}>
-                  <img src={item.icon} alt={item.label} />
-                </Col>
-                <Col span={20}>
-                  <p>{item.label}</p>
-                </Col>
-              </Row>
-            ))}
+            {showProfile && (
+              <div className="profile__dropdown">
+                {profileItems.map((item: ProfileItem) => (
+                  <Row
+                    key={item.key}
+                    gutter={[16, 16]}
+                    className="profile__dropdown-item"
+                    onClick={() => handleProfileClick(item)}
+                  >
+                    <Col span={4}>
+                      <img src={item.icon} alt={item.label} />
+                    </Col>
+                    <Col span={20}>
+                      <p>{item.label}</p>
+                    </Col>
+                  </Row>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="top__bar-guest">
+            <Link className="guest-signup" to={ROUTER_PATH.SIGN_UP}>
+              Đăng ký
+            </Link>
+            <Link className="guest-login" to={ROUTER_PATH.SIGN_IN}>
+              Đăng nhập
+            </Link>
           </div>
         )}
       </div>

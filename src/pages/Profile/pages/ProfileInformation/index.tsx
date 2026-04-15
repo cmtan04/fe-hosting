@@ -8,7 +8,10 @@ import {
 import phone from "../../../../assets/svg/profile/phone.svg";
 import mail from "../../../../assets/svg/profile/mail.svg";
 import bio from "../../../../assets/svg/profile/bio.svg";
-import upload from "../../../../assets/svg/profile/upload.svg";
+import locationIcon from "../../../../assets/images/profile/icn_location.svg";
+import threeDots from "../../../../assets/svg/three-dots.svg";
+import fallbackAvatar from "../../../../assets/images/profile/icn_profile.svg";
+import fallbackCover from "../../../../assets/images/home/home-background2.jpg";
 import { useEffect, useRef, useState } from "react";
 import { uploadImage } from "../../../../api/configs/common.config";
 import {
@@ -180,53 +183,76 @@ export const ProfileInformation = () => {
     setShowModal(!showModal);
   };
 
+  const headerCover = user?.coverUrl || fallbackCover;
+  const headerAvatar = url || user?.avatarUrl || fallbackAvatar;
+  const headerName = user?.fullName || "Người dùng";
+  const headerEmail = user?.email || "Chưa cập nhật email";
+  const headerBio = user?.bio || "Chưa cập nhật giới thiệu";
+  const headerPhone = user?.phone || "Chưa cập nhật số điện thoại";
+  const headerLocation = user?.fullAddress || "Chưa cập nhật địa chỉ";
+
   return (
     <div className="profile__information">
       <h1 className="title">Thông tin cá nhân</h1>
       <Col className="profile__information-header">
-        <img
-          className="image-background"
-          crossOrigin="anonymous"
-          src={user?.coverUrl}
-          alt=""
-        />
+        <div className="profile__information-cover">
+          <img
+            className="image-background"
+            crossOrigin="anonymous"
+            src={headerCover}
+            alt="Ảnh bìa hồ sơ"
+          />
+          <div className="blur-blender"></div>
+        </div>
 
-        <div className="blur-blender"></div>
+        <div className="profile__information-avatar-bridge">
+          <div className="content__avatar">
+            <figure style={{ margin: 0 }}>
+              <img
+                className="content__avatar-url"
+                src={headerAvatar}
+                alt="Ảnh đại diện"
+              />
+            </figure>
+            <label htmlFor="upload" className="content__avatar-upload">
+              <input
+                id="upload"
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+              />
+            </label>
+          </div>
+        </div>
+
         <Col className="profile__information-header-content">
-          
           <div className="content">
-            <div className="content__avatar">
-              <figure style={{ margin: 0 }}>
-                {url ? (
-                  <img className="content__avatar-url" src={url} alt="" />
-                ) : (
-                  <div className="content__avatar-url"></div>
-                )}
-              </figure>
-              <label htmlFor="upload" className="content__avatar-upload">
-                <input
-                  id="upload"
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                />
-              </label>
-            </div>
             <div className="content__info">
-              <p className="content__info-text name">{user?.fullName}</p>
-              <p className="content__info-text email">
-                <img className="content__info-icon" src={mail} alt="" />
-                {user?.email}
-              </p>
-              <p className="content__info-text bio">
-                <img className="content__info-icon" src={bio} alt="" />
-                {user?.bio}
-              </p>
-              <p className="content__info-text phone">
-                <img className="content__info-icon" src={phone} alt="" />
-                {user?.phone}
-              </p>
+              <div className="content__info-head">
+                <p className="content__info-text name">{headerName}</p>
+              </div>
+
+              <p className="content__info-text subtitle">{headerBio}</p>
+
+              <div className="content__meta">
+                <p className="content__info-text meta-item">
+                  <img
+                    className="content__info-icon"
+                    src={locationIcon}
+                    alt=""
+                  />
+                  {headerLocation}
+                </p>
+                <p className="content__info-text meta-item">
+                  <img className="content__info-icon" src={mail} alt="" />
+                  {headerEmail}
+                </p>
+                <p className="content__info-text meta-item">
+                  <img className="content__info-icon" src={phone} alt="" />
+                  {headerPhone}
+                </p>
+              </div>
             </div>
           </div>
         </Col>

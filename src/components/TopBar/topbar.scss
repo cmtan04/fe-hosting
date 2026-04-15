@@ -151,7 +151,6 @@
   &-host {
     width: fit-content;
     height: 40px !important;
-    border: 2px solid $text_color_1;
     border-radius: 20px;
     display: flex;
     flex-direction: row;
@@ -194,6 +193,46 @@
     .menu {
       width: 25px;
       height: 25px;
+    }
+  }
+
+  &-guest {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .guest-login,
+    .guest-signup {
+      height: 40px;
+      padding: 0px 16px;
+      border-radius: 20px;
+      border: 2px solid $text_color_1;
+      font-weight: 600;
+      font-size: 14px;
+      font-family: $font_family_1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .guest-login {
+      background-color: $white_color;
+      color: $text_color_1 !important;
+
+      &:hover {
+        background-color: $background-color-1;
+      }
+    }
+
+    .guest-signup {
+      background-color: $text_color_1;
+      color: $white_color !important;
+
+      &:hover {
+        background-color: $text_color_4;
+        border-color: $text_color_4;
+      }
     }
   }
 
