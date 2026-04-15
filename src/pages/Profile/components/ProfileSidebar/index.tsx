@@ -24,7 +24,7 @@ export const ProfileSideBar = () => {
     if (data.key === TYPE_LOG_OUT) {
       signOut();
       showNotification("Đăng xuất thành công!", NOTI_SUCCESS);
-      navigate(ROUTER_PATH.SIGN_IN);
+      navigate(ROUTER_PATH.HOME);
     } else {
       setTabActive(data.key);
       navigate(data.href);

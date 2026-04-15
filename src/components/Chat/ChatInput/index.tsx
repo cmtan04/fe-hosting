@@ -137,6 +137,7 @@ export const ChatInput = (props: ChatInputProps) => {
   };
 
   const handleUploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("click");
     const selectedFiles = e.target.files;
     if (!selectedFiles || selectedFiles.length === 0) return;
 

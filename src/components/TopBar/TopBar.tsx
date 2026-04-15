@@ -25,7 +25,7 @@ export const TopBar = () => {
     if (data.key === TYPE_LOG_OUT) {
       signOut();
       showNotification("Đăng xuất thành công!", NOTI_SUCCESS);
-      navigate(ROUTER_PATH.SIGN_IN);
+      navigate(ROUTER_PATH.HOME);
     } else {
       navigate(data.href);
     }
@@ -43,7 +43,7 @@ export const TopBar = () => {
         <div className="top__bar-menu">
           <Menu
             mode="horizontal"
-            items={items(navigate)}
+            items={items()}
             className="top__bar-menu-list"
           />
         </div>

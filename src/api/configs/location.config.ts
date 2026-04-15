@@ -1,7 +1,9 @@
 import type { ProfileLocationFilter } from "../../common/types/profile";
 import axiosClient from "../axiosClient";
 import type {
+  LocationCommentPayloadDto,
   LocationDto,
+  LocationParamDto,
   LocationResponseDto,
   LocationTypeDto,
   PaginatedLocationDto,
@@ -43,6 +45,26 @@ export const createLocation = async (payload: LocationDto): Promise<any> => {
   const response = await axiosClient.post(
     LocationEndpoint.CREATE_LOCATION,
     payload,
+  );
+  return response.data;
+};
+
+export const createNewComment = async (
+  payload: LocationCommentPayloadDto,
+): Promise<any> => {
+  const response = await axiosClient.post(
+    LocationEndpoint.CREATE_LOCATION_COMMENT,
+    payload,
+  );
+  return response.data;
+};
+
+export const getComment = async (payload: LocationParamDto): Promise<any> => {
+  const response = await axiosClient.get(
+    LocationEndpoint.GET_LOCATION_COMMENT,
+    {
+      params: payload,
+    },
   );
   return response.data;
 };

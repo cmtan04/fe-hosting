@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ROUTER_PATH } from "../../router/Route";
 import type { ProfileItem } from "../types/profile";
 import location from "../../assets/images/profile/icn_location.svg";
@@ -11,7 +11,7 @@ import contract from "../../assets/svg/profile/contract.svg";
 import payment from "../../assets/svg/profile/payment.svg";
 import { LOCATION_TYPE, RENT_TYPE, TYPE_LOG_OUT } from "../constants/constants";
 
-export const items = (navigate: ReturnType<typeof useNavigate>) => [
+export const items = () => [
   {
     key: 1,
     label: <Link to={ROUTER_PATH.HOME}>Trang chủ</Link>,
@@ -28,75 +28,60 @@ export const items = (navigate: ReturnType<typeof useNavigate>) => [
         key: 21,
         value: RENT_TYPE.MOTEL,
         label: (
-          <span
-            onClick={() =>
-              navigate(ROUTER_PATH.LOCATIONS, {
-                state: { rent: RENT_TYPE.MOTEL, page: 1 },
-              })
-            }
+          <Link
+            to={ROUTER_PATH.LOCATIONS}
+            state={{ rent: RENT_TYPE.MOTEL, page: 1 }}
           >
             Phòng trọ
-          </span>
+          </Link>
         ),
       },
       {
         key: 22,
         value: RENT_TYPE.APARTMENT,
         label: (
-          <span
-            onClick={() =>
-              navigate(ROUTER_PATH.LOCATIONS, {
-                state: { rent: RENT_TYPE.APARTMENT, page: 1 },
-              })
-            }
+          <Link
+            to={ROUTER_PATH.LOCATIONS}
+            state={{ rent: RENT_TYPE.APARTMENT, page: 1 }}
           >
             Căn hộ
-          </span>
+          </Link>
         ),
       },
       {
         key: 23,
         value: RENT_TYPE.OFFICE,
         label: (
-          <span
-            onClick={() =>
-              navigate(ROUTER_PATH.LOCATIONS, {
-                state: { rent: RENT_TYPE.OFFICE, page: 1 },
-              })
-            }
+          <Link
+            to={ROUTER_PATH.LOCATIONS}
+            state={{ rent: RENT_TYPE.OFFICE, page: 1 }}
           >
             Văn phòng
-          </span>
+          </Link>
         ),
       },
       {
         key: 24,
         value: RENT_TYPE.FULL_HOUSE,
         label: (
-          <span
-            onClick={() =>
-              navigate(ROUTER_PATH.LOCATIONS, {
-                state: { rent: RENT_TYPE.FULL_HOUSE, page: 1 },
-              })
-            }
+          <Link
+            to={ROUTER_PATH.LOCATIONS}
+            state={{ rent: RENT_TYPE.FULL_HOUSE, page: 1 }}
           >
             Nhà nguyên căn
-          </span>
+          </Link>
         ),
       },
       {
         key: 25,
         value: RENT_TYPE.VENUE,
         label: (
-          <span
-            onClick={() =>
-              navigate(ROUTER_PATH.LOCATIONS, {
-                state: { rent: RENT_TYPE.VENUE, page: 1 },
-              })
-            }
+          <Link
+            to={ROUTER_PATH.LOCATIONS}
+            state={{ rent: RENT_TYPE.VENUE, page: 1 }}
           >
             Địa điểm tổ chức sự kiện
-          </span>
+          </Link>
         ),
       },
     ],
@@ -113,60 +98,48 @@ export const items = (navigate: ReturnType<typeof useNavigate>) => [
         key: 31,
         value: LOCATION_TYPE.NORTH,
         label: (
-          <span
-            onClick={() =>
-              navigate(ROUTER_PATH.LOCATIONS, {
-                state: { location: LOCATION_TYPE.NORTH, page: 1 },
-              })
-            }
+          <Link
+            to={ROUTER_PATH.LOCATIONS}
+            state={{ location: LOCATION_TYPE.NORTH, page: 1 }}
           >
             Miền Bắc
-          </span>
+          </Link>
         ),
       },
       {
         key: 32,
         value: LOCATION_TYPE.CENTRAL,
         label: (
-          <span
-            onClick={() =>
-              navigate(ROUTER_PATH.LOCATIONS, {
-                state: { location: LOCATION_TYPE.CENTRAL, page: 1 },
-              })
-            }
+          <Link
+            to={ROUTER_PATH.LOCATIONS}
+            state={{ location: LOCATION_TYPE.CENTRAL, page: 1 }}
           >
             Miền Trung
-          </span>
+          </Link>
         ),
       },
       {
         key: 33,
         value: LOCATION_TYPE.SOUTH,
         label: (
-          <span
-            onClick={() =>
-              navigate(ROUTER_PATH.LOCATIONS, {
-                state: { location: LOCATION_TYPE.SOUTH, page: 1 },
-              })
-            }
+          <Link
+            to={ROUTER_PATH.LOCATIONS}
+            state={{ location: LOCATION_TYPE.SOUTH, page: 1 }}
           >
             Miền Nam
-          </span>
+          </Link>
         ),
       },
       {
         key: 34,
         value: LOCATION_TYPE.WEST,
         label: (
-          <span
-            onClick={() =>
-              navigate(ROUTER_PATH.LOCATIONS, {
-                state: { location: LOCATION_TYPE.WEST, page: 1 },
-              })
-            }
+          <Link
+            to={ROUTER_PATH.LOCATIONS}
+            state={{ location: LOCATION_TYPE.WEST, page: 1 }}
           >
             Miền Tây
-          </span>
+          </Link>
         ),
       },
     ],

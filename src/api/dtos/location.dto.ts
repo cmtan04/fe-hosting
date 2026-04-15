@@ -1,3 +1,5 @@
+import type { ChatAndCommentDto } from "./common.dto";
+
 export interface LocationTypeDto {
   id: string;
   typeCode: string;
@@ -129,4 +131,16 @@ export interface AddressDto {
   addressDescription: string;
   addressNote: string;
   addressType: string;
+}
+
+export interface LocationCommentPayloadDto {
+  commentId: number;
+  locationCode: string;
+  content: ChatAndCommentDto;
+}
+
+export interface LocationParamDto {
+  locationCode: string;
+  limit: number;
+  page: number;
 }
