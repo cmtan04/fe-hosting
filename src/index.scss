@@ -1,4 +1,7 @@
 @import "./color.scss";
+* {
+  font-family: $font_family_1 !important;
+}
 
 .notification-container {
   position: fixed;
@@ -136,6 +139,21 @@
         width: 18px;
         height: 18px;
       }
+    }
+  }
+}
+
+.login-required-modal {
+  .ant-modal-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap;
+    text-align: center;
+
+    .ant-btn + .ant-btn {
+      margin-inline-start: 0;
     }
   }
 }

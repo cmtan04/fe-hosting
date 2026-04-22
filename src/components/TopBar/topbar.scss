@@ -160,12 +160,20 @@
     cursor: pointer;
     padding: 0px 8px;
 
-    span {
+    span,
+    &-action {
       font-weight: 500;
       color: $color-text-primary;
       font-size: 14px;
       line-height: 1.5;
       font-family: $font_family_1;
+    }
+
+    &-action {
+      border: none;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
     }
   }
 
@@ -216,7 +224,7 @@
       transition: all 0.2s ease;
     }
 
-    .guest-login {
+    .guest-signup {
       background-color: $white_color;
       color: $text_color_1 !important;
 
@@ -225,7 +233,7 @@
       }
     }
 
-    .guest-signup {
+    .guest-login {
       background-color: $text_color_1;
       color: $white_color !important;
 

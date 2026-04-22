@@ -48,7 +48,7 @@ export const PickLocationType = (props: RenterProps) => {
           src={icnClear}
           className="header-close"
           alt="X"
-          onClick={() => navigate(ROUTER_PATH.HOME)}
+          onClick={() => navigate(-1)}
         />
       </div>
 

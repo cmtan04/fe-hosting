@@ -144,3 +144,9 @@ export interface LocationParamDto {
   limit: number;
   page: number;
 }
+
+export interface RelatedLocationParamDto {
+  locationCode: string;
+  page?: number;
+  limit?: number;
+}

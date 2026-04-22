@@ -1,4 +1,5 @@
 import type { Socket } from "socket.io-client";
+import { getStoredToken } from "../common/utils/authStorage";
 import { getSocketClient } from "./socket-client";
 import type { SocketAck } from "./socket-types";
 
@@ -19,11 +20,10 @@ class SocketManager {
   }
 
   public connect() {
+    const token = getStoredToken();
     this.socket.auth = {
       ...(typeof this.socket.auth === "object" ? this.socket.auth : {}),
-      token: localStorage.getItem("token")
-        ? `Bearer ${localStorage.getItem("token")}`
-        : undefined,
+      token: token ? `Bearer ${token}` : undefined,
     };
 
     if (!this.socket.connected) {

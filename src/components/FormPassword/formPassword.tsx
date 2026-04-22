@@ -43,7 +43,7 @@ export const FormPassword = ({
   const navigate = useNavigate();
 
   return (
-    <div className={`form-input ${vertical ? "form-input--vertical" : ""}`}>
+    <div className={`form-input`}>
       <div className="label">
         <span className="label__right">{label}</span>
         <span
@@ -58,7 +58,7 @@ export const FormPassword = ({
       <Form.Item
         name={name}
         {...formItemProps}
-        labelCol={vertical ? { span: 24 } : undefined}
+        labelCol={vertical  ? { span: 24 } : undefined}
       >
         <Password
           className="form-input__password"

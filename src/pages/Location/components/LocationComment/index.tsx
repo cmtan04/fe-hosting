@@ -20,6 +20,7 @@ import {
 import { isAxiosError } from "axios";
 import { useNotification } from "../../../../providers/notificationProvider";
 import remove from "../../../../assets/svg/remove.svg";
+import { useRequireLoginAction } from "../../../../common/hooks/useRequireLoginAction";
 interface LocationCommentProps {
   locationCode: string;
   data: any;
@@ -30,12 +31,14 @@ interface LocationCommentProps {
 export const LocationComment = (props: LocationCommentProps) => {
   const { setLoading } = useLoading();
   const { showNotification } = useNotification();
+  const { requireLoginAction, isAuthenticated } = useRequireLoginAction();
   const [showReply, setShowReply] = useState<number>();
   const [commentId, setCommentId] = useState<number>();
 
   const { data: userData, isLoading: locationLoading } = useQuery({
     queryKey: [UserEndpoint.GET_USER_INFORMATION],
     queryFn: () => getUserPRofile(),
+    enabled: isAuthenticated,
   });
 
   const handleShowMore = () => {
@@ -81,7 +84,26 @@ export const LocationComment = (props: LocationCommentProps) => {
       commentId: commentId,
       content: value,
     };
-    createNewCommentMutate.mutate(payload);
+
+    requireLoginAction(
+      () => {
+        createNewCommentMutate.mutate(payload);
+      },
+      {
+        message: "Vui lòng đăng nhập để bình luận.",
+      },
+    );
+  };
+
+  const handleReply = (id: number) => {
+    requireLoginAction(
+      () => {
+        setCommentId(id);
+      },
+      {
+        message: "Vui lòng đăng nhập để bình luận.",
+      },
+    );
   };
 
   return (
@@ -92,30 +114,36 @@ export const LocationComment = (props: LocationCommentProps) => {
         ) : (
           <>
             {props?.data?.data?.length > 10 && (
-              <p className="show__more" onClick={handleShowMore}>
+              <button
+                type="button"
+                className="show__more"
+                onClick={handleShowMore}
+              >
                 Hiện thêm bình luận
-              </p>
+              </button>
             )}
             {props?.data?.data?.map((comment: any) => (
-              <div className="list-wrap">
+              <div key={comment.id} className="list-wrap">
                 <CommentLabel
                   data={comment}
-                  onReply={() => setCommentId(comment.id)}
+                  onReply={() => handleReply(comment.id)}
                 />
 
                 <div className="comment-reply">
                   {showReply === comment.id ? (
                     <div className={showReply === comment.id ? "show" : "hide"}>
-                      {comment.replies?.map((reply: any) => {
+                      {comment.replies?.map((reply: any, index: number) => {
                         return (
                           <CommentLabel
+                            key={reply.id ?? `${comment.id}-${index}`}
                             data={reply}
-                            onReply={() => setCommentId(comment.id)}
+                            onReply={() => handleReply(comment.id)}
                           />
                         );
                       })}
 
-                      <p
+                      <button
+                        type="button"
                         className="comment-reply-action"
                         onClick={() => setShowReply(undefined)}
                       >
@@ -123,10 +151,11 @@ export const LocationComment = (props: LocationCommentProps) => {
                           <img src={up} alt="Less" />
                         </span>
                         Ẩn {comment.replies?.length || 0} trả lời
-                      </p>
+                      </button>
                     </div>
                   ) : (
-                    <p
+                    <button
+                      type="button"
                       className="comment-reply-action"
                       onClick={() => setShowReply(comment.id)}
                     >
@@ -134,7 +163,7 @@ export const LocationComment = (props: LocationCommentProps) => {
                         <img src={more} alt="More" />
                       </span>
                       Hiện {comment.replies?.length || 0} trả lời
-                    </p>
+                    </button>
                   )}
                 </div>
               </div>
@@ -144,7 +173,7 @@ export const LocationComment = (props: LocationCommentProps) => {
       </div>
 
       <div className="location__comment-action">
-        {commentId && (
+        {Boolean(commentId) && (
           <div className="comment__reply-label">
             <img src={reply} alt="" />
             <p className="comment__reply-content">
@@ -160,17 +189,25 @@ export const LocationComment = (props: LocationCommentProps) => {
                 }
               </span>
             </p>
-            <img
+            <button
+              type="button"
               className="remove"
-              src={remove}
               onClick={() => setCommentId(null)}
-            />
+            >
+              <img src={remove} alt="Xoa tra loi" />
+            </button>
           </div>
         )}
-        <CommentInput
-          data={userData}
-          onSubmit={(value) => handleComment(value)}
-        />
+        {isAuthenticated && userData ? (
+          <CommentInput
+            data={userData}
+            onSubmit={(value) => handleComment(value)}
+          />
+        ) : (
+          <p className="comment__login-required">
+            Vui lòng đăng nhập để bình luận
+          </p>
+        )}
       </div>
     </div>
   );

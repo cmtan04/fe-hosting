@@ -11,6 +11,14 @@ import {
   signUp as signUpApi,
 } from "../../api/configs/auth.config";
 import { getUserPRofile } from "../../api/configs/user.config";
+import {
+  clearStoredAuth,
+  getStoredRole,
+  getStoredToken,
+  isStoredAuthRemembered,
+  setStoredAuth,
+  setStoredRole,
+} from "../utils/authStorage";
 import type {
   SignInPayloadDto,
   SignInResponseDto,
@@ -19,16 +27,17 @@ import type {
 } from "../../api/dtos/auth.dto";
 import type { UserProfileResponseDto } from "../../api/dtos/user.dto";
 
-const TOKEN_STORAGE_KEY = "token";
-const ROLE_STORAGE_KEY = "userRole";
-
 interface AuthContextType {
   token: string | null;
   user: UserProfileResponseDto | null;
   userRole: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  signIn: (payload: SignInPayloadDto) => Promise<SignInResponseDto>;
+  isAuthResolved: boolean;
+  signIn: (
+    payload: SignInPayloadDto,
+    options?: { remember?: boolean },
+  ) => Promise<SignInResponseDto>;
   signUp: (payload: SignUpPayloadDto) => Promise<SignUpResponseDto>;
   signOut: () => void;
   setUser: (user: UserProfileResponseDto | null) => void;
@@ -36,13 +45,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const getStoredToken = () => localStorage.getItem(TOKEN_STORAGE_KEY);
-
-const clearAuthStorage = () => {
-  localStorage.removeItem(TOKEN_STORAGE_KEY);
-  localStorage.removeItem(ROLE_STORAGE_KEY);
-};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -52,17 +54,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     null,
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthResolved, setIsAuthResolved] = useState(false);
 
   const applyAuthenticatedState = useCallback(
-    (nextToken: string, nextUser: UserProfileResponseDto | null) => {
+    (
+      nextToken: string,
+      nextUser: UserProfileResponseDto | null,
+      remember = false,
+    ) => {
       setToken(nextToken);
-      localStorage.setItem(TOKEN_STORAGE_KEY, nextToken);
-
-      if (nextUser?.role) {
-        localStorage.setItem(ROLE_STORAGE_KEY, nextUser.role);
-      } else {
-        localStorage.removeItem(ROLE_STORAGE_KEY);
-      }
+      setStoredAuth(nextToken, nextUser?.role, remember);
 
       setCurrentUser(nextUser);
     },
@@ -71,52 +72,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const setUser = useCallback((nextUser: UserProfileResponseDto | null) => {
     setCurrentUser(nextUser);
-    if (nextUser?.role) {
-      localStorage.setItem(ROLE_STORAGE_KEY, nextUser.role);
-      return;
-    }
-    localStorage.removeItem(ROLE_STORAGE_KEY);
+    setStoredRole(nextUser?.role ?? null);
   }, []);
 
   const signOut = useCallback(() => {
-    clearAuthStorage();
+    clearStoredAuth();
     setToken(null);
     setCurrentUser(null);
   }, []);
 
   const fetchAndApplyUserProfile = useCallback(
-    async (nextToken: string) => {
+    async (nextToken: string, remember = false) => {
       const profile = await getUserPRofile();
-      applyAuthenticatedState(nextToken, profile);
+      applyAuthenticatedState(nextToken, profile, remember);
     },
     [applyAuthenticatedState],
   );
 
   const checkAuthStatus = useCallback(async () => {
+    setIsAuthResolved(false);
     const currentToken = getStoredToken();
 
     if (!currentToken) {
       signOut();
+      setIsAuthResolved(true);
       return;
     }
 
     setIsLoading(true);
     try {
-      await fetchAndApplyUserProfile(currentToken);
+      await fetchAndApplyUserProfile(currentToken, isStoredAuthRemembered());
     } catch {
       signOut();
     } finally {
       setIsLoading(false);
+      setIsAuthResolved(true);
     }
   }, [fetchAndApplyUserProfile, signOut]);
 
   const signIn = useCallback(
-    async (payload: SignInPayloadDto) => {
+    async (payload: SignInPayloadDto, options?: { remember?: boolean }) => {
+      const remember = options?.remember ?? false;
       setIsLoading(true);
       try {
         const response = await signInApi(payload);
-        applyAuthenticatedState(response.access_token, null);
-        await fetchAndApplyUserProfile(response.access_token);
+        applyAuthenticatedState(response.access_token, null, remember);
+        await fetchAndApplyUserProfile(response.access_token, remember);
         return response;
       } catch (error) {
         signOut();
@@ -143,7 +144,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [checkAuthStatus]);
 
   const userRole = useMemo(
-    () => currentUser?.role ?? localStorage.getItem(ROLE_STORAGE_KEY),
+    () => currentUser?.role ?? getStoredRole(),
     [currentUser?.role],
   );
 
@@ -156,6 +157,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       userRole,
       isAuthenticated,
       isLoading,
+      isAuthResolved,
       signIn,
       signUp,
       signOut,
@@ -168,6 +170,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       userRole,
       isAuthenticated,
       isLoading,
+      isAuthResolved,
       signIn,
       signUp,
       signOut,

@@ -36,13 +36,12 @@ export const SignUp = () => {
     try {
       const data = await signUp(payload);
       showNotification(data.message, NOTI_SUCCESS);
-      // Keep current flow until backend supports auto-send OTP after sign up.
-      // navigate(ROUTER_PATH.VERIFY_EMAIL, {
-      //   state: {
-      //     email: form.getFieldValue("account"),
-      //     type: 3,
-      //   },
-      // });
+      navigate(ROUTER_PATH.SIGN_IN, {
+        replace: true,
+        state: {
+          email: payload.email,
+        },
+      });
     } catch (error) {
       let message = DEFAULT_MESSAGE;
       if (isAxiosError(error)) {

@@ -42,7 +42,6 @@
           align-items: center;
           max-width: 100%;
           width: 100%;
-          gap: 12px;
           .form-input {
             max-width: 100%;
           }
@@ -56,6 +55,27 @@
 
             input {
               width: 100%;
+            }
+          }
+
+          .remember-me {
+            width: 100%;
+            margin-top: -4px;
+            margin-bottom: 0;
+            color: $primary-color;
+            font-family: $font_family_1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
+
+            .ant-form-item-control-input-content {
+              display: flex;
+              justify-content: flex-start;
+            }
+
+            .ant-checkbox-wrapper {
+              color: inherit;
+              font-family: inherit;
             }
           }
         }

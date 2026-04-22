@@ -1,4 +1,5 @@
 import { io, type Socket } from "socket.io-client";
+import { getStoredToken } from "../common/utils/authStorage";
 
 const resolveSocketUrl = () => {
   const explicitUrl = process.env.REACT_APP_SOCKET_URL;
@@ -17,23 +18,22 @@ export const getSocketClient = () => {
     return socketInstance;
   }
 
+  const token = getStoredToken();
+
   socketInstance = io(resolveSocketUrl(), {
     autoConnect: false,
     transports: ["websocket", "polling"],
     auth: {
-      token: localStorage.getItem("token")
-        ? `Bearer ${localStorage.getItem("token")}`
-        : undefined,
+      token: token ? `Bearer ${token}` : undefined,
     },
   });
 
   socketInstance.on("reconnect_attempt", () => {
+    const reconnectToken = getStoredToken();
     socketInstance?.auth &&
       (socketInstance.auth = {
         ...socketInstance.auth,
-        token: localStorage.getItem("token")
-          ? `Bearer ${localStorage.getItem("token")}`
-          : undefined,
+        token: reconnectToken ? `Bearer ${reconnectToken}` : undefined,
       });
   });
 

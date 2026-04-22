@@ -14,11 +14,13 @@ import { useAuth } from "../../common/contexts/authContext";
 import { useNotification } from "../../providers/notificationProvider";
 import { ROUTER_PATH } from "../../router/Route";
 import "./topbar.scss";
+import { useRequireLoginAction } from "../../common/hooks/useRequireLoginAction";
 
 export const TopBar = () => {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
   const { userRole, signOut, isAuthenticated } = useAuth();
+  const { requireLoginAction } = useRequireLoginAction();
   const [showProfile, setShowProfile] = useState<boolean>(false);
 
   const handleProfileClick = (data: ProfileItem) => {
@@ -50,13 +52,32 @@ export const TopBar = () => {
       </div>
       <div className="right">
         <div className="top__bar-host">
-          <span>
-            {Number(userRole) === USER_ROLE.OWNER ? (
-              <Link to={ROUTER_PATH.PROFILE_LOCATION}>Địa điểm của tôi</Link>
-            ) : (
-              <Link to={ROUTER_PATH.RENTER}>Cho thuê địa điểm</Link>
-            )}
-          </span>
+          {isAuthenticated ? (
+            <span>
+              {Number(userRole) === USER_ROLE.OWNER ? (
+                <Link to={ROUTER_PATH.PROFILE_LOCATION}>Địa điểm của tôi</Link>
+              ) : (
+                <Link to={ROUTER_PATH.RENTER}>Cho thuê địa điểm</Link>
+              )}
+            </span>
+          ) : (
+            <button
+              type="button"
+              className="top__bar-host-action"
+              onClick={() =>
+                requireLoginAction(() => {}, {
+                  title: "Đăng nhập để sử dụng tính năng này",
+                  message: "Bạn cần đăng nhập để tiếp tục thao tác này.",
+                  signInState: {
+                    redirectTo: ROUTER_PATH.RENTER,
+                    source: "topbar-renter-cta",
+                  },
+                })
+              }
+            >
+              Cho thuê địa điểm
+            </button>
+          )}
         </div>
         {isAuthenticated ? (
           <>
@@ -93,11 +114,11 @@ export const TopBar = () => {
           </>
         ) : (
           <div className="top__bar-guest">
-            <Link className="guest-signup" to={ROUTER_PATH.SIGN_UP}>
-              Đăng ký
-            </Link>
             <Link className="guest-login" to={ROUTER_PATH.SIGN_IN}>
               Đăng nhập
+            </Link>
+            <Link className="guest-signup" to={ROUTER_PATH.SIGN_UP}>
+              Đăng ký
             </Link>
           </div>
         )}

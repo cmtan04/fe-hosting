@@ -31,10 +31,12 @@ export const RenterLayout = () => {
   const { showNotification } = useNotification();
   const [step, setStep] = useState<number>(RENTER_STEP.PICK_TYPE);
   const [data, setData] = useState<LocationDto>({
+    locationCode: "",
+    typeName: "",
     typeCode: "",
     locationLogo: "",
     serviceCode: [],
-    locationAddress: [],
+    address: [],
     locationName: "",
     locationPriceStart: 0,
     locationPriceEnd: 0,
@@ -129,7 +131,7 @@ export const RenterLayout = () => {
               (prev) =>
                 ({
                   ...prev,
-                  locationAddress: [
+                  address: [
                     {
                       addressName: value.addressName,
                       fullAddress: value.fullAddress,

@@ -1,7 +1,8 @@
-import { Button, Form } from "antd";
+import { Button, Checkbox, Form } from "antd";
+import { useEffect } from "react";
 import { FormInput } from "../../../components/FormInput/formInput";
 import { FormPassword } from "../../../components/FormPassword/formPassword";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "../../../router/Route";
 import background from "../../../assets/images/auth/authBackGround.jpg";
 import "./signin.scss";
@@ -16,14 +17,58 @@ import {
 } from "../../../common/constants/constants";
 import { isAxiosError } from "axios";
 import { useAuth } from "../../../common/contexts/authContext";
+import {
+  clearRememberedSignIn,
+  getRememberedSignIn,
+  setRememberedSignIn,
+} from "../../../common/utils/authStorage";
+
+type SignInLocationState = {
+  email?: string;
+  redirectTo?: string;
+  from?: string;
+};
+
+const getSafeRedirectPath = (redirectPath: string | undefined) => {
+  if (!redirectPath) {
+    return undefined;
+  }
+
+  if (!redirectPath.startsWith("/") || redirectPath.startsWith("//")) {
+    return undefined;
+  }
+
+  if (redirectPath === ROUTER_PATH.SIGN_IN) {
+    return undefined;
+  }
+
+  return redirectPath;
+};
+
 export const SignIn = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const location = useLocation();
   const { setLoading } = useLoading();
   const { showNotification } = useNotification();
   const { signIn } = useAuth();
+  const locationState = location.state as SignInLocationState | null;
+  const rememberedSignIn = getRememberedSignIn();
+
+  const redirectPath =
+    getSafeRedirectPath(locationState?.redirectTo) ??
+    getSafeRedirectPath(locationState?.from) ??
+    ROUTER_PATH.HOME;
+
+  useEffect(() => {
+    form.setFieldsValue({
+      email: locationState?.email ?? rememberedSignIn.email ?? undefined,
+      rememberMe: rememberedSignIn.remember,
+    });
+  }, [form, locationState?.email, rememberedSignIn.email, rememberedSignIn.remember]);
 
   const onSubmit = async () => {
+    const rememberMe = Boolean(form.getFieldValue("rememberMe"));
     const payload: SignInPayloadDto = {
       email: form.getFieldValue("email"),
       password: form.getFieldValue("password"),
@@ -31,9 +76,14 @@ export const SignIn = () => {
 
     setLoading(true);
     try {
-      const data = await signIn(payload);
+      const data = await signIn(payload, { remember: rememberMe });
+      if (rememberMe) {
+        setRememberedSignIn(payload.email);
+      } else {
+        clearRememberedSignIn();
+      }
       showNotification(data.message ?? "Đăng nhập thành công!", NOTI_SUCCESS);
-      navigate(ROUTER_PATH.HOME);
+      navigate(redirectPath, { replace: true });
     } catch (error) {
       let message = DEFAULT_MESSAGE;
       if (isAxiosError(error)) {
@@ -94,6 +144,14 @@ export const SignIn = () => {
                 ],
               }}
             />
+            
+            <Form.Item
+              className="remember-me"
+              name="rememberMe"
+              valuePropName="checked"
+            >
+              <Checkbox>Ghi nhớ đăng nhập</Checkbox>
+            </Form.Item>
           </div>
           <div className="form-row-3">
             <Button htmlType="submit" className="button-submit">

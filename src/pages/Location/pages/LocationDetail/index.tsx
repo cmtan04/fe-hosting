@@ -7,7 +7,7 @@ import { createConversation } from "../../../../api/configs/chat.config";
 import {
   getComment,
   getLocationByCode,
-  getLocationByFilter,
+  getRelatedLocation,
 } from "../../../../api/configs/location.config";
 import type {
   LocationDto,
@@ -27,15 +27,14 @@ import {
   NOTI_ERROR,
 } from "../../../../common/constants/constants";
 import { formatMoney } from "../../../../common/contexts/format";
-import type { ProfileLocationFilter } from "../../../../common/types/profile";
 import { MediaGallery } from "../../../../components/MediaComponent";
 import { useLoading } from "../../../../providers/loadingProvider";
 import { useNotification } from "../../../../providers/notificationProvider";
 import { ROUTER_PATH } from "../../../../router/Route";
 import { ServiceTag } from "../../../Renter/components/ServiceTag/intex";
 import { useRequireLoginAction } from "../../../../common/hooks/useRequireLoginAction";
-import { LocationCard } from "../../components/LocationCard";
 import { LocationComment } from "../../components/LocationComment";
+import { LocationCard } from "../../components/LocationCard";
 
 export const LocationDetail = () => {
   const media: MediaItem[] = [
@@ -60,11 +59,6 @@ export const LocationDetail = () => {
   const { showNotification } = useNotification();
   const { requireLoginAction } = useRequireLoginAction();
 
-  const [otherFilter, setOtherFilter] = useState<ProfileLocationFilter>({
-    page: 1,
-    limit: 20,
-  });
-
   const [filter, setFilter] = useState<LocationParamDto>({
     locationCode: locationCode,
     page: 1,
@@ -81,11 +75,7 @@ export const LocationDetail = () => {
     }
   }, [locationCode]);
 
-  const {
-    data: locationDetail,
-    isLoading,
-    refetch: refetchDetail,
-  } = useQuery({
+  const { data: locationDetail, isLoading } = useQuery({
     queryKey: [LocationEndpoint.GET_LOCATION_BY_CODE, locationCode],
     queryFn: () => getLocationByCode(locationCode),
     enabled: !!locationCode,
@@ -95,19 +85,20 @@ export const LocationDetail = () => {
     queryKey: [LocationEndpoint.GET_LOCATION_COMMENT, filter],
     queryFn: () => getComment(filter),
   });
-
-  const { data: locationData, isLoading: locationLoading } = useQuery({
-    queryKey: [LocationEndpoint.GET_LOCATION_BY_FILTER, otherFilter],
-    queryFn: () => getLocationByFilter(otherFilter),
+  const { data: relatedLocationData } = useQuery({
+    queryKey: [LocationEndpoint.GET_RELATED_LOCATION, locationCode],
+    queryFn: () =>
+      getRelatedLocation({
+        locationCode: locationCode as string,
+        page: 1,
+        limit: 8,
+      }),
+    enabled: Boolean(locationCode),
   });
 
   useEffect(() => {
     setLoading(isLoading);
   }, [isLoading]);
-
-  useEffect(() => {
-    setLoading(locationLoading);
-  }, [locationLoading]);
 
   const contactMutation = useMutation({
     mutationFn: ({
@@ -192,7 +183,9 @@ export const LocationDetail = () => {
     <div className="location__detail">
       <Row gutter={[16, 16]} className="location__detail-row-1">
         <Col span={24} className="location__detail-row-1-col">
-          <MediaGallery media={media} />
+          <div className="location__detail-row-1-media">
+            <MediaGallery media={media} />
+          </div>
           <div className="location__detail-row-1-info">
             <p className="content-label">
               <span>
@@ -220,7 +213,7 @@ export const LocationDetail = () => {
       </Row>
 
       <Row gutter={[16, 16]} className="location__detail-row-2">
-        <Col span={16}>
+        <Col xs={24} lg={16} className="location__detail-row-2-main">
           <Row gutter={[16, 16]} className="row-wrap-1">
             <Rate defaultValue={Number(locationDetail?.locationRate)} />
             <span className="code">
@@ -242,7 +235,10 @@ export const LocationDetail = () => {
               <p className="wrap-title">Địa chỉ cụ thể</p>
               <div className="wrap-content">
                 {locationDetail?.address?.map((item, index) => (
-                  <div className="wrap-content-row">
+                  <div
+                    key={`${item.addressName}-${index}`}
+                    className="wrap-content-row"
+                  >
                     <div className="wrap-content-row-info">
                       <img src={pin} alt="" />
                       <div className="content">
@@ -253,9 +249,8 @@ export const LocationDetail = () => {
 
                     <div className="wrap-content-row-map">
                       <iframe
+                        className="wrap-content-row-map-frame"
                         title={`map-${index}`}
-                        width="100%"
-                        height="250"
                         frameBorder="0"
                         scrolling="no"
                         src={`https://www.openstreetmap.org/export/embed.html?bbox=${Number(item.addressLong) - 0.01}%2C${
@@ -279,6 +274,7 @@ export const LocationDetail = () => {
               <div className="wrap-content-service">
                 {locationDetail?.services?.map((service) => (
                   <ServiceTag
+                    key={service.serviceCode}
                     icon={service.serviceLogo}
                     name={service.serviceName}
                     price={service.servicePrice}
@@ -313,7 +309,7 @@ export const LocationDetail = () => {
             </Col>
           </Row>
         </Col>
-        <Col span={8}>
+        <Col xs={24} lg={8} className="location__detail-row-2-sidebar">
           <div className="col-content">
             <div className="row-1">
               <p className="label">Giá thuê</p>
@@ -393,9 +389,84 @@ export const LocationDetail = () => {
               >
                 Thuê ngay
               </Button>
+              <Button
+                type="default"
+                block
+                className="contact-action"
+                style={{ display: "none" }}
+                onClick={() =>
+                  handleContactOwner(
+                    locationDetail?.ownerCode as string,
+                    MessageTypeEnum.CONTACT,
+                    locationDetail?.locationCode,
+                  )
+                }
+              >
+                <span>
+                  <img src={message} alt="Message" />
+                </span>
+                <span>Liên hệ</span>
+              </Button>
             </div>
           </div>
 
+          <div className="col-owner">
+            <img src={locationDetail?.ownerAvatar as string} alt="Owner" />
+            <div className="owner-info">
+              <h1 className="title">Liên hệ</h1>
+              <p className="owner-name">
+                <span>
+                  <img src={profileIcn} alt="Profile" />
+                </span>
+                <span>{locationDetail?.ownerName}</span>
+              </p>
+              <p className="owner-address">
+                <span>
+                  <img src={address} alt="Address" />
+                </span>
+                <span>{locationDetail?.ownerAddress}</span>
+              </p>
+              <p className="owner-phone">
+                <span>
+                  <img src={phone} alt="Phone" />
+                </span>
+                <span>{locationDetail?.ownerPhone}</span>
+              </p>
+              <p className="owner-email">
+                <span>
+                  <img src={mail} alt="Email" />
+                </span>
+                <span>{locationDetail?.ownerEmail}</span>
+              </p>
+            </div>
+
+            <div className="owner-contact">
+              <Button
+                type="primary"
+                onClick={() =>
+                  handleContactOwner(
+                    locationDetail?.ownerCode as string,
+                    MessageTypeEnum.CONTACT,
+                    locationDetail?.locationCode,
+                  )
+                }
+              >
+                <span>
+                  <img src={message} alt="Message" />
+                </span>
+                <span>Liên hệ</span>
+              </Button>
+            </div>
+          </div>
+        </Col>
+
+        <Col
+          xs={24}
+          md={12}
+          lg={3}
+          className="location__detail-row-2-sidebar"
+          style={{ display: "none" }}
+        >
           <div className="col-owner">
             <img src={locationDetail?.ownerAvatar as string} alt="Owner" />
             <div className="owner-info">
@@ -451,16 +522,16 @@ export const LocationDetail = () => {
         <Col span={24}>
           <h1 className="title">Các địa điểm khác</h1>
           <Row gutter={[12, 12]} className="list">
-            {locationData?.data?.map((location: LocationDto) => (
+            {relatedLocationData?.data?.map((relatedLocation: LocationDto) => (
               <LocationCard
-                key={location.locationCode}
-                code={location.locationCode}
-                typeName={location.typeName}
-                name={location.locationName}
-                description={location.locationDescription}
-                address={location.address[0]?.fullAddress}
-                rate={location.locationRate}
-                image={location.locationLogo}
+                key={relatedLocation.locationCode}
+                code={relatedLocation.locationCode}
+                typeName={relatedLocation.typeName}
+                name={relatedLocation.locationName}
+                description={relatedLocation.locationDescription}
+                address={relatedLocation.address?.[0]?.fullAddress}
+                rate={relatedLocation.locationRate}
+                image={relatedLocation.locationLogo}
                 isFavourite={false}
                 onClick={handleCardClick}
               />

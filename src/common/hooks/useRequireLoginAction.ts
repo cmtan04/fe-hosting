@@ -9,6 +9,7 @@ import { ROUTER_PATH } from "../../router/Route";
 
 interface RequireLoginActionOptions extends LoginRequiredModalOptions {
   shouldNavigateToSignIn?: boolean;
+  signInState?: Record<string, unknown>;
 }
 
 export const useRequireLoginAction = () => {
@@ -30,6 +31,11 @@ export const useRequireLoginAction = () => {
           if (options?.shouldNavigateToSignIn === false) {
             return;
           }
+          if (options?.signInState) {
+            navigate(ROUTER_PATH.SIGN_IN, { state: options.signInState });
+            return;
+          }
+
           navigate(ROUTER_PATH.SIGN_IN);
         },
         onCancel: () => {

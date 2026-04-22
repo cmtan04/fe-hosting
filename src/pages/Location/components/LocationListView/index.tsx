@@ -1,62 +1,278 @@
 import { useQuery } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import { useEffect, useRef, useState } from "react";
 import { getLocationByFilter } from "../../../../api/configs/location.config";
+import type { PaginatedLocationDto } from "../../../../api/dtos/location.dto";
 import { LocationEndpoint } from "../../../../api/endpoints/location.endpoint";
+import { DEFAULT_MESSAGE } from "../../../../common/constants/constants";
 import type { ProfileLocationFilter } from "../../../../common/types/profile";
 import { Pagination } from "../../../../components/PaginationCommon/paginationCommon";
-import { useLoading } from "../../../../providers/loadingProvider";
+import { ROUTER_PATH } from "../../../../router/Route";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { LocationCard } from "../LocationCard";
 import "../style.scss";
 import type { LocationDto } from "../../../../api/dtos/location.dto";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { ROUTER_PATH } from "../../../../router/Route";
 
 interface LocationListViewProps {
   searchValue?: string;
+  routeFilter?: ProfileLocationFilter;
+  embedded?: boolean;
+  enabled?: boolean;
+  title?: string;
+  hideTitle?: boolean;
+  queryKeyPrefix?: string;
+  fetchLocations?: (
+    filter: ProfileLocationFilter,
+  ) => Promise<PaginatedLocationDto>;
 }
 
+const DEFAULT_PAGE = 1;
+const DEFAULT_LIMIT = 20;
+
+const cleanString = (value?: string | null) => {
+  const trimmedValue = value?.trim();
+  return trimmedValue || undefined;
+};
+
+const normalizeSearchValue = (value?: string | null) => {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+
+  return value;
+};
+
+const parsePositiveInt = (value?: string | null) => {
+  if (!value) return undefined;
+  const parsedValue = Number(value);
+
+  if (!Number.isInteger(parsedValue) || parsedValue <= 0) {
+    return undefined;
+  }
+
+  return parsedValue;
+};
+
+const parseFilterFromSearchParams = (
+  searchParams: URLSearchParams,
+): ProfileLocationFilter => {
+  const querySearchValue = searchParams.get("q") ?? searchParams.get("search");
+
+  return {
+    addressRegion: cleanString(searchParams.get("location")),
+    locationType: cleanString(searchParams.get("rent")),
+    searchValue: normalizeSearchValue(querySearchValue),
+    page: parsePositiveInt(searchParams.get("page")),
+    limit: parsePositiveInt(searchParams.get("limit")),
+  };
+};
+
+const normalizeFilter = (
+  filter: ProfileLocationFilter,
+): ProfileLocationFilter => {
+  return {
+    ...filter,
+    addressRegion: cleanString(filter.addressRegion),
+    locationType: cleanString(filter.locationType),
+    searchValue: normalizeSearchValue(filter.searchValue),
+    page:
+      typeof filter.page === "number" && filter.page > 0
+        ? filter.page
+        : DEFAULT_PAGE,
+    limit:
+      typeof filter.limit === "number" && filter.limit > 0
+        ? filter.limit
+        : DEFAULT_LIMIT,
+  };
+};
+
+const buildMergedFilter = (
+  routeFilter?: ProfileLocationFilter,
+  queryFilter?: ProfileLocationFilter,
+  baseFilter?: ProfileLocationFilter,
+): ProfileLocationFilter => {
+  const mergedFilter: ProfileLocationFilter = {};
+
+  if (baseFilter) {
+    Object.assign(mergedFilter, baseFilter);
+  }
+
+  if (queryFilter) {
+    Object.assign(mergedFilter, queryFilter);
+  }
+
+  if (routeFilter) {
+    Object.assign(mergedFilter, routeFilter);
+  }
+
+  mergedFilter.page =
+    routeFilter?.page ?? queryFilter?.page ?? baseFilter?.page ?? DEFAULT_PAGE;
+  mergedFilter.limit =
+    routeFilter?.limit ??
+    queryFilter?.limit ??
+    baseFilter?.limit ??
+    DEFAULT_LIMIT;
+
+  return normalizeFilter(mergedFilter);
+};
+
+const getFilterSignature = (filter: ProfileLocationFilter) => {
+  const normalizedFilter = normalizeFilter(filter);
+  return JSON.stringify({
+    addressRegion: normalizedFilter.addressRegion ?? "",
+    locationType: normalizedFilter.locationType ?? "",
+    searchValue: normalizedFilter.searchValue ?? "",
+    page: normalizedFilter.page ?? DEFAULT_PAGE,
+    limit: normalizedFilter.limit ?? DEFAULT_LIMIT,
+  });
+};
+
+const hasScopedLocationFilter = (filter: ProfileLocationFilter) => {
+  return Boolean(
+    cleanString(filter.locationType) ||
+      cleanString(filter.addressRegion) ||
+      cleanString(filter.searchValue),
+  );
+};
+
+const buildSearchParamsFromFilter = (filter: ProfileLocationFilter) => {
+  const normalizedFilter = normalizeFilter(filter);
+  const nextSearchParams = new URLSearchParams();
+
+  if (normalizedFilter.addressRegion) {
+    nextSearchParams.set("location", normalizedFilter.addressRegion);
+  }
+
+  if (normalizedFilter.locationType) {
+    nextSearchParams.set("rent", normalizedFilter.locationType);
+  }
+
+  if (normalizedFilter.searchValue) {
+    nextSearchParams.set("q", normalizedFilter.searchValue);
+  }
+
+  if ((normalizedFilter.page ?? DEFAULT_PAGE) > DEFAULT_PAGE) {
+    nextSearchParams.set("page", String(normalizedFilter.page));
+  }
+
+  if ((normalizedFilter.limit ?? DEFAULT_LIMIT) !== DEFAULT_LIMIT) {
+    nextSearchParams.set("limit", String(normalizedFilter.limit));
+  }
+
+  return nextSearchParams;
+};
+
 export const LocationListView = (props: LocationListViewProps) => {
-  const { setLoading } = useLoading();
-  const [searchParams] = useSearchParams();
-  const location = searchParams.get("location");
+  const [searchParams, setSearchParams] = useSearchParams();
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const isEmbedded = Boolean(props.embedded);
+  const fetchLocations = props.fetchLocations ?? getLocationByFilter;
 
-  const [filter, setFilter] = useState<ProfileLocationFilter>({
-    page: 1,
-    limit: 20,
-  });
-
-  const { data: locationData, isLoading: locationLoading } = useQuery({
-    queryKey: [LocationEndpoint.GET_LOCATION_BY_FILTER, filter],
-    queryFn: () => getLocationByFilter(filter),
-  });
-
-  useEffect(() => {
-    setLoading(locationLoading);
-  }, [locationLoading]);
-
-  useEffect(() => {
-    if (location) {
-      setFilter((prev) => ({
-        ...prev,
-        addressRegion: location,
-      }));
+  const [filter, setFilter] = useState<ProfileLocationFilter>(() => {
+    if (isEmbedded) {
+      return normalizeFilter({
+        page: DEFAULT_PAGE,
+        limit: DEFAULT_LIMIT,
+        ...props.routeFilter,
+      });
     }
-  }, [location]);
+
+    const queryFilter = parseFilterFromSearchParams(searchParams);
+    return buildMergedFilter(props.routeFilter, queryFilter, {
+      page: DEFAULT_PAGE,
+      limit: DEFAULT_LIMIT,
+    });
+  });
+
+  const canFetchLocations = isEmbedded
+    ? (props.enabled ?? true)
+    : hasScopedLocationFilter(filter);
+
+  const {
+    data: locationData,
+    isLoading: locationLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: [props.queryKeyPrefix ?? LocationEndpoint.GET_LOCATION_BY_FILTER, filter],
+    queryFn: () => fetchLocations(filter),
+    enabled: canFetchLocations,
+  });
 
   useEffect(() => {
-    setFilter((prev) => ({
-      ...prev,
-      searchValue: props.searchValue,
-    }));
+    if (isEmbedded) {
+      setFilter((prevFilter) => {
+        const nextFilter = normalizeFilter({
+          ...prevFilter,
+          ...props.routeFilter,
+        });
+
+        if (getFilterSignature(prevFilter) === getFilterSignature(nextFilter)) {
+          return prevFilter;
+        }
+
+        return nextFilter;
+      });
+      return;
+    }
+
+    const queryFilter = parseFilterFromSearchParams(searchParams);
+    setFilter((prevFilter) => {
+      const nextFilter = buildMergedFilter(
+        props.routeFilter,
+        queryFilter,
+        prevFilter,
+      );
+
+      if (getFilterSignature(prevFilter) === getFilterSignature(nextFilter)) {
+        return prevFilter;
+      }
+
+      return nextFilter;
+    });
+  }, [isEmbedded, props.routeFilter, searchParams]);
+
+  useEffect(() => {
+    if (props.searchValue === undefined) {
+      return;
+    }
+
+    const nextSearchValue = normalizeSearchValue(props.searchValue);
+
+    setFilter((prevFilter) => {
+      const nextFilter = normalizeFilter({
+        ...prevFilter,
+        searchValue: nextSearchValue,
+        page: DEFAULT_PAGE,
+      });
+
+      if (getFilterSignature(prevFilter) === getFilterSignature(nextFilter)) {
+        return prevFilter;
+      }
+
+      return nextFilter;
+    });
   }, [props.searchValue]);
 
   useEffect(() => {
+    if (isEmbedded) {
+      return;
+    }
+
+    const nextSearchParams = buildSearchParamsFromFilter(filter);
+
+    if (searchParams.toString() !== nextSearchParams.toString()) {
+      setSearchParams(nextSearchParams, { replace: true });
+    }
+  }, [filter, isEmbedded, searchParams, setSearchParams]);
+
+  useEffect(() => {
     const resizeCards = () => {
-      const cards = containerRef.current?.querySelectorAll(
-        ".location__card",
-      ) as NodeListOf<HTMLElement>;
+      const cards =
+        containerRef.current?.querySelectorAll<HTMLElement>(".location__card");
 
       if (!cards || cards.length === 0) return;
 
@@ -75,13 +291,18 @@ export const LocationListView = (props: LocationListViewProps) => {
     resizeCards();
     window.addEventListener("resize", resizeCards);
     return () => window.removeEventListener("resize", resizeCards);
-  }, [locationData]);
+  }, [locationData, isError, locationLoading]);
 
   const handlePageChange = (page: number) => {
-    setFilter((prev) => ({ ...prev, page }));
+    setFilter((prevFilter) => normalizeFilter({ ...prevFilter, page }));
   };
 
   const totalPages = locationData?.totalPages ?? 1;
+  const currentPage = filter.page ?? DEFAULT_PAGE;
+  const locations = locationData?.data ?? [];
+  const errorMessage = isAxiosError(error)
+    ? (error.response?.data?.message ?? DEFAULT_MESSAGE)
+    : DEFAULT_MESSAGE;
 
   const handleCardClick = (code: string) => {
     const url = ROUTER_PATH.LOCATION_DETAIL.replace(":code", code);
@@ -90,30 +311,91 @@ export const LocationListView = (props: LocationListViewProps) => {
 
   return (
     <div className="location__list">
-      <h2 className="location__list-title">Danh sách địa điểm</h2>
+      {props.hideTitle ? null : (
+        <h2 className="location__list-title">
+          {props.title ?? "Danh sách địa điểm"}
+        </h2>
+      )}
+
+      {canFetchLocations && isFetching && !locationLoading && (
+        <p className="location__list-status">Đang cập nhật danh sách...</p>
+      )}
 
       <div className="location__list-content" ref={containerRef}>
-        {locationData?.data?.map((location: LocationDto) => (
-          <LocationCard
-            key={location.locationCode}
-            code={location.locationCode}
-            typeName={location.typeName}
-            name={location.locationName}
-            description={location.locationDescription}
-            address={location.address[0]?.fullAddress}
-            rate={location.locationRate}
-            image={location.locationLogo}
-            isFavourite={false}
-            onClick={handleCardClick}
-          />
-        ))}
+        {!canFetchLocations && !isEmbedded ? (
+          <div className="location__list-state">
+            <p className="location__list-state-title">
+              Chưa hỗ trợ xem toàn bộ địa điểm
+            </p>
+            <p className="location__list-state-description">
+              Hãy chọn loại hình hoặc khu vực từ menu để xem danh sách phù hợp.
+            </p>
+          </div>
+        ) : null}
+
+        {canFetchLocations && locationLoading
+          ? Array.from({ length: 8 }, (_, index) => (
+              <div key={index} className="location__card-skeleton" />
+            ))
+          : null}
+
+        {canFetchLocations && !locationLoading && isError ? (
+          <div className="location__list-state">
+            <p className="location__list-state-title">
+              Không thể tải danh sách địa điểm
+            </p>
+            <p className="location__list-state-description">{errorMessage}</p>
+            <button
+              type="button"
+              className="location__list-state-action"
+              onClick={() => {
+                void refetch();
+              }}
+            >
+              Thử lại
+            </button>
+          </div>
+        ) : null}
+
+        {canFetchLocations &&
+        !locationLoading &&
+        !isError &&
+        locations.length === 0 ? (
+          <div className="location__list-state">
+            <p className="location__list-state-title">
+              Không tìm thấy địa điểm nào phù hợp
+            </p>
+            <p className="location__list-state-description">
+              Hãy thử thay đổi từ khóa tìm kiếm hoặc bộ lọc khu vực/loại hình.
+            </p>
+          </div>
+        ) : null}
+
+        {canFetchLocations && !locationLoading && !isError
+          ? locations.map((location: LocationDto) => (
+              <LocationCard
+                key={location.locationCode}
+                code={location.locationCode}
+                typeName={location.typeName}
+                name={location.locationName}
+                description={location.locationDescription}
+                address={location.address?.[0]?.fullAddress}
+                rate={location.locationRate}
+                image={location.locationLogo}
+                isFavourite={false}
+                onClick={handleCardClick}
+              />
+            ))
+          : null}
       </div>
 
-      <Pagination
-        currentPage={filter.page ?? 1}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      {canFetchLocations && !locationLoading && !isError ? (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      ) : null}
     </div>
   );
 };

@@ -19,6 +19,7 @@ import OTPInput from "../../../components/FormOtp/formOtp";
 import { useLoading } from "../../../providers/loadingProvider";
 import { useNotification } from "../../../providers/notificationProvider";
 import { ROUTER_PATH } from "../../../router/Route";
+import { setStoredAuth } from "../../../common/utils/authStorage";
 import "../auth.scss";
 import "./verifyEmail.scss";
 
@@ -44,7 +45,7 @@ export const VerifyEmail = () => {
       } else {
         showNotification(DEFAULT_MESSAGE, NOTI_ERROR);
       }
-      localStorage.setItem("token", data.access_token);
+      setStoredAuth(data.access_token, null, true);
     },
     onError: (error) => {
       let message = DEFAULT_MESSAGE;

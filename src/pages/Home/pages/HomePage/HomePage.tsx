@@ -9,9 +9,27 @@ import find from "../../../../assets/lotties/home/find.json";
 import docs from "../../../../assets/lotties/home/docs.json";
 import Lottie from "lottie-react";
 import type { HomeCardProps } from "../../../../components/HomeCard/HomeCard";
-import { FormSearch } from "../../../../components/FormSearch/formSearch";
 import { HomeCarousel } from "../../../../components/HomeCarousel/HomeCarousel";
+import { useNavigate } from "react-router-dom";
+import { ROUTER_PATH } from "../../../../router/Route";
+import homeFrame1 from "../../../../assets/svg/home/homeFrame1.svg";
+import { Banner } from "../../../../components/Banner/Banner";
 export const HomePage = () => {
+  const navigate = useNavigate();
+
+  const handleSearch = (value: string) => {
+    if (!value.trim()) {
+      return;
+    }
+
+    const params = new URLSearchParams({
+      q: value,
+      page: "1",
+    });
+
+    navigate(`${ROUTER_PATH.LOCATIONS}?${params.toString()}`);
+  };
+
   const sampleHomes: HomeCardProps[] = [
     {
       imageUrl:
@@ -88,7 +106,16 @@ export const HomePage = () => {
 
   return (
     <div className="home_page">
-      <div className="home_page-row-1">
+      <Banner
+        title="Tìm không gian phù hợp cho mọi nhu cầu của bạn"
+        description="Nền tảng kết nối người thuê với hàng ngàn phòng trọ, căn hộ, văn
+            phòng và địa điểm cho thuê trên toàn quốc. Tìm kiếm nhanh chóng theo
+            khu vực, loại hình và mức giá, với thông tin rõ ràng và được cập
+            nhật liên tục."
+        onSearch={handleSearch}
+        image={homeFrame1}
+      />
+      {/* <div className="home_page-row-1">
         <div className="row__content">
           <h1 className="row__content-title">
             Tìm không gian phù hợp cho mọi nhu cầu của bạn
@@ -102,12 +129,13 @@ export const HomePage = () => {
           <FormSearch
             label=""
             name="search"
+            onSearch={handleSearch}
             formItemProps={{
               className: "row__content-search",
             }}
           />
         </div>
-      </div>
+      </div> */}
       <div className="home_page-row-2">
         <div className="row__content">
           <h1 className="row__content-title">
@@ -183,8 +211,8 @@ export const HomePage = () => {
           </p>
         </div>
         <div className="row__description">
-          {supportSteps.map((step, index) => (
-            <div key={index} className="row__description-item">
+          {supportSteps.map((step) => (
+            <div key={step.id} className="row__description-item">
               <Lottie className="lottie-icon" animationData={step.icon} />
               <div className="div">
                 <h3 className="row__description-title">{step.title}</h3>

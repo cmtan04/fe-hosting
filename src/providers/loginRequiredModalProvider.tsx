@@ -76,6 +76,7 @@ export const LoginRequiredModalProvider: React.FC<{
     <LoginRequiredModalContext.Provider value={contextValue}>
       {children}
       <Modal
+        className="login-required-modal"
         open={open}
         centered
         closable={false}
@@ -84,10 +85,19 @@ export const LoginRequiredModalProvider: React.FC<{
         title={options.title ?? DEFAULT_TITLE}
         onCancel={handleCancel}
         footer={[
-          <Button key="cancel" onClick={handleCancel}>
+          <Button
+            className="login-required__cancel"
+            key="cancel"
+            onClick={handleCancel}
+          >
             {options.cancelText ?? DEFAULT_CANCEL_TEXT}
           </Button>,
-          <Button key="confirm" type="primary" onClick={handleConfirm}>
+          <Button
+            className="login-required__confirm"
+            key="confirm"
+            type="primary"
+            onClick={handleConfirm}
+          >
             {options.confirmText ?? DEFAULT_CONFIRM_TEXT}
           </Button>,
         ]}

@@ -4,6 +4,7 @@ import type {
   LocationCommentPayloadDto,
   LocationDto,
   LocationParamDto,
+  RelatedLocationParamDto,
   LocationResponseDto,
   LocationTypeDto,
   PaginatedLocationDto,
@@ -38,6 +39,15 @@ export const getLocationByCode = async (
       params: { locationCode },
     },
   );
+  return response.data;
+};
+
+export const getRelatedLocation = async (
+  params: RelatedLocationParamDto,
+): Promise<PaginatedLocationDto> => {
+  const response = await axiosClient.get(LocationEndpoint.GET_RELATED_LOCATION, {
+    params,
+  });
   return response.data;
 };
 

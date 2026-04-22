@@ -1,8 +1,6 @@
 @import "../../color.scss";
 
 .form-input {
-  margin-bottom: 16px;
-
   // Label styling
   .ant-form-item-label {
     label {
@@ -62,7 +60,6 @@
   &.form-input--vertical {
     .ant-form-item-label {
       text-align: left;
-      margin-bottom: 8px;
     }
   }
 
