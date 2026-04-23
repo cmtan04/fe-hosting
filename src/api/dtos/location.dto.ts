@@ -1,19 +1,161 @@
 import type { ChatAndCommentDto } from "./common.dto";
 
 export interface LocationTypeDto {
-  id: string;
+  id: number;
   typeCode: string;
   typeName: string;
-  typeDescription: string;
-  typeLogo: string;
-  typeBackGround: string;
+  typeDescription?: string;
+  typeLogo?: string;
+  typeBackGround?: string;
 }
 
-export interface ServicePayloadDto {
+export interface LocationPricingDto {
+  priceStart: number;
+  priceEnd?: number;
+  priceAfterDeal: number;
+}
+
+export interface LocationAvailabilityDto {
+  hasTimeLimit?: boolean;
+  availableFrom?: string;
+  availableTo?: string;
+  isRented?: boolean;
+}
+
+export interface LocationAddressDto {
+  addressCode?: string;
+  name: string;
+  fullAddress: string;
+  ward: string;
+  district: string;
+  city: string;
+  province: string;
+  country: string;
+  postalCode: string;
+  region: string;
+  latitude: number;
+  longitude: number;
+  description?: string;
+  note?: string;
+}
+
+export interface LocationMediaDto {
+  mediaCode?: string;
+  url: string;
+  type: "IMAGE" | "VIDEO";
+  displayOrder?: number;
+  isLogo?: boolean;
+}
+
+export interface CreateLocationRequestDto {
+  typeCode: string;
+  name: string;
+  description?: string;
+  note?: string;
+  area?: number;
+  pricing: LocationPricingDto;
+  availability?: LocationAvailabilityDto;
+  primaryAddress: LocationAddressDto;
+  serviceCodes?: string[];
+  media?: LocationMediaDto[];
+}
+
+export interface UpdateLocationRequestDto
+  extends Partial<CreateLocationRequestDto> {}
+
+export interface ServiceDto {
   serviceCode: string;
+  serviceName: string;
+  serviceDescription?: string;
+  serviceLogo?: string;
+  serviceBackGround?: string;
+  servicePrice: number | string;
+  serviceDiscount?: number;
+  isActive?: number;
 }
 
-export interface LocationAddressUpdateDto {
+export interface LocationOwnerDto {
+  userCode: string;
+  username: string;
+  email: string;
+  avatarUrl?: string | null;
+  phone?: string | null;
+  fullAddress?: string | null;
+  city?: string | null;
+}
+
+export interface LocationTypeSummaryDto {
+  code: string;
+  name: string;
+  description?: string;
+  logo?: string;
+  background?: string;
+}
+
+export interface LocationSummaryDto {
+  locationCode: string;
+  name: string;
+  description?: string;
+  note?: string;
+  logo?: string;
+  area?: number | null;
+  rating: number;
+  pricing: LocationPricingDto;
+  availability: LocationAvailabilityDto;
+  type: LocationTypeSummaryDto;
+  primaryAddress: LocationAddressDto | null;
+  owner: LocationOwnerDto;
+}
+
+export interface LocationDetailApiDto extends LocationSummaryDto {
+  addresses: LocationAddressDto[];
+  services: ServiceDto[];
+  media: LocationMediaDto[];
+}
+
+export interface PaginatedLocationApiDto {
+  data: LocationSummaryDto[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+// Compatibility view models for existing UI surfaces.
+export interface LocationDto {
+  locationCode: string;
+  typeCode: string;
+  typeName: string;
+  typeDescription?: string;
+  typeLogo?: string;
+  typeBackGround?: string;
+  locationName: string;
+  locationDescription?: string;
+  locationNote?: string;
+  locationLogo?: string;
+  locationPriceStart: number;
+  locationPriceEnd: number;
+  locationPriceAfterDeal: number;
+  locationArea?: number | null;
+  minTime?: string;
+  maxTime?: string;
+  hasRent: number;
+  renterCode: string | null;
+  locationRate: number;
+  ownerCode: string;
+  ownerName: string;
+  ownerEmail: string;
+  ownerAvatar?: string | null;
+  ownerPhone?: string | null;
+  ownerAddress?: string | null;
+  ownerCity?: string | null;
+  services?: ServiceDto[];
+  address?: AddressDto[];
+  media?: LocationMediaDto[];
+}
+
+export interface AddressDto {
+  addressCode?: string;
   addressName: string;
   fullAddress: string;
   addressWard: string;
@@ -25,31 +167,10 @@ export interface LocationAddressUpdateDto {
   addressLat: string;
   addressLong: string;
   addressRegion: string;
-  addressStatus: string;
   addressDescription?: string;
   addressNote?: string;
-  addressType: string;
-}
-
-export interface LocationDto {
-  locationCode: string;
-  typeCode: string;
-  typeName: string;
-  serviceCode: ServicePayloadDto[];
-  address: LocationAddressUpdateDto[];
-  locationName: string;
-  locationLogo: string;
-  locationPriceStart: number;
-  locationPriceEnd: number;
-  locationPriceAfterDeal: number;
-  minTimeLimit?: string;
-  maxTimeLimit?: string;
-  hasRent?: number;
-  userRentCd?: string;
-  locationDescription?: string;
-  locationNote?: string;
-  locationStatus: number;
-  locationRate?: number;
+  addressStatus?: string;
+  addressType?: string;
 }
 
 export interface PaginatedLocationDto {
@@ -60,79 +181,6 @@ export interface PaginatedLocationDto {
   totalPages: number;
 }
 
-export interface LocationResponseDto {
-  typeCode: string;
-  locationName: string;
-  locationLogo: string;
-  ownerCode: string;
-  locationCode: string;
-  minTime: string;
-  maxTime: string;
-  locationPriceStart: string;
-  locationPriceEnd: string;
-  locationPriceAfterDeal: string;
-  hasRent: number;
-  renterCode: string | null;
-  locationDescription: string;
-  locationNote: string;
-  locationRate: number;
-
-  typeName: string;
-  typeDescription: string;
-  typeLogo: string;
-  typeBackGround: string;
-
-  ownerEmail: string;
-  ownerAvatar: string | null;
-  ownerCover: string | null;
-  ownerPhone: string | null;
-  ownerAddress: string | null;
-  ownerCity: string | null;
-
-  renterEmail: string | null;
-  renterAvatar: string | null;
-  renterCover: string | null;
-  renterPhone: string | null;
-  renterAddress: string | null;
-  renterCity: string | null;
-
-  ownerName: string;
-  renterName: string | null;
-
-  services: ServiceDto[];
-  address: AddressDto[];
-}
-
-export interface ServiceDto {
-  isActive: number;
-  serviceBackGround: string;
-  serviceCode: string;
-  serviceDescription: string;
-  serviceLogo: string;
-  serviceName: string;
-  serviceNote: string;
-  servicePrice: string;
-}
-
-export interface AddressDto {
-  addressCode: string;
-  addressName: string;
-  fullAddress: string;
-  addressWard: string;
-  addressDistrict: string;
-  addressCity: string;
-  addressProvince: string;
-  addressCountry: string;
-  addressPortal: string;
-  addressLat: string;
-  addressLong: string;
-  addressRegion: string;
-  addressStatus: string;
-  addressDescription: string;
-  addressNote: string;
-  addressType: string;
-}
-
 export interface LocationCommentPayloadDto {
   commentId: number;
   locationCode: string;
@@ -140,7 +188,7 @@ export interface LocationCommentPayloadDto {
 }
 
 export interface LocationParamDto {
-  locationCode: string;
+  locationCode?: string;
   limit: number;
   page: number;
 }

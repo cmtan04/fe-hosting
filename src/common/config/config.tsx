@@ -20,7 +20,7 @@ export const items = () => [
     key: 2,
     label: (
       <span>
-        Cho thuê <img src={down} alt="Logo" />
+        Loại hình <img src={down} alt="Logo" />
       </span>
     ),
     children: [

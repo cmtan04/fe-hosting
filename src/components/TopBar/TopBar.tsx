@@ -47,6 +47,7 @@ export const TopBar = () => {
             mode="horizontal"
             items={items()}
             className="top__bar-menu-list"
+            disabledOverflow
           />
         </div>
       </div>

@@ -16,6 +16,7 @@ export const LocationTypeCard = (props: LocationTypeCardProps) => {
         alt={props.typeName}
       />
       <div className="type__card-content">
+
         <div className="type__card-content-logo">
           <img src={props.typeLogo} alt={props.typeName} />
         </div>

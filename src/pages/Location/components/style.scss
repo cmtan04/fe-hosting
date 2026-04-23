@@ -140,7 +140,6 @@
   }
 
   &__comment {
-    width: 90%;
     padding: 12px 12px;
     border-radius: 12px;
     background-color: #fdfaf3;
@@ -429,5 +428,8 @@
         font-weight: 800;
       }
     }
+  }
+  &__login-required{
+    justify-self: center;
   }
 }

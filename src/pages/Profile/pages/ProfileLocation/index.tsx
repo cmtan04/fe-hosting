@@ -46,12 +46,12 @@ export const ProfileLocation = () => {
 
   const onSubmitSearch = () => {
     setFilter({
-      locationName: form.getFieldValue("locationName"),
+      searchValue: form.getFieldValue("locationName"),
       hasRent: form.getFieldValue("hasRent"),
       locationType: form.getFieldValue("locationType"),
-      renderName: form.getFieldValue("renderName"),
-      renderEmail: form.getFieldValue("renderEmail"),
-      fullAddress: form.getFieldValue("fullAddress"),
+      addressRegion: form.getFieldValue("fullAddress"),
+      page: 1,
+      limit: 2,
     });
   };
 

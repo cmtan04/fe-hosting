@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Col, Rate, Row } from "antd";
 import { isAxiosError } from "axios";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { createConversation } from "../../../../api/configs/chat.config";
 import {
   getComment,
@@ -53,7 +53,10 @@ export const LocationDetail = () => {
   ];
 
   const location = useLocation();
-  const locationCode = location?.state?.code;
+  const { code: locationCodeFromParams } = useParams<{ code: string }>();
+  const locationCode =
+    (location.state as { code?: string } | null)?.code ??
+    locationCodeFromParams;
   const { setLoading } = useLoading();
   const navigate = useNavigate();
   const { showNotification } = useNotification();
@@ -239,11 +242,19 @@ export const LocationDetail = () => {
                     key={`${item.addressName}-${index}`}
                     className="wrap-content-row"
                   >
+                    
                     <div className="wrap-content-row-info">
                       <img src={pin} alt="" />
                       <div className="content">
                         <p className="name">{item.addressName}</p>
-                        <p className="note">({item.fullAddress})</p>
+                      <a
+                        className="wrap-content-row-map-open note"
+                        href={`https://www.google.com/maps/search/?api=1&query=${item.addressLat},${item.addressLong}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {item.fullAddress}
+                      </a>
                       </div>
                     </div>
 
@@ -253,14 +264,15 @@ export const LocationDetail = () => {
                         title={`map-${index}`}
                         frameBorder="0"
                         scrolling="no"
+                        loading="lazy"
+                        allowFullScreen
+                        referrerPolicy="no-referrer-when-downgrade"
                         src={`https://www.openstreetmap.org/export/embed.html?bbox=${Number(item.addressLong) - 0.01}%2C${
                           Number(item.addressLat) - 0.01
                         }%2C${Number(item.addressLong) + 0.01}%2C${Number(item.addressLat) + 0.01}&layer=mapnik&marker=${item.addressLat}%2C${item.addressLong}`}
-                        style={{
-                          border: "none",
-                          pointerEvents: "none",
-                        }}
-                      ></iframe>
+                        style={{ border: "none" }}
+                      />
+                      
                     </div>
                   </div>
                 ))}

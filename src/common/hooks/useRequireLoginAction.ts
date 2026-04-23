@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
 import {
   type LoginRequiredModalOptions,
@@ -12,7 +12,24 @@ interface RequireLoginActionOptions extends LoginRequiredModalOptions {
   signInState?: Record<string, unknown>;
 }
 
+const getSafeRedirectPath = (redirectPath: unknown) => {
+  if (typeof redirectPath !== "string" || !redirectPath) {
+    return undefined;
+  }
+
+  if (!redirectPath.startsWith("/") || redirectPath.startsWith("//")) {
+    return undefined;
+  }
+
+  if (redirectPath === ROUTER_PATH.SIGN_IN) {
+    return undefined;
+  }
+
+  return redirectPath;
+};
+
 export const useRequireLoginAction = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { openLoginRequiredModal } = useLoginRequiredModal();
@@ -24,19 +41,26 @@ export const useRequireLoginAction = () => {
         return true;
       }
 
+      const currentPathAtOpen = `${location.pathname}${location.search}${location.hash}`;
+
       openLoginRequiredModal({
         ...options,
         onConfirm: () => {
+          const providedRedirectPath = getSafeRedirectPath(
+            options?.signInState?.redirectTo,
+          );
+          const fallbackRedirectPath = getSafeRedirectPath(currentPathAtOpen);
+          const mergedSignInState: Record<string, unknown> = {
+            ...(options?.signInState ?? {}),
+            redirectTo: providedRedirectPath ?? fallbackRedirectPath,
+          };
+
           options?.onConfirm?.();
           if (options?.shouldNavigateToSignIn === false) {
             return;
           }
-          if (options?.signInState) {
-            navigate(ROUTER_PATH.SIGN_IN, { state: options.signInState });
-            return;
-          }
 
-          navigate(ROUTER_PATH.SIGN_IN);
+          navigate(ROUTER_PATH.SIGN_IN, { state: mergedSignInState });
         },
         onCancel: () => {
           options?.onCancel?.();
@@ -45,7 +69,7 @@ export const useRequireLoginAction = () => {
 
       return false;
     },
-    [isAuthenticated, navigate, openLoginRequiredModal],
+    [isAuthenticated, location.hash, location.pathname, location.search, navigate, openLoginRequiredModal],
   );
 
   return { requireLoginAction, isAuthenticated };

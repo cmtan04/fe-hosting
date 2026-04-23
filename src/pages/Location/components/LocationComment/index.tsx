@@ -194,7 +194,7 @@ export const LocationComment = (props: LocationCommentProps) => {
               className="remove"
               onClick={() => setCommentId(null)}
             >
-              <img src={remove} alt="Xoa tra loi" />
+              <img src={remove} alt="Xóa trả lời" />
             </button>
           </div>
         )}
