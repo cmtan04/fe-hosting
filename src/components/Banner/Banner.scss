@@ -87,7 +87,9 @@
         .ant-input-search-button {
           min-width: 116px;
           font-weight: 600;
-          font-family: $font_family_1 !important;
+          background-color: $primary_color;
+          color: $white_color;
+          font-family: $font_family_1;
         }
       }
     }

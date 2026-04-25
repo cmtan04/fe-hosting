@@ -1,4 +1,11 @@
-import type { CreateLocationRequestDto } from "../../api/dtos/location.dto";
+import type {
+  CreateLocationRequestDto,
+  LocationServiceSelectionDto,
+} from "../../api/dtos/location.dto";
+import {
+  mapEditableMediaToRequest,
+  type EditableLocationMediaItem,
+} from "./media";
 
 export interface CreateLocationDraft {
   basicInfo: {
@@ -12,24 +19,21 @@ export interface CreateLocationDraft {
     hasTimeLimit: boolean;
     availableFrom?: string;
     availableTo?: string;
-    logoUrl: string;
+    media: EditableLocationMediaItem[];
   };
   address: {
-    name: string;
+    addressDetail: string;
     fullAddress: string;
     ward: string;
-    district: string;
     city: string;
-    province: string;
     country: string;
-    postalCode: string;
     region: string;
     latitude: number;
     longitude: number;
     description: string;
     note: string;
   };
-  serviceCodes: string[];
+  services: LocationServiceSelectionDto[];
 }
 
 export const createEmptyLocationDraft = (): CreateLocationDraft => ({
@@ -44,24 +48,21 @@ export const createEmptyLocationDraft = (): CreateLocationDraft => ({
     hasTimeLimit: false,
     availableFrom: undefined,
     availableTo: undefined,
-    logoUrl: "",
+    media: [],
   },
   address: {
-    name: "",
+    addressDetail: "",
     fullAddress: "",
     ward: "",
-    district: "",
     city: "",
-    province: "",
     country: "",
-    postalCode: "",
     region: "",
     latitude: 21.0285,
     longitude: 105.8542,
     description: "",
     note: "",
   },
-  serviceCodes: [],
+  services: [],
 });
 
 export const mapDraftToCreateLocationRequest = (
@@ -87,31 +88,33 @@ export const mapDraftToCreateLocationRequest = (
     : {
         hasTimeLimit: false,
         isRented: false,
-      },
+  },
   primaryAddress: {
-    name: draft.address.name,
+    addressDetail: draft.address.addressDetail,
     fullAddress: draft.address.fullAddress,
     ward: draft.address.ward,
-    district: draft.address.district,
     city: draft.address.city,
-    province: draft.address.province,
     country: draft.address.country,
-    postalCode: draft.address.postalCode,
     region: draft.address.region,
     latitude: draft.address.latitude,
     longitude: draft.address.longitude,
     description: draft.address.description || undefined,
     note: draft.address.note || undefined,
   },
-  serviceCodes: draft.serviceCodes,
-  media: draft.basicInfo.logoUrl
-    ? [
-        {
-          url: draft.basicInfo.logoUrl,
-          type: "IMAGE",
-          displayOrder: 1,
-          isLogo: true,
+  services: draft.services.map((service) =>
+    service.serviceCode
+      ? {
+          serviceCode: service.serviceCode,
+          name: service.name,
+          description: service.description,
+          pricingType: "FULL",
+          customPrice: 0,
+        }
+      : {
+          ...service,
+          pricingType: service.pricingType ?? "FULL",
+          customPrice: Number(service.customPrice ?? 0),
         },
-      ]
-    : [],
+  ),
+  media: mapEditableMediaToRequest(draft.basicInfo.media),
 });

@@ -635,6 +635,7 @@ export const ChatPanel = (props: ChatPanelProps) => {
                     avartar={item.senderAvatarUrl || displayAvatar}
                     type={item.type}
                     attachments={item.attachments}
+                    metadata={item.metadata}
                     onOpenImageViewer={openImageViewer}
                     messageStatus={
                       item.status === "SENT" ||

@@ -6,4 +6,5 @@ export const ConverationEndpoint = {
   SET_CHAT_NICKNAME: "/chat/nickname",
   PIN_CHAT_CONVERSATION: "/chat/pin",
   MUTE_CHAT_CONVERSATION: "/chat/mute",
+  VIEW_CHAT_ATTACHMENT: "/chat/attachments",
 };

@@ -3,6 +3,10 @@ import {
   createEmptyLocationDraft,
   type CreateLocationDraft,
 } from "./types";
+import {
+  mapLocationMediaToEditable,
+  type EditableLocationMediaItem,
+} from "./media";
 
 const STORAGE_KEY = "create_location_draft_v2";
 
@@ -17,9 +21,29 @@ const readDraft = (): CreateLocationDraft => {
   }
 
   try {
+    const parsed = JSON.parse(raw) as CreateLocationDraft & {
+      basicInfo?: CreateLocationDraft["basicInfo"] & {
+        logoUrl?: string;
+        media?: EditableLocationMediaItem[];
+      };
+    };
+
     return {
       ...createEmptyLocationDraft(),
-      ...JSON.parse(raw),
+      ...parsed,
+      basicInfo: {
+        ...createEmptyLocationDraft().basicInfo,
+        ...parsed.basicInfo,
+        media: mapLocationMediaToEditable(
+          parsed.basicInfo?.media,
+          parsed.basicInfo?.logoUrl,
+        ),
+      },
+      address: {
+        ...createEmptyLocationDraft().address,
+        ...parsed.address,
+      },
+      services: parsed.services ?? [],
     } as CreateLocationDraft;
   } catch {
     sessionStorage.removeItem(STORAGE_KEY);
@@ -52,10 +76,10 @@ export const useCreateLocationDraft = () => {
           address: { ...prev.address, ...value },
         }));
       },
-      updateServiceCodes: (serviceCodes: string[]) => {
+      updateServices: (services: CreateLocationDraft["services"]) => {
         setDraft((prev) => ({
           ...prev,
-          serviceCodes,
+          services,
         }));
       },
       reset: () => {

@@ -88,16 +88,25 @@ export const LocationDetail = () => {
     queryKey: [LocationEndpoint.GET_LOCATION_COMMENT, filter],
     queryFn: () => getComment(filter),
   });
-  const { data: relatedLocationData } = useQuery({
-    queryKey: [LocationEndpoint.GET_RELATED_LOCATION, locationCode],
+  const {
+    data: relatedLocationData,
+    isLoading: relatedLocationLoading,
+    isError: relatedLocationError,
+  } = useQuery({
+    queryKey: [`${LocationEndpoint.GET_RELATED_LOCATION}/related`, locationCode],
     queryFn: () =>
       getRelatedLocation({
-        locationCode: locationCode as string,
+        locationCode: locationCode ?? "",
         page: 1,
         limit: 8,
       }),
     enabled: Boolean(locationCode),
   });
+
+  const relatedLocations =
+    relatedLocationData?.data?.filter(
+      (relatedLocation) => relatedLocation.locationCode !== locationCode,
+    ) ?? [];
 
   useEffect(() => {
     setLoading(isLoading);
@@ -334,18 +343,18 @@ export const LocationDetail = () => {
                 <p className="sum-price-end">
                   <sup>đ</sup>
                   {formatMoney(
-                    locationDetail?.locationPriceAfterDeal as string,
+                    locationDetail?.locationPriceAfterDeal,
                   )}
                 </p>
                 <p className="sum-price-detail">
                   <span>
                     <sup>đ</sup>
-                    {formatMoney(locationDetail?.locationPriceStart as string)}
+                    {formatMoney(locationDetail?.locationPriceStart)}
                   </span>
                   <span> - </span>
                   <span>
                     <sup>đ</sup>
-                    {formatMoney(locationDetail?.locationPriceEnd as string)}
+                    {formatMoney(locationDetail?.locationPriceEnd)}
                   </span>
                 </p>
               </div>
@@ -355,7 +364,7 @@ export const LocationDetail = () => {
                   <p className="detail-price-label">Giá gốc từ</p>
                   <p className="detail-price-value">
                     <sup>đ</sup>
-                    {formatMoney(locationDetail?.locationPriceStart as string)}
+                    {formatMoney(locationDetail?.locationPriceStart)}
                   </p>
                 </div>
 
@@ -363,7 +372,7 @@ export const LocationDetail = () => {
                   <p className="detail-price-label">Giá gốc đến</p>
                   <p className="detail-price-value">
                     <sup>đ</sup>
-                    {formatMoney(locationDetail?.locationPriceEnd as string)}
+                    {formatMoney(locationDetail?.locationPriceEnd)}
                   </p>
                 </div>
 
@@ -372,7 +381,7 @@ export const LocationDetail = () => {
                   <p className="detail-price-value">
                     <sup>đ</sup>
                     {formatMoney(
-                      locationDetail?.locationPriceAfterDeal as string,
+                      locationDetail?.locationPriceAfterDeal,
                     )}
                   </p>
                 </div>
@@ -393,7 +402,7 @@ export const LocationDetail = () => {
                 disabled={locationDetail?.renterCode !== null}
                 onClick={() =>
                   handleContactOwner(
-                    locationDetail?.ownerCode as string,
+                    locationDetail?.ownerCode ?? "",
                     MessageTypeEnum.RENT,
                     locationDetail?.locationCode,
                   )
@@ -408,7 +417,7 @@ export const LocationDetail = () => {
                 style={{ display: "none" }}
                 onClick={() =>
                   handleContactOwner(
-                    locationDetail?.ownerCode as string,
+                    locationDetail?.ownerCode ?? "",
                     MessageTypeEnum.CONTACT,
                     locationDetail?.locationCode,
                   )
@@ -423,7 +432,7 @@ export const LocationDetail = () => {
           </div>
 
           <div className="col-owner">
-            <img src={locationDetail?.ownerAvatar as string} alt="Owner" />
+            <img src={locationDetail?.ownerAvatar || ""} alt="Owner" />
             <div className="owner-info">
               <h1 className="title">Liên hệ</h1>
               <p className="owner-name">
@@ -457,7 +466,7 @@ export const LocationDetail = () => {
                 type="primary"
                 onClick={() =>
                   handleContactOwner(
-                    locationDetail?.ownerCode as string,
+                    locationDetail?.ownerCode ?? "",
                     MessageTypeEnum.CONTACT,
                     locationDetail?.locationCode,
                   )
@@ -480,7 +489,7 @@ export const LocationDetail = () => {
           style={{ display: "none" }}
         >
           <div className="col-owner">
-            <img src={locationDetail?.ownerAvatar as string} alt="Owner" />
+            <img src={locationDetail?.ownerAvatar || ""} alt="Owner" />
             <div className="owner-info">
               <h1 className="title">Liên hệ</h1>
               <p className="owner-name">
@@ -514,7 +523,7 @@ export const LocationDetail = () => {
                 type="primary"
                 onClick={() =>
                   handleContactOwner(
-                    locationDetail?.ownerCode as string,
+                    locationDetail?.ownerCode ?? "",
                     MessageTypeEnum.CONTACT,
                     locationDetail?.locationCode,
                   )
@@ -534,20 +543,37 @@ export const LocationDetail = () => {
         <Col span={24}>
           <h1 className="title">Các địa điểm khác</h1>
           <Row gutter={[12, 12]} className="list">
-            {relatedLocationData?.data?.map((relatedLocation: LocationDto) => (
-              <LocationCard
-                key={relatedLocation.locationCode}
-                code={relatedLocation.locationCode}
-                typeName={relatedLocation.typeName}
-                name={relatedLocation.locationName}
-                description={relatedLocation.locationDescription}
-                address={relatedLocation.address?.[0]?.fullAddress}
-                rate={relatedLocation.locationRate}
-                image={relatedLocation.locationLogo}
-                isFavourite={false}
-                onClick={handleCardClick}
-              />
-            ))}
+            {relatedLocationLoading ? (
+              <p className="related-state">Dang tai cac dia diem khac...</p>
+            ) : null}
+            {!relatedLocationLoading && relatedLocationError ? (
+              <p className="related-state">
+                Khong tai duoc cac dia diem lien quan.
+              </p>
+            ) : null}
+            {!relatedLocationLoading &&
+            !relatedLocationError &&
+            relatedLocations.length === 0 ? (
+              <p className="related-state">
+                Chua co dia diem lien quan de hien thi.
+              </p>
+            ) : null}
+            {!relatedLocationLoading && !relatedLocationError
+              ? relatedLocations.map((relatedLocation: LocationDto) => (
+                  <LocationCard
+                    key={relatedLocation.locationCode}
+                    code={relatedLocation.locationCode}
+                    typeName={relatedLocation.typeName}
+                    name={relatedLocation.locationName}
+                    description={relatedLocation.locationDescription}
+                    address={relatedLocation.address?.[0]?.fullAddress}
+                    rate={relatedLocation.locationRate}
+                    image={relatedLocation.locationLogo || ""}
+                    isFavourite={false}
+                    onClick={handleCardClick}
+                  />
+                ))
+              : null}
           </Row>
         </Col>
       </Row>

@@ -3,6 +3,7 @@ export const LocationEndpoint = {
   GET_LOCATIONS: "/locations",
   GET_LOCATION_BY_FILTER: "/locations",
   GET_LOCATION_BY_CODE: "/locations",
+  GET_OWNER_LOCATIONS: "/locations/owner",
   UPDATE_LOCATION: "/locations",
   GET_RELATED_LOCATION: "/locations",
   GET_ALL_LOCATION_TYPE: "/location-types",

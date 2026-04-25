@@ -26,7 +26,7 @@ export const MediaGallery = ({ media, className = "" }: MediaGalleryProps) => {
       <div className={`media-gallery ${className} media-gallery--empty`}>
         <figure className="media-gallery__preview">
           <div className="media-gallery__placeholder">
-            <span>Chưa có ảnh</span>
+            
           </div>
         </figure>
       </div>

@@ -21,42 +21,54 @@
 
   // Search input styling
   .form-input__search {
-    border-radius: 6px;
-    border: 1px solid $primary_color;
-    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: stretch;
     height: 40px;
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: all 0.3s ease;
 
     &:hover {
-      border-width: 2px;
-    }
-
-    &:focus,
-    &.ant-input-focused {
-      border-color: $color-blue-5;
-      box-shadow: 0 0 0 2px $shadow-focus-blue;
-    }
-
-    &.ant-input-disabled {
-      background-color: $color-gray-2;
-      color: $color-gray-6;
-      cursor: not-allowed;
-    }
-
-    &.ant-input-status-error {
-      border-color: $color-red-5;
-
-      &:focus,
-      &.ant-input-focused {
-        box-shadow: 0 0 0 2px $shadow-error-red;
+      .ant-input,
+      .ant-input-affix-wrapper {
+        border-width: 2px;
       }
     }
 
-    &.ant-input-status-warning {
-      border-color: $color-orange-5;
+    > .ant-input,
+    > .ant-input-affix-wrapper {
+      flex: 1 1 auto;
+      min-width: 0;
+      height: 100%;
+      border: 1px solid $primary_color;
+      border-right: 0;
+      border-radius: 6px 0 0 6px;
+      box-shadow: none;
+      transition: all 0.3s ease;
+    }
 
+    > .ant-input {
+      padding: 4px 12px;
+    }
+
+    > .ant-input-affix-wrapper {
+      padding: 0 11px;
+      display: inline-flex;
+      align-items: center;
+
+      > .ant-input {
+        padding: 0;
+        height: 100%;
+      }
+    }
+
+    > .ant-input,
+    > .ant-input-affix-wrapper {
       &:focus,
-      &.ant-input-focused {
-        box-shadow: 0 0 0 2px $shadow-warning-orange;
+      &:focus-within {
+        border-color: $color-blue-5;
+        box-shadow: 0 0 0 2px $shadow-focus-blue;
       }
     }
 
@@ -64,7 +76,8 @@
     .ant-input {
       border: none;
       background: transparent;
-      padding: 4px 8px;
+      height: 100%;
+      border-radius: 0;
 
       &:focus {
         outline: none;
@@ -78,22 +91,34 @@
     }
 
     // Search button styling
-    .ant-input-search-button {
+    .ant-input-search-btn {
       border-radius: 0 6px 6px 0;
       border: none;
-      background-color: $color-blue-5;
-      color: $white_color;
+      background-color: $primary_color !important;
+      color: $white_color !important;
       transition: all 0.3s ease;
       height: 100%;
+      margin: 0;
+      align-self: stretch;
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      min-width: 116px;
+      padding: 4px 20px !important;
+      line-height: 1.4;
 
       &:hover {
-        background-color: $color-blue-4;
+        background-color: $secondary_color !important;
+        color: $white_color !important;
         transform: translateY(-1px);
-        box-shadow: 0 2px 8px $shadow-focus-blue;
+        box-shadow: 0 2px 8px rgba(0, 41, 58, 0.24);
       }
 
       &:active {
-        background-color: $color-blue-6;
+        background-color: $black_color !important;
+        color: $white_color !important;
         transform: translateY(0);
       }
 
@@ -103,13 +128,20 @@
     }
 
     // Disabled search button
-    &.ant-input-disabled {
-      .ant-input-search-button {
-        background-color: $color-gray-6;
+    &.ant-input-search-disabled {
+      > .ant-input,
+      > .ant-input-affix-wrapper {
+        background-color: $color-gray-2;
+        color: $color-gray-6;
+        cursor: not-allowed;
+      }
+
+      .ant-input-search-btn {
+        background-color: $color-gray-6 !important;
         cursor: not-allowed;
 
         &:hover {
-          background-color: $color-gray-6;
+          background-color: $color-gray-6 !important;
           transform: none;
           box-shadow: none;
         }
@@ -163,7 +195,7 @@
       line-height: 38px;
     }
 
-    .ant-input-search-button {
+    .ant-input-search-btn {
       width: 40px;
 
       .anticon {
@@ -181,7 +213,7 @@
       line-height: 22px;
     }
 
-    .ant-input-search-button {
+    .ant-input-search-btn {
       width: 24px;
 
       .anticon {
@@ -232,7 +264,7 @@
         font-size: 14px;
       }
 
-      .ant-input-search-button {
+      .ant-input-search-btn {
         .anticon {
           font-size: 14px;
         }

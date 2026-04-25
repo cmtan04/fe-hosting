@@ -11,11 +11,21 @@ export const formatMinutesToTime = (minutes: number) => {
   return `${hh}:${mm}:${ss}`;
 };
 
-export const formatMoney = (value: string) => {
-  if (Number(value) === 0) return "";
+export const formatMoney = (
+  value?: string | number | null,
+) => {
+  if (value === undefined || value === null || value === "") {
+    return "";
+  }
 
-  const number = Number(value?.replace(/,/g, ""));
-  return number.toLocaleString("en-US");
+  const normalized =
+    typeof value === "number" ? value : Number(String(value).replace(/,/g, ""));
+
+  if (!Number.isFinite(normalized) || normalized === 0) {
+    return "";
+  }
+
+  return normalized.toLocaleString("en-US");
 };
 
 export const formatCurrencyVND = (amount: number) => {

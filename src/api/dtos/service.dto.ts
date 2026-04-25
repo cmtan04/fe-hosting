@@ -7,4 +7,7 @@ export interface GetAllServiceDto {
   serviceLogo: string;
   serviceName: string;
   servicePrice: string;
+  pricingType?: "FULL" | "DAILY";
+  isCustom?: boolean;
+  customPrice?: number;
 }

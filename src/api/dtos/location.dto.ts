@@ -24,19 +24,20 @@ export interface LocationAvailabilityDto {
 
 export interface LocationAddressDto {
   addressCode?: string;
-  name: string;
+  addressDetail?: string;
   fullAddress: string;
   ward: string;
-  district: string;
   city: string;
-  province: string;
   country: string;
-  postalCode: string;
   region: string;
   latitude: number;
   longitude: number;
   description?: string;
   note?: string;
+  name?: string;
+  district?: string;
+  province?: string;
+  postalCode?: string;
 }
 
 export interface LocationMediaDto {
@@ -45,6 +46,16 @@ export interface LocationMediaDto {
   type: "IMAGE" | "VIDEO";
   displayOrder?: number;
   isLogo?: boolean;
+}
+
+export type ServicePricingType = "FULL" | "DAILY";
+
+export interface LocationServiceSelectionDto {
+  serviceCode?: string;
+  name?: string;
+  description?: string;
+  pricingType?: ServicePricingType;
+  customPrice?: number;
 }
 
 export interface CreateLocationRequestDto {
@@ -56,7 +67,7 @@ export interface CreateLocationRequestDto {
   pricing: LocationPricingDto;
   availability?: LocationAvailabilityDto;
   primaryAddress: LocationAddressDto;
-  serviceCodes?: string[];
+  services?: LocationServiceSelectionDto[];
   media?: LocationMediaDto[];
 }
 
@@ -72,6 +83,9 @@ export interface ServiceDto {
   servicePrice: number | string;
   serviceDiscount?: number;
   isActive?: number;
+  pricingType?: ServicePricingType;
+  isCustom?: boolean;
+  customPrice?: number;
 }
 
 export interface LocationOwnerDto {

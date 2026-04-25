@@ -1,14 +1,21 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Checkbox, Col, DatePicker, Form, Modal, Row } from "antd";
-import dayjs from "dayjs";
-import { useEffect, useRef, useState } from "react";
+import dayjs, { type Dayjs } from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getLocationByCode } from "../../../../../api/configs/location.config";
+import {
+  getLocationByCode,
+  updateLocation,
+} from "../../../../../api/configs/location.config";
 import { getAllService } from "../../../../../api/configs/service.config";
 import {
   MapAddressMapper,
   type MapAddressDto,
 } from "../../../../../api/dtos/map.dto";
+import type {
+  LocationAddressDto,
+} from "../../../../../api/dtos/location.dto";
 import { LocationEndpoint } from "../../../../../api/endpoints/location.endpoint";
 import { ServiceEndpoint } from "../../../../../api/endpoints/service.endpoint";
 import add from "../../../../../assets/svg/profile/add.svg";
@@ -26,14 +33,49 @@ import { validString } from "../../../../../common/contexts/helper";
 import { CommonTable } from "../../../../../components/CommonTable";
 import { FormInput } from "../../../../../components/FormInput/formInput";
 import { FormTextArea } from "../../../../../components/FormTextArea/formTextArea";
+import { LocationMediaEditor } from "../../../../../components/LocationMediaEditor";
 import { MapViewCommon } from "../../../../../components/MapViewCommon";
 import { useLoading } from "../../../../../providers/loadingProvider";
 import { ServiceTag } from "../../../../Renter/components/ServiceTag/intex";
 import { uploadImage } from "../../../../../api/configs/common.config";
 import { isAxiosError } from "axios";
 import { useNotification } from "../../../../../providers/notificationProvider";
-import { MediaGallery } from "../../../../../components/MediaComponent";
 import type { ProfileLocationFilter } from "../../../../../common/types/profile";
+import {
+  appendEditableMedia,
+  mapEditableMediaToRequest,
+  mapLocationMediaToEditable,
+  markEditableMediaAsLogo,
+  removeEditableMediaById,
+  type EditableLocationMediaItem,
+} from "../../../../../features/locationCreation/media";
+import {
+  createEmptyPrimaryAddress,
+  mapPrimaryAddressToMapData,
+  normalizeLocationAddress,
+} from "../../../../../features/locationCreation/address";
+import { calculateSelectedServicesTotal } from "../../../../../features/locationCreation/services";
+import { uploadLocationMediaFiles } from "../../../../../features/locationCreation/upload";
+
+dayjs.extend(customParseFormat);
+
+const parseLocationDate = (value?: string | null): Dayjs | null => {
+  if (!value) {
+    return null;
+  }
+
+  const supportedFormats = [DATE_FORMAT, "YYYY-MM-DD", "DD/MM/YYYY"];
+
+  for (const format of supportedFormats) {
+    const parsedDate = dayjs(value, format, true);
+    if (parsedDate.isValid()) {
+      return parsedDate;
+    }
+  }
+
+  const parsedDate = dayjs(value);
+  return parsedDate.isValid() ? parsedDate : null;
+};
 
 export const ProfileLocationDetail = () => {
   const [form] = Form.useForm();
@@ -49,17 +91,13 @@ export const ProfileLocationDetail = () => {
   });
   const [showUpdate, setShowUpdate] = useState<boolean>(false);
   const [showDelete, setShowDelete] = useState<boolean>(false);
-  const [mediaList, setMediaList] = useState<
-    Array<{
-      url: string;
-      type: "image" | "video";
-      thumbnail?: string;
-    }>
-  >([]);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [mediaList, setMediaList] = useState<EditableLocationMediaItem[]>([]);
   const { showNotification } = useNotification();
   const [locationDefault, setLocationDefault] = useState<MapAddressDto>(
     MapAddressMapper.createEmpty(21.0285, 105.8542),
+  );
+  const [primaryAddress, setPrimaryAddress] = useState<LocationAddressDto>(
+    createEmptyPrimaryAddress(),
   );
 
   const { data: locationData, isLoading: locationLoading } = useQuery({
@@ -98,31 +136,64 @@ export const ProfileLocationDetail = () => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (payload: Parameters<typeof updateLocation>[1]) => {
+      if (!locationCode) {
+        throw new Error("Location code is required");
+      }
+
+      return updateLocation(locationCode, payload);
+    },
+    onSuccess: (data) => {
+      showNotification(data.message, NOTI_SUCCESS);
+    },
+    onError: (error) => {
+      let message = DEFAULT_MESSAGE;
+      if (isAxiosError(error)) {
+        const apiMessage = error.response?.data?.message;
+        if (typeof apiMessage === "string") {
+          message = apiMessage;
+        } else if (Array.isArray(apiMessage) && apiMessage[0]) {
+          message = apiMessage[0];
+        }
+      } else if (error instanceof Error && error.message) {
+        message = error.message;
+      }
+      showNotification(message, NOTI_ERROR);
+    },
+  });
+
   useEffect(() => {
-    setLoading(locationLoading);
-  }, [locationLoading]);
+    setLoading(locationLoading || uploadMutation.isPending || updateMutation.isPending);
+  }, [locationLoading, setLoading, updateMutation.isPending, uploadMutation.isPending]);
 
   useEffect(() => {
     if (locationData) {
+      const nextPrimaryAddress = normalizeLocationAddress(
+        locationData.address?.[0] ?? null,
+      );
+
       form.setFieldsValue({
         locationCode: locationData.locationCode,
         locationName: locationData.locationName,
-        minTimeLimit: locationData.minTime ? dayjs(locationData.minTime) : null,
-        maxTimeLimit: locationData.maxTime ? dayjs(locationData.maxTime) : null,
+        hasLimit: Boolean(locationData.minTime || locationData.maxTime),
+        minTimeLimit: parseLocationDate(locationData.minTime),
+        maxTimeLimit: parseLocationDate(locationData.maxTime),
         locationDescription: locationData.locationDescription,
         locationNote: locationData.locationNote,
         locationPriceStart: locationData.locationPriceStart,
-        locationPriceEnd: locationData.locationPriceEnd,
+        locationPriceAfterDeal:
+          locationData.locationPriceAfterDeal ?? locationData.locationPriceEnd,
       });
 
-      if (locationData.locationLogo) {
-        setMediaList([
-          {
-            url: locationData.locationLogo,
-            type: "image",
-          },
-        ]);
-      }
+      setPrimaryAddress(nextPrimaryAddress);
+      setLocationDefault(mapPrimaryAddressToMapData(nextPrimaryAddress));
+      setMediaList(
+        mapLocationMediaToEditable(
+          locationData.media,
+          locationData.locationLogo || undefined,
+        ),
+      );
     }
   }, [locationData, form]);
 
@@ -133,12 +204,23 @@ export const ProfileLocationDetail = () => {
         .map((item) => item.serviceCode);
 
       setSelectedServices(activeServiceCodes);
+      return;
     }
+    setSelectedServices([]);
   }, [locationData]);
 
   const isServiceSelected = (serviceCode: string) => {
     return selectedServices.includes(serviceCode);
   };
+
+  const selectedPaidServices = useMemo(
+    () =>
+      service?.filter(
+        (item) =>
+          Number(item.servicePrice) > 0 && isServiceSelected(item.serviceCode),
+      ) ?? [],
+    [service, selectedServices],
+  );
 
   const handleServiceClick = (serviceCode: string) => {
     setSelectedServices((prev) => {
@@ -171,79 +253,129 @@ export const ProfileLocationDetail = () => {
   };
 
   const handleUpdateClick = (addressCode?: string) => {
-    if (validString(addressCode as string)) {
+    if (validString(addressCode ?? "")) {
       const addressData = locationData?.address?.find(
         (item) => item.addressCode === addressCode,
       );
+      const resolvedAddress = normalizeLocationAddress(addressData);
 
-      setLocationDefault({
-        lat: Number(addressData?.addressLat),
-        long: Number(addressData?.addressLong),
-        addressLat: addressData?.addressLat ?? "",
-        addressLong: addressData?.addressLong ?? "",
-        fullAddress: addressData?.fullAddress ?? "",
-        addressWard: addressData?.addressWard ?? "",
-        addressDistrict: addressData?.addressDistrict ?? "",
-        addressCity: addressData?.addressCity ?? "",
-        addressProvince: addressData?.addressProvince ?? "",
-        addressCountry: addressData?.addressCountry ?? "",
-        addressPostal: addressData?.addressPortal ?? "",
-        addressRegion: addressData?.addressRegion ?? "",
-      });
+      setLocationDefault(mapPrimaryAddressToMapData(resolvedAddress));
 
       address.setFieldsValue({
-        addressName: addressData?.addressName,
-        fullAddress: addressData?.fullAddress,
-        addressWard: addressData?.addressWard,
-        addressDistrict: addressData?.addressDistrict,
-        addressCity: addressData?.addressCity,
-        addressProvince: addressData?.addressProvince,
-        addressCountry: addressData?.addressCountry,
-        addressPostal: addressData?.addressPortal,
-        addressRegion: addressData?.addressRegion,
-        addressDescription: addressData?.addressDescription,
-        addressNote: addressData?.addressNote,
+        addressName: resolvedAddress.name,
+        fullAddress: resolvedAddress.fullAddress,
+        addressWard: resolvedAddress.ward,
+        addressDistrict: resolvedAddress.district,
+        addressCity: resolvedAddress.city,
+        addressProvince: resolvedAddress.province,
+        addressCountry: resolvedAddress.country,
+        addressPostal: resolvedAddress.postalCode,
+        addressRegion: resolvedAddress.region,
+        addressDescription: resolvedAddress.description,
+        addressNote: resolvedAddress.note,
       });
       setShowUpdate(!showUpdate);
     } else {
-      address.resetFields();
+      address.setFieldsValue({
+        addressName: primaryAddress.name,
+        fullAddress: primaryAddress.fullAddress,
+        addressWard: primaryAddress.ward,
+        addressDistrict: primaryAddress.district,
+        addressCity: primaryAddress.city,
+        addressProvince: primaryAddress.province,
+        addressCountry: primaryAddress.country,
+        addressPostal: primaryAddress.postalCode,
+        addressRegion: primaryAddress.region,
+        addressDescription: primaryAddress.description,
+        addressNote: primaryAddress.note,
+      });
       setShowUpdate(!showUpdate);
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+  const handleUploadFiles = (files: FileList | null) => {
     if (!files || files.length === 0) {
       return;
     }
 
-    Array.from(files).forEach((file) => {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const isVideo = file.type.startsWith("video/");
-
-      uploadMutation.mutate(formData, {
-        onSuccess: (data) => {
-          setMediaList((prev) => [
-            ...prev,
-            {
-              url: data.imageUrl,
-              type: isVideo ? "video" : "image",
-            },
-          ]);
-        },
+    uploadLocationMediaFiles(files, uploadMutation.mutateAsync)
+      .then((uploaded) => {
+        setMediaList((prev) => appendEditableMedia(prev, uploaded));
+      })
+      .catch(() => {
+        // Error notification handled by mutation.
       });
-    });
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
   };
 
-  const onSubmit = () => {};
+  const onSubmit = async (values: Record<string, any>) => {
+    if (!locationCode || !locationData) {
+      return;
+    }
 
-  const onAddressSubmit = () => {};
+    await updateMutation.mutateAsync({
+      name: values.locationName,
+      description: values.locationDescription || undefined,
+      note: values.locationNote || undefined,
+      pricing: {
+        priceStart: Number(values.locationPriceStart ?? 0),
+        priceEnd: Number(locationData.locationPriceEnd ?? values.locationPriceStart ?? 0),
+        priceAfterDeal: Number(values.locationPriceAfterDeal ?? 0),
+      },
+      availability: {
+        hasTimeLimit: Boolean(values.hasLimit),
+        availableFrom: values.hasLimit
+          ? dayjs(values.minTimeLimit).format(DATE_FORMAT)
+          : undefined,
+        availableTo: values.hasLimit
+          ? dayjs(values.maxTimeLimit).format(DATE_FORMAT)
+          : undefined,
+        isRented: locationData.hasRent === 1,
+      },
+      primaryAddress,
+      services: selectedServices.map((serviceCode) => ({
+        serviceCode,
+        customPrice: 0,
+        pricingType: "FULL" as const,
+      })),
+      media: mapEditableMediaToRequest(mediaList),
+    });
+  };
+
+  const onAddressSubmit = (values: Record<string, any>) => {
+    const nextAddress = {
+      ...primaryAddress,
+      name: values.addressName,
+      fullAddress: values.fullAddress,
+      ward: values.addressWard,
+      district: values.addressDistrict,
+      city: values.addressCity,
+      province: values.addressProvince,
+      country: values.addressCountry,
+      postalCode: values.addressPostal,
+      region: values.addressRegion,
+      latitude: Number(locationDefault.lat || locationDefault.addressLat || 0),
+      longitude: Number(locationDefault.long || locationDefault.addressLong || 0),
+      description: values.addressDescription || undefined,
+      note: values.addressNote || undefined,
+    };
+
+    setPrimaryAddress(nextAddress);
+    setLocationDefault({
+      lat: nextAddress.latitude,
+      long: nextAddress.longitude,
+      addressLat: String(nextAddress.latitude),
+      addressLong: String(nextAddress.longitude),
+      fullAddress: nextAddress.fullAddress,
+      addressWard: nextAddress.ward,
+      addressDistrict: nextAddress.district,
+      addressCity: nextAddress.city,
+      addressProvince: nextAddress.province,
+      addressCountry: nextAddress.country,
+      addressPostal: nextAddress.postalCode,
+      addressRegion: nextAddress.region,
+    });
+    setShowUpdate(false);
+  };
 
   const tableHeader = [
     {
@@ -290,14 +422,14 @@ export const ProfileLocationDetail = () => {
           <div className="action-column">
             <Button
               htmlType="button"
-              icon={<img src={pen} />}
+              icon={<img src={pen} alt="" />}
               onClick={() => handleUpdateClick(record.addressCode)}
               className="button-update"
             />
 
             <Button
               htmlType="button"
-              icon={<img src={deleteIcn} />}
+              icon={<img src={deleteIcn} alt="" />}
               onClick={() => {
                 setShowDelete(!showDelete);
               }}
@@ -322,7 +454,7 @@ export const ProfileLocationDetail = () => {
         <div className="action">
           <Button
             htmlType="button"
-            icon={<img src={back} />}
+            icon={<img src={back} alt="" />}
             onClick={() => navigate(-1)}
             className="button-back"
           />
@@ -411,22 +543,20 @@ export const ProfileLocationDetail = () => {
               </Col>
 
               <Col span={10} className="upload-wrapper">
-                <MediaGallery media={mediaList} />
-
-                <label
-                  htmlFor="upload"
-                  className="renter__fillInformation-upload-btn-upload"
-                >
-                  <input
-                    id="upload"
-                    type="file"
-                    accept="image/*,video/*"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    multiple
-                  />
-                  <span>Tải ảnh/video lên</span>
-                </label>
+                <LocationMediaEditor
+                  media={mediaList}
+                  isUploading={uploadMutation.isPending}
+                  inputId="upload-location-media"
+                  uploadLabel="Tai anh/video len"
+                  emptyLabel="Chua co media cho location nay"
+                  onUpload={handleUploadFiles}
+                  onRemove={(id) =>
+                    setMediaList((prev) => removeEditableMediaById(prev, id))
+                  }
+                  onSetAvatar={(id) =>
+                    setMediaList((prev) => markEditableMediaAsLogo(prev, id))
+                  }
+                />
               </Col>
             </Row>
 
@@ -485,8 +615,8 @@ export const ProfileLocationDetail = () => {
                     prevValues.hasLimit !== currentValues.hasLimit
                   }
                 >
-                  {({ getFieldValue }) =>
-                    getFieldValue("hasLimit") === true && (
+                  {() =>
+                    form.getFieldValue("hasLimit") === true && (
                       <Row gutter={[16, 16]} className="limit-time">
                         <Col span={12}>
                           <Form.Item
@@ -518,9 +648,11 @@ export const ProfileLocationDetail = () => {
                                 required: true,
                                 message: "Vui lòng chọn ngày kết thúc",
                               },
-                              ({ getFieldValue }) => ({
-                                validator(_, value) {
-                                  const minDate = getFieldValue("minTimeLimit");
+                              () => ({
+                                validator(_rule: unknown, value?: Dayjs) {
+                                  const minDate = form.getFieldValue(
+                                    "minTimeLimit",
+                                  ) as Dayjs | undefined;
                                   if (
                                     !value ||
                                     !minDate ||
@@ -567,10 +699,17 @@ export const ProfileLocationDetail = () => {
                 {service
                   ?.filter((item) => Number(item.servicePrice) === 0)
                   .map((item) => (
-                    <div
+                    <button
+                      type="button"
                       key={item.serviceCode}
                       onClick={() => handleServiceClick(item.serviceCode)}
-                      style={{ cursor: "pointer" }}
+                      style={{
+                        background: "transparent",
+                        border: 0,
+                        cursor: "pointer",
+                        padding: 0,
+                        textAlign: "left",
+                      }}
                     >
                       <ServiceTag
                         icon={item.serviceLogo}
@@ -579,7 +718,7 @@ export const ProfileLocationDetail = () => {
                         description={item.serviceDescription}
                         active={isServiceSelected(item.serviceCode)}
                       />
-                    </div>
+                    </button>
                   ))}
               </Row>
             </div>
@@ -590,10 +729,17 @@ export const ProfileLocationDetail = () => {
                 {service
                   ?.filter((item) => Number(item.servicePrice) > 0)
                   .map((item) => (
-                    <div
+                    <button
+                      type="button"
                       key={item.serviceCode}
                       onClick={() => handleServiceClick(item.serviceCode)}
-                      style={{ cursor: "pointer" }}
+                      style={{
+                        background: "transparent",
+                        border: 0,
+                        cursor: "pointer",
+                        padding: 0,
+                        textAlign: "left",
+                      }}
                     >
                       <ServiceTag
                         icon={item.serviceLogo}
@@ -602,7 +748,7 @@ export const ProfileLocationDetail = () => {
                         description={item.serviceDescription}
                         active={isServiceSelected(item.serviceCode)}
                       />
-                    </div>
+                    </button>
                   ))}
               </Row>
             </div>
@@ -615,13 +761,7 @@ export const ProfileLocationDetail = () => {
                 <Col span={8}>
                   <p>
                     {formatCurrencyVND(
-                      service
-                        ?.filter((item) => Number(item.servicePrice) > 0)
-                        .filter((item) => isServiceSelected(item.serviceCode))
-                        .reduce(
-                          (sum, item) => sum + Number(item.servicePrice),
-                          0,
-                        ) || 0,
+                      calculateSelectedServicesTotal(selectedPaidServices) || 0,
                     )}
                   </p>
                 </Col>
@@ -634,13 +774,7 @@ export const ProfileLocationDetail = () => {
                 <Col span={8}>
                   <p>
                     {formatCurrencyVND(
-                      service
-                        ?.filter(
-                          (item) =>
-                            Number(item.servicePrice) > 0 &&
-                            isServiceSelected(item.serviceCode),
-                        )
-                        .reduce((sum, item) => {
+                      selectedPaidServices.reduce((sum, item) => {
                           const price = Number(item.servicePrice || 0);
                           const discount = Number(item.serviceDiscount || 0);
                           return sum + (price * discount) / 100;
@@ -657,13 +791,7 @@ export const ProfileLocationDetail = () => {
                 <Col span={8}>
                   <p>
                     {formatCurrencyVND(
-                      service
-                        ?.filter(
-                          (item) =>
-                            Number(item.servicePrice) > 0 &&
-                            isServiceSelected(item.serviceCode),
-                        )
-                        .reduce((sum, item) => {
+                      selectedPaidServices.reduce((sum, item) => {
                           const price = Number(item.servicePrice || 0);
                           const discount = Number(item.serviceDiscount || 0);
                           return sum + price * (1 - discount / 100);
@@ -700,7 +828,7 @@ export const ProfileLocationDetail = () => {
             <Row gutter={[16, 16]} className="body-row-address-button">
               <Button
                 htmlType="button"
-                icon={<img src={add} />}
+                icon={<img src={add} alt="" />}
                 onClick={() => handleUpdateClick()}
                 className="button-add"
               >
@@ -730,7 +858,7 @@ export const ProfileLocationDetail = () => {
             afterOpenChange={(visible) => {
               if (visible) {
                 setTimeout(() => {
-                  window.dispatchEvent(new Event("resize"));
+                  globalThis.dispatchEvent(new Event("resize"));
                 }, 0);
               }
             }}

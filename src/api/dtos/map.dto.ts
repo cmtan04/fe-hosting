@@ -1,13 +1,15 @@
 export interface MapAddressDto {
   lat: number;
   long: number;
+  addressDetail: string;
   fullAddress: string;
+
   addressWard: string;
-  addressDistrict: string;
+
   addressCity: string;
-  addressProvince: string;
+
   addressCountry: string;
-  addressPostal: string;
+
   addressLat: string;
   addressLong: string;
   addressRegion: string;
@@ -16,7 +18,8 @@ export interface MapAddressDto {
 export interface CreateMapAddressDto {
   lat: number;
   long: number;
-  fullAddress?: string;
+  addressDetail?: string;
+  fullAddress: string;
   addressWard?: string;
   addressDistrict?: string;
   addressCity?: string;
@@ -31,6 +34,11 @@ export interface NominatimResponseDto {
   lon: string;
   display_name: string;
   address?: {
+    house_number?: string;
+    road?: string;
+    pedestrian?: string;
+    amenity?: string;
+    hamlet?: string;
     suburb?: string;
     neighbourhood?: string;
     quarter?: string;
@@ -50,27 +58,80 @@ export interface NominatimResponseDto {
 }
 
 export class MapAddressMapper {
+  private static buildAddressDetail(data: NominatimResponseDto): string {
+    const address = data.address || {};
+    const primaryLine = [address.house_number, address.road || address.pedestrian]
+      .filter(Boolean)
+      .join(" ")
+      .trim();
+
+    return (
+      primaryLine ||
+      address.amenity ||
+      address.hamlet ||
+      ""
+    );
+  }
+
+  private static buildFullAddress(data: NominatimResponseDto): string {
+    const address = data.address || {};
+    const parts = [
+      MapAddressMapper.buildAddressDetail(data),
+      address.amenity,
+      address.hamlet,
+      address.suburb || address.neighbourhood || address.quarter,
+      address.city_district || address.county,
+      address.city || address.town || address.village,
+      address.state || address.province,
+      address.country,
+    ]
+      .map((part) => part?.trim())
+      .filter(Boolean) as string[];
+
+    const uniqueParts = parts.filter(
+      (part, index) => parts.findIndex((value) => value === part) === index,
+    );
+
+    return uniqueParts.join(", ") || data.display_name || "";
+  }
+
   static fromNominatim(
     data: NominatimResponseDto,
     lat: number,
     lng: number,
   ): MapAddressDto {
+    console.log("nominatim data", data);
     const address = data.address || {};
 
     return {
       lat,
       long: lng,
-      fullAddress: data.display_name || "",
+      addressDetail: MapAddressMapper.buildAddressDetail(data),
+      fullAddress: MapAddressMapper.buildFullAddress(data),
       addressWard:
-        address.suburb || address.neighbourhood || address.quarter || "",
-      addressDistrict: address.city_district || address.county || "",
-      addressCity: address.city || address.town || address.village || "",
-      addressProvince: address.state || address.province || "",
+        address.suburb ||
+        address.neighbourhood ||
+        address.quarter ||
+        address.city_district ||
+        address.county ||
+        "",
+      addressCity:
+        address.city ||
+        address.town ||
+        address.village ||
+        address.state ||
+        address.province ||
+        "",
       addressCountry: address.country || "",
-      addressPostal: address.postcode || "",
       addressLat: lat.toString(),
       addressLong: lng.toString(),
-      addressRegion: address.region || address.state_district || "",
+      addressRegion:
+        address.city ||
+        address.town ||
+        address.village ||
+        address.state ||
+        address.province ||
+        "",
     };
   }
 
@@ -78,13 +139,11 @@ export class MapAddressMapper {
     return {
       lat,
       long: lng,
+      addressDetail: "",
       fullAddress: "",
       addressWard: "",
-      addressDistrict: "",
       addressCity: "",
-      addressProvince: "",
       addressCountry: "",
-      addressPostal: "",
       addressLat: lat.toString(),
       addressLong: lng.toString(),
       addressRegion: "",
@@ -93,10 +152,9 @@ export class MapAddressMapper {
 
   static toDisplayString(address: MapAddressDto): string {
     const parts = [
+      address.addressDetail,
       address.addressWard,
-      address.addressDistrict,
       address.addressCity,
-      address.addressProvince,
       address.addressCountry,
     ].filter(Boolean);
 
@@ -107,7 +165,7 @@ export class MapAddressMapper {
     return !!(
       address.lat &&
       address.long &&
-      (address.fullAddress || address.addressCity || address.addressProvince)
+      (address.fullAddress || address.addressCity)
     );
   }
 }

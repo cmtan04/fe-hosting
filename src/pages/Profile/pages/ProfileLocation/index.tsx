@@ -10,9 +10,10 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getAllLocationType,
   getLocationByFilter,
+  getOwnerLocations,
 } from "../../../../api/configs/location.config";
 import { useLoading } from "../../../../providers/loadingProvider";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { CommonTable } from "../../../../components/CommonTable";
 import add from "../../../../assets/svg/profile/add.svg";
 import find from "../../../../assets/svg/profile/find.svg";
@@ -21,6 +22,8 @@ import type { ProfileLocationFilter } from "../../../../common/types/profile";
 import { useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "../../../../router/Route";
 import type { LocationDto } from "../../../../api/dtos/location.dto";
+import { useAuth } from "../../../../common/contexts/authContext";
+import { FormSearch } from "../../../../components/FormSearch/formSearch";
 
 export const ProfileLocation = () => {
   const [form] = Form.useForm();
@@ -30,14 +33,17 @@ export const ProfileLocation = () => {
     page: 1,
     limit: 2,
   });
+  const auth = useAuth();
+  const ownerCode = auth?.user?.userCode || "";
+
   const { data: typeList, isLoading } = useQuery({
     queryKey: [LocationEndpoint.GET_ALL_LOCATION_TYPE],
     queryFn: () => getAllLocationType(),
   });
 
   const { data: locationData, isLoading: locationLoading } = useQuery({
-    queryKey: [LocationEndpoint.GET_LOCATION_BY_FILTER, filter],
-    queryFn: () => getLocationByFilter(filter),
+    queryKey: [LocationEndpoint.GET_OWNER_LOCATIONS, ownerCode],
+    queryFn: () => getOwnerLocations(ownerCode),
   });
 
   useEffect(() => {
@@ -152,124 +158,21 @@ export const ProfileLocation = () => {
         <p>Danh sách các địa điểm mà bạn đã cung cấp.</p>
       </div>
       <div className="profile__location-body">
-        <div className="profile__location-body-search">
-          <Form form={form} onFinish={onSubmitSearch}>
-            <Row gutter={[16, 16]}>
-              <Col span={8}>
-                <FormInput
-                  label="Tên địa điểm"
-                  name="locationName"
-                  placeholder="Nhập tên địa điểm"
-                  vertical={true}
-                  formItemProps={{
-                    rules: [
-                      {
-                        required: false,
-                      },
-                    ],
-                  }}
-                />
-              </Col>
-              <Col span={8}>
-                <SelectCommon
-                  label="Trạng thái"
-                  name="hasRent"
-                  placeholder="Trạng thái"
-                  options={rentOption}
-                  formItemProps={{
-                    rules: [
-                      {
-                        required: false,
-                      },
-                    ],
-                  }}
-                />
-              </Col>
-              <Col span={8}>
-                <SelectCommon
-                  label="Phân loại"
-                  name="locationType"
-                  placeholder="Phân loại"
-                  options={
-                    typeList?.map((item) => ({
-                      key: Number(item.id),
-                      value: item.typeCode,
-                      label: item.typeName,
-                    })) || []
-                  }
-                  formItemProps={{
-                    rules: [
-                      {
-                        required: false,
-                      },
-                    ],
-                  }}
-                />
-              </Col>
-            </Row>
-            <Row gutter={[16, 16]}>
-              <Col span={12}>
-                <FormInput
-                  label="Tên người thuê"
-                  name="renderName"
-                  placeholder="Tên người thuê"
-                  vertical={true}
-                  formItemProps={{
-                    rules: [
-                      {
-                        required: false,
-                      },
-                    ],
-                  }}
-                />
-              </Col>
-              <Col span={12}>
-                <FormInput
-                  label="Email người thuê"
-                  name="renderEmail"
-                  placeholder="Email người thuê"
-                  vertical={true}
-                  formItemProps={{
-                    rules: [
-                      {
-                        required: false,
-                      },
-                    ],
-                  }}
-                />
-              </Col>
-            </Row>
-            <Row gutter={[16, 16]}>
-              <Col span={24}>
-                <FormInput
-                  label="Địa chỉ"
-                  name="fullAddress"
-                  placeholder="Địa chỉ"
-                  vertical={true}
-                  formItemProps={{
-                    rules: [
-                      {
-                        required: false,
-                      },
-                    ],
-                  }}
-                />
-              </Col>
-            </Row>
-            <Row gutter={[16, 16]} className="action-row">
-              <Button
-                icon={<img src={find} />}
-                htmlType="submit"
-                className="button-submit"
-              >
-                Tìm kiếm
-              </Button>
-            </Row>
-          </Form>
+        <div className="search">
+          <FormSearch
+            name="locationName"
+            label=""
+            placeholder="Tìm kiếm địa điểm của bạn..."
+            onSearch={onSubmitSearch}
+            searchProps={{ enterButton: "Tìm kiếm" }}
+          />
         </div>
+
         <div className="profile__location-body-result">
           <Row gutter={[16, 16]} className="header">
-            <p className="result__count">Tổng số địa điểm: </p>
+            <p className="result__count">
+              Tổng số địa điểm: {locationData?.length ?? 0}
+            </p>
             <Button
               htmlType="button"
               onClick={() => addNewLocation()}
@@ -283,12 +186,12 @@ export const ProfileLocation = () => {
           <Row gutter={[16, 16]}>
             <CommonTable
               header={header}
-              body={locationData?.data as LocationDto[]}
+              body={locationData}
               className="location__table"
               loading={locationLoading}
               hasPagination={true}
               currentPage={filter.page ?? 1}
-              totalPages={locationData?.totalPages ?? 0}
+              // totalPages={locationData?.length ?? 1}
               onPageChange={(page) => setFilter((prev) => ({ ...prev, page }))}
             />
           </Row>

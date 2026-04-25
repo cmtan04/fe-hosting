@@ -15,16 +15,41 @@ import type {
 } from "../dtos/location.dto";
 import { LocationEndpoint } from "../endpoints/location.endpoint";
 
+const LOCATION_TYPE_CODE_MAP: Record<string, string> = {
+  motel: "ROOM",
+  room: "ROOM",
+  apartment: "APARTMENT",
+  office: "OFFICE",
+  "full-house": "HOUSE",
+  full_house: "HOUSE",
+  house: "HOUSE",
+  dorm: "DORM",
+  venue: "SHOP",
+  shop: "SHOP",
+};
+
+const normalizeLocationTypeCode = (value?: string | null) => {
+  const normalizedValue = value?.trim();
+
+  if (!normalizedValue) {
+    return undefined;
+  }
+
+  return (
+    LOCATION_TYPE_CODE_MAP[normalizedValue.toLowerCase()] ?? normalizedValue
+  );
+};
+
 const mapAddress = (address: LocationAddressDto) => ({
   addressCode: address.addressCode,
-  addressName: address.name,
+  addressName: address.addressDetail,
   fullAddress: address.fullAddress,
   addressWard: address.ward,
-  addressDistrict: address.district,
+  addressDistrict: address.ward,
   addressCity: address.city,
-  addressProvince: address.province,
+  addressProvince: address.city,
   addressCountry: address.country,
-  addressPortal: address.postalCode,
+  addressPortal: "",
   addressLat: String(address.latitude),
   addressLong: String(address.longitude),
   addressRegion: address.region,
@@ -88,7 +113,7 @@ const mapLocationListResponse = (
 
 const toLocationQueryParams = (filter: ProfileLocationFilter) => ({
   keyword: filter.searchValue,
-  typeCode: filter.locationType,
+  typeCode: normalizeLocationTypeCode(filter.locationType),
   typeName: filter.typeName,
   addressCity: filter.addressCity,
   addressRegion: filter.addressRegion,
@@ -97,13 +122,17 @@ const toLocationQueryParams = (filter: ProfileLocationFilter) => ({
   minArea: filter.minArea,
   maxArea: filter.maxArea,
   isRented:
-    typeof filter.hasRent === "number" ? Number(filter.hasRent) === 1 : undefined,
+    typeof filter.hasRent === "number"
+      ? Number(filter.hasRent) === 1
+      : undefined,
   page: filter.page,
   limit: filter.limit,
 });
 
 export const getAllLocationType = async (): Promise<LocationTypeDto[]> => {
-  const response = await axiosClient.get(LocationEndpoint.GET_ALL_LOCATION_TYPE);
+  const response = await axiosClient.get(
+    LocationEndpoint.GET_ALL_LOCATION_TYPE,
+  );
   return response.data;
 };
 
@@ -118,6 +147,15 @@ export const getLocationByFilter = async (
   );
 
   return mapLocationListResponse(response.data);
+};
+
+export const getOwnerLocations = async (
+  ownerCode: string,
+): Promise<LocationDto[]> => {
+  const response = await axiosClient.get<LocationSummaryDto[]>(
+    `${LocationEndpoint.GET_OWNER_LOCATIONS}/${ownerCode}`,
+  );
+  return response.data.map(mapLocationSummary);
 };
 
 export const getLocationByCode = async (
@@ -186,8 +224,11 @@ export const createNewComment = async (
 };
 
 export const getComment = async (payload: LocationParamDto): Promise<any> => {
-  const response = await axiosClient.get(LocationEndpoint.GET_LOCATION_COMMENT, {
-    params: payload,
-  });
+  const response = await axiosClient.get(
+    LocationEndpoint.GET_LOCATION_COMMENT,
+    {
+      params: payload,
+    },
+  );
   return response.data;
 };

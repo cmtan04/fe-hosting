@@ -14,12 +14,13 @@
     }
   }
 
-  .form-input__input {
+  .form-input__input,
+  .form-input__input.ant-input-affix-wrapper {
     border-radius: 6px;
     border: 1px solid $primary_color;
     transition: all 0.3s ease;
     height: 40px;
-    line-height: 40px;
+    background: #fff;
 
     &:hover {
       border-width: 2px;
@@ -53,6 +54,41 @@
       &.ant-input-focused {
         box-shadow: 0 0 0 2px $shadow-warning-orange;
       }
+    }
+  }
+
+  .form-input__input.ant-input-affix-wrapper {
+    padding: 0 11px;
+
+    .ant-input {
+      height: 38px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      line-height: 38px;
+      box-shadow: none;
+    }
+
+    .ant-input-suffix {
+      margin: 0 0 0 8px;
+    }
+  }
+
+  .form-input__input.ant-input {
+    line-height: 40px;
+  }
+
+  .form-input__input.ant-input,
+  .form-input__input.ant-input-affix-wrapper .ant-input {
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+      -webkit-text-fill-color: $color-text-primary;
+      -webkit-box-shadow: 0 0 0 1000px #fff inset;
+      box-shadow: 0 0 0 1000px #fff inset;
+      caret-color: $color-text-primary;
+      transition: background-color 5000s ease-in-out 0s;
     }
   }
 

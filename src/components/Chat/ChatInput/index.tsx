@@ -2,6 +2,7 @@ import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isAxiosError } from "axios";
 import { uploadImage } from "../../../api/configs/common.config";
+import { sendChatMessage } from "../../../api/configs/chat.config";
 import type {
   MessageResponseDto,
   SendMessageAttachmentDto,
@@ -14,7 +15,6 @@ import {
   NOTI_ERROR,
 } from "../../../common/constants/constants";
 import { useNotification } from "../../../providers/notificationProvider";
-import { chatSocket } from "../../../socket/domains/chat.socket";
 
 export interface ChatInputProps {
   conversationId: number;
@@ -116,22 +116,26 @@ export const ChatInput = (props: ChatInputProps) => {
   ): Promise<SendMessageAttachmentDto[]> => {
     return Promise.all(
       selectedFiles.map(async (file) => {
-        const formData = new FormData();
-        formData.append("file", file);
+        try {
+          const formData = new FormData();
+          formData.append("file", file);
 
-        const [uploadResult, dimensions] = await Promise.all([
-          uploadImage(formData),
-          getImageDimensions(file),
-        ]);
+          const [uploadResult, dimensions] = await Promise.all([
+            uploadImage(formData),
+            getImageDimensions(file),
+          ]);
 
-        return {
-          fileName: file.name,
-          mimeType: file.type || "application/octet-stream",
-          size: file.size,
-          url: uploadResult.imageUrl,
-          width: dimensions?.width,
-          height: dimensions?.height,
-        };
+          return {
+            fileName: file.name,
+            mimeType: file.type || "application/octet-stream",
+            size: file.size,
+            url: uploadResult.imageUrl,
+            width: dimensions?.width,
+            height: dimensions?.height,
+          };
+        } catch (error) {
+          throw new Error(`Khong the tai file ${file.name}: ${resolveErrorMessage(error)}`);
+        }
       }),
     );
   };
@@ -232,7 +236,7 @@ export const ChatInput = (props: ChatInputProps) => {
     try {
       const attachments = hasFiles ? await uploadAttachments(files) : undefined;
 
-      const createdMessage = await chatSocket.sendMessage({
+      const createdMessage = await sendChatMessage({
         conversationId: props.conversationId,
         content: trimmedMessage || undefined,
         attachments,

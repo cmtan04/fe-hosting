@@ -552,6 +552,19 @@
             align-items: center;
             padding: 0;
           }
+
+          .related-state {
+            width: 90%;
+            margin: 0;
+            padding: 20px 24px;
+            border: 1px dashed #d8cbb8;
+            border-radius: 12px;
+            color: #7a6e62;
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: center;
+            background: #fdfaf4;
+          }
         }
       }
     }
