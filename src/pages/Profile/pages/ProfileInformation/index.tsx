@@ -1,40 +1,40 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Col, DatePicker, Form, Modal, Row } from "antd";
-import { UserEndpoint } from "../../../../api/endpoints/user.endpoint";
+import { UserEndpoint } from "@api/endpoints/user.endpoint";
 import {
   getUserPRofile,
   updateUserProfile,
-} from "../../../../api/configs/user.config";
-import phone from "../../../../assets/svg/profile/phone.svg";
-import mail from "../../../../assets/svg/profile/mail.svg";
-import bio from "../../../../assets/svg/profile/bio.svg";
-import locationIcon from "../../../../assets/images/profile/icn_location.svg";
-import threeDots from "../../../../assets/svg/three-dots.svg";
-import fallbackAvatar from "../../../../assets/images/profile/icn_profile.svg";
-import fallbackCover from "../../../../assets/images/home/home-background2.jpg";
+} from "@api/configs/user.config";
+import phone from "@assets/svg/profile/phone.svg";
+import mail from "@assets/svg/profile/mail.svg";
+import locationIcon from "@assets/images/profile/icn_location.svg";
+import fallbackAvatar from "@assets/images/profile/icn_profile.svg";
+import fallbackCover from "@assets/images/home/home-background2.jpg";
 import { useEffect, useRef, useState } from "react";
-import { uploadImage } from "../../../../api/configs/common.config";
+import { uploadImage } from "@api/configs/common.config";
 import {
   DATE_FORMAT,
   DEFAULT_MESSAGE,
   NOTI_ERROR,
   NOTI_SUCCESS,
-} from "../../../../common/constants/constants";
+} from "@common/constants/constants";
 import { isAxiosError } from "axios";
-import { useLoading } from "../../../../providers/loadingProvider";
-import { useNotification } from "../../../../providers/notificationProvider";
-import { FormInput } from "../../../../components/FormInput/formInput";
-import { FormTextArea } from "../../../../components/FormTextArea/formTextArea";
+import { useLoading } from "@providers/loadingProvider";
+import { useNotification } from "@providers/notificationProvider";
+import { FormInput } from "@components/FormInput/formInput";
+import { FormTextArea } from "@components/FormTextArea/formTextArea";
 import type {
   UserAddressDto,
   UserUpdatePayloadDto,
-} from "../../../../api/dtos/user.dto";
+} from "@api/dtos/user.dto";
 import dayjs from "dayjs";
-import { MapViewCommon } from "../../../../components/MapViewCommon";
+import { MapViewCommon } from "@components/MapViewCommon";
 import {
-  MapAddressMapper,
-  type MapAddressDto,
-} from "../../../../api/dtos/map.dto";
+  createDraftAddressFromMapResult,
+  createDraftAddressFromUserAddress,
+  mapDraftAddressToUserAddress,
+} from "@features/mapAddress/address";
+import { useMapAddressPicker } from "@features/mapAddress/useMapAddressPicker";
 
 export const ProfileInformation = () => {
   const [form] = Form.useForm();
@@ -43,10 +43,20 @@ export const ProfileInformation = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [url, setUrl] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>();
-  const [location, setLocation] = useState<MapAddressDto>(
-    MapAddressMapper.createEmpty(21.0285, 105.8542),
-  );
   const [address, setAddress] = useState<UserAddressDto>();
+  const [addressDraft, setAddressDraft] = useState(() =>
+    createDraftAddressFromUserAddress(),
+  );
+  const { mapData, resolveCoordinates, searchState } = useMapAddressPicker({
+    initialAddress: addressDraft,
+    hasSearch: true,
+    onAddressResolved: (value) => {
+      const nextDraft = createDraftAddressFromMapResult(value, addressDraft);
+      setAddressDraft(nextDraft);
+      form.setFieldValue("fullAddress", nextDraft.fullAddress);
+      setAddress(mapDraftAddressToUserAddress(nextDraft));
+    },
+  });
 
   const {
     data: user,
@@ -121,6 +131,9 @@ export const ProfileInformation = () => {
   useEffect(() => {
     if (user) {
       setUrl(user.avatarUrl);
+      const nextAddressDraft = createDraftAddressFromUserAddress(user);
+      setAddressDraft(nextAddressDraft);
+      setAddress(mapDraftAddressToUserAddress(nextAddressDraft));
       form.setFieldsValue({
         username: user.username,
         fullName: user.fullName,
@@ -165,22 +178,6 @@ export const ProfileInformation = () => {
     };
 
     updateUserMutation.mutate(payload);
-  };
-
-  const handleMapClick = (data: MapAddressDto) => {
-    form.setFieldValue("fullAddress", data.fullAddress);
-    setAddress({
-      fullAddress: data.fullAddress,
-      userWard: data.addressWard,
-      userDistrict: data.addressDistrict,
-      userCity: data.addressCity,
-      userProvince: data.addressProvince,
-      userCountry: data.addressCountry,
-      userPortal: data.addressPostal,
-      userLat: data.addressLat,
-      userLong: data.addressLong,
-    });
-    setShowModal(!showModal);
   };
 
   const headerCover = user?.coverUrl || fallbackCover;
@@ -420,9 +417,12 @@ export const ProfileInformation = () => {
           >
             <div className="profile__information-modal-body">
               <MapViewCommon
-                data={location}
-                hasInputSearch={true}
-                onMapClick={handleMapClick}
+                center={{
+                  lat: mapData.lat,
+                  lng: mapData.long,
+                }}
+                searchState={searchState}
+                onCoordinateSelect={resolveCoordinates}
               />
             </div>
           </Modal>

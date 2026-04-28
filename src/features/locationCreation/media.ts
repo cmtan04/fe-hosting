@@ -1,4 +1,4 @@
-import type { LocationMediaDto } from "../../api/dtos/location.dto";
+import type { LocationMediaDto } from "@api/dtos/location.dto";
 
 export interface EditableLocationMediaItem {
   id: string;
@@ -23,7 +23,7 @@ export const normalizeEditableMedia = (
     id: item.id || createMediaId(),
     url: item.url || "",
     fileName: item.fileName?.trim() || "",
-    type: item.type === "VIDEO" ? "VIDEO" : "IMAGE",
+    type: item.type,
     isLogo: Boolean(item.isLogo),
     displayOrder: index + 1,
   }));

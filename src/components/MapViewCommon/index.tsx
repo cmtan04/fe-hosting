@@ -14,14 +14,7 @@ import {
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import "./style.scss";
-import {
-  MapAddressMapper,
-  type MapAddressDto,
-  type NominatimResponseDto,
-} from "../../api/dtos/map.dto";
-
-const SEARCH_DEBOUNCE_MS = 350;
-const SEARCH_RESULT_LIMIT = 5;
+import type { NominatimResponseDto } from "../../api/dtos/map.dto";
 
 const DefaultIcon = L.icon({
   iconUrl: icon,
@@ -33,9 +26,22 @@ const DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 interface MapViewCommonProps {
-  data: MapAddressDto;
-  hasInputSearch?: boolean;
-  onMapClick: (e: MapAddressDto) => void;
+  center: {
+    lat: number;
+    lng: number;
+  };
+  searchState?: {
+    input: string;
+    results: NominatimResponseDto[];
+    isSearching: boolean;
+    isDropdownOpen: boolean;
+    onInputChange: (value: string) => void;
+    onFocus: () => void;
+    onSubmit: () => void | Promise<void>;
+    onSelectResult: (result: NominatimResponseDto) => void;
+    onOpenChange: (open: boolean) => void;
+  };
+  onCoordinateSelect: (value: { lat: number; lng: number }) => void | Promise<void>;
 }
 
 function ChangeView({
@@ -53,24 +59,14 @@ function ChangeView({
 }
 
 function MapClickHandler({
-  onMapClick,
+  onCoordinateSelect,
 }: {
-  onMapClick: (data: MapAddressDto) => void;
+  onCoordinateSelect: (value: { lat: number; lng: number }) => void | Promise<void>;
 }): null {
   useMapEvents({
     click(event) {
       const { lat, lng } = event.latlng;
-
-      fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`,
-      )
-        .then((res) => res.json())
-        .then((data: NominatimResponseDto) => {
-          onMapClick(MapAddressMapper.fromNominatim(data, lat, lng));
-        })
-        .catch(() => {
-          onMapClick(MapAddressMapper.createEmpty(lat, lng));
-        });
+      onCoordinateSelect({ lat, lng });
     },
   });
 
@@ -89,33 +85,32 @@ const getSuggestionTitle = (result: NominatimResponseDto) =>
   result.display_name;
 
 export const MapViewCommon: React.FC<MapViewCommonProps> = ({
-  data,
-  hasInputSearch = false,
-  onMapClick,
+  center,
+  searchState,
+  onCoordinateSelect,
 }) => {
-  const [searchInput, setSearchInput] = useState("");
-  const [searchResults, setSearchResults] = useState<NominatimResponseDto[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [markerPosition, setMarkerPosition] = useState<[number, number]>([
-    data.lat,
-    data.long,
+    center.lat,
+    center.lng,
   ]);
   const markerRef = useRef<L.Marker>(null);
   const searchWrapperRef = useRef<HTMLDivElement>(null);
-  const skipNextSearchRef = useRef(false);
 
   useEffect(() => {
-    setMarkerPosition([data.lat, data.long]);
-  }, [data.lat, data.long]);
+    setMarkerPosition([center.lat, center.lng]);
+  }, [center.lat, center.lng]);
 
   useEffect(() => {
+    if (!searchState) {
+      return;
+    }
+
     const handleClickOutside = (event: MouseEvent) => {
       if (
         searchWrapperRef.current &&
         !searchWrapperRef.current.contains(event.target as Node)
       ) {
-        setIsDropdownOpen(false);
+        searchState.onOpenChange(false);
       }
     };
 
@@ -124,94 +119,7 @@ export const MapViewCommon: React.FC<MapViewCommonProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
-
-  useEffect(() => {
-    const keyword = searchInput.trim();
-
-    if (skipNextSearchRef.current) {
-      skipNextSearchRef.current = false;
-      return;
-    }
-
-    if (!hasInputSearch || keyword.length < 2) {
-      setSearchResults([]);
-      setIsSearching(false);
-      setIsDropdownOpen(false);
-      return;
-    }
-
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(async () => {
-      try {
-        setIsSearching(true);
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-            keyword,
-          )}&addressdetails=1&limit=${SEARCH_RESULT_LIMIT}`,
-          {
-            signal: controller.signal,
-          },
-        );
-        const results: NominatimResponseDto[] = await response.json();
-        setSearchResults(results);
-        setIsDropdownOpen(true);
-      } catch (error) {
-        if (!(error instanceof DOMException && error.name === "AbortError")) {
-          console.error("Search error:", error);
-          setSearchResults([]);
-          setIsDropdownOpen(true);
-        }
-      } finally {
-        setIsSearching(false);
-      }
-    }, SEARCH_DEBOUNCE_MS);
-
-    return () => {
-      controller.abort();
-      window.clearTimeout(timeoutId);
-    };
-  }, [hasInputSearch, searchInput]);
-
-  const applySearchResult = (result: NominatimResponseDto) => {
-    const newLat = Number.parseFloat(result.lat);
-    const newLng = Number.parseFloat(result.lon);
-    const parsedData = MapAddressMapper.fromNominatim(result, newLat, newLng);
-
-    setMarkerPosition([newLat, newLng]);
-    onMapClick(parsedData);
-    skipNextSearchRef.current = true;
-    setSearchInput(parsedData.fullAddress);
-    setSearchResults([]);
-    setIsDropdownOpen(false);
-  };
-
-  const handleSearch = async () => {
-    if (searchResults.length > 0) {
-      applySearchResult(searchResults[0]);
-      return;
-    }
-
-    if (!searchInput.trim()) {
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          searchInput,
-        )}&addressdetails=1&limit=1`,
-      );
-      const results: NominatimResponseDto[] = await response.json();
-      const firstResult = results[0];
-
-      if (firstResult) {
-        applySearchResult(firstResult);
-      }
-    } catch (error) {
-      console.error("Search error:", error);
-    }
-  };
+  }, [searchState]);
 
   const handleMarkerDrag = () => {
     const marker = markerRef.current;
@@ -221,54 +129,39 @@ export const MapViewCommon: React.FC<MapViewCommonProps> = ({
     }
 
     const { lat, lng } = marker.getLatLng();
-
-    fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`,
-    )
-      .then((res) => res.json())
-      .then((result: NominatimResponseDto) => {
-        const parsedData = MapAddressMapper.fromNominatim(result, lat, lng);
-        onMapClick(parsedData);
-        skipNextSearchRef.current = true;
-        setSearchInput(parsedData.fullAddress);
-      })
-      .catch(() => {
-        onMapClick(MapAddressMapper.createEmpty(lat, lng));
-      });
+    onCoordinateSelect({ lat, lng });
   };
 
   return (
     <div className="map__view">
-      {hasInputSearch && (
+      {searchState && (
         <div className="map__view__search" ref={searchWrapperRef}>
           <Input
             placeholder="Tim kiem dia diem..."
             prefix={<SearchOutlined />}
             size="large"
-            value={searchInput}
-            onChange={(event) => setSearchInput(event.target.value)}
-            onFocus={() => {
-              if (searchResults.length > 0) {
-                setIsDropdownOpen(true);
-              }
+            value={searchState.input}
+            onChange={(event) => searchState.onInputChange(event.target.value)}
+            onFocus={searchState.onFocus}
+            onPressEnter={() => {
+              void searchState.onSubmit();
             }}
-            onPressEnter={handleSearch}
           />
-          {isDropdownOpen && (
+          {searchState.isDropdownOpen && (
             <div className="map-autocomplete-dropdown">
-              {isSearching && (
+              {searchState.isSearching && (
                 <div className="map-autocomplete-dropdown__state">
                   Dang tim dia diem...
                 </div>
               )}
 
-              {!isSearching &&
-                searchResults.map((result, index) => (
+              {!searchState.isSearching &&
+                searchState.results.map((result, index) => (
                   <button
                     key={`${result.lat}-${result.lon}-${index}`}
                     type="button"
                     className="map-autocomplete-dropdown__item"
-                    onClick={() => applySearchResult(result)}
+                    onClick={() => searchState.onSelectResult(result)}
                   >
                     <span className="map-autocomplete-dropdown__item__title">
                       {getSuggestionTitle(result)}
@@ -279,9 +172,9 @@ export const MapViewCommon: React.FC<MapViewCommonProps> = ({
                   </button>
                 ))}
 
-              {!isSearching &&
-                searchInput.trim().length >= 2 &&
-                searchResults.length === 0 && (
+              {!searchState.isSearching &&
+                searchState.input.trim().length >= 2 &&
+                searchState.results.length === 0 && (
                   <div className="map-autocomplete-dropdown__state">
                     Khong tim thay ket qua phu hop.
                   </div>
@@ -294,7 +187,7 @@ export const MapViewCommon: React.FC<MapViewCommonProps> = ({
       <div className="map__view__container">
         <MapContainer center={markerPosition} zoom={15}>
           <ChangeView center={markerPosition} />
-          <MapClickHandler onMapClick={onMapClick} />
+          <MapClickHandler onCoordinateSelect={onCoordinateSelect} />
 
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

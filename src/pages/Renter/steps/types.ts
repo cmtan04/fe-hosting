@@ -104,10 +104,8 @@ export interface AddressAndServicesStepProps {
   onCancel: () => void;
   onNext: (value: AddressAndServicesStepSubmitValue) => void;
   onStepChange: (nextStep: number) => void;
-  onDraftChange: (
-    patch: AddressDraftPatch,
-    services: ServicesDraftPatch["services"],
-  ) => void;
+  onAddressDraftChange: (patch: AddressDraftPatch) => void;
+  onServicesDraftChange: (services: ServicesDraftPatch["services"]) => void;
 }
 
 export interface ConfirmStepProps {
@@ -120,6 +118,10 @@ export interface ConfirmStepProps {
   onSubmit: () => void;
   onStepChange: (nextStep: number) => void;
   isSubmitting: boolean;
+  isUploading: boolean;
+  onUpload: (files: FileList) => void;
+  onRemoveMedia: (id: string) => void;
+  onSetAvatar: (id: string) => void;
 }
 
 export interface CustomServiceComposerState {

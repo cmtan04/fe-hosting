@@ -49,6 +49,7 @@ export interface LocationMediaDto {
 }
 
 export type ServicePricingType = "FULL" | "DAILY";
+export type ServicePriceType = "FREE" | "PAID";
 
 export interface LocationServiceSelectionDto {
   serviceCode?: string;
@@ -81,6 +82,7 @@ export interface ServiceDto {
   serviceLogo?: string;
   serviceBackGround?: string;
   servicePrice: number | string;
+  servicePriceType?: ServicePriceType;
   serviceDiscount?: number;
   isActive?: number;
   pricingType?: ServicePricingType;

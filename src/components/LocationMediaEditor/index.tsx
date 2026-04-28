@@ -22,7 +22,7 @@ interface LocationMediaEditorProps {
 export const LocationMediaEditor = ({
   media,
   isUploading = false,
-  uploadLabel = "Tai file da phuong tien len",
+  uploadLabel,
   emptyLabel = "Chua tai len tep da phuong tien nao",
   inputId,
   accept = "image/*,video/*",
@@ -106,7 +106,11 @@ export const LocationMediaEditor = ({
                     className="file-name"
                     style={{ paddingLeft: "4px", flex: 1, minWidth: 0 }}
                   >
-                    <Text ellipsis={{ tooltip: item.fileName || "Media khong co ten" }}>
+                    <Text
+                      ellipsis={{
+                        tooltip: item.fileName || "Media khong co ten",
+                      }}
+                    >
                       {item.fileName || "Media khong co ten"}
                     </Text>
                   </span>
@@ -130,25 +134,27 @@ export const LocationMediaEditor = ({
           </div>
         )}
 
-        <label
-          htmlFor={inputId}
-          className={`renter__fillInformation-upload-btn-upload ${isUploading ? "is-uploading" : ""}`}
-        >
-          <input
-            id={inputId}
-            type="file"
-            accept={accept}
-            disabled={isUploading}
-            multiple={multiple}
-            onChange={(event) => {
-              if (event.target.files?.length) {
-                onUpload(event.target.files);
-              }
-              event.target.value = "";
-            }}
-          />
-          <span>{isUploading ? "Dang tai media" : uploadLabel}</span>
-        </label>
+        {uploadLabel && (
+          <label
+            htmlFor={inputId}
+            className={`renter__fillInformation-upload-btn-upload ${isUploading ? "is-uploading" : ""}`}
+          >
+            <input
+              id={inputId}
+              type="file"
+              accept={accept}
+              disabled={isUploading}
+              multiple={multiple}
+              onChange={(event) => {
+                if (event.target.files?.length) {
+                  onUpload(event.target.files);
+                }
+                event.target.value = "";
+              }}
+            />
+            <span>{isUploading ? "Dang tai media" : uploadLabel}</span>
+          </label>
+        )}
       </div>
 
       <Modal

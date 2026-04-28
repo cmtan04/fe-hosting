@@ -1,15 +1,18 @@
+import {
+  buildAddressDetailFromNominatim,
+  createEmptyMapAddress,
+  createFullAddressFromNominatim,
+  createMapAddressFromNominatim,
+} from "../../features/mapAddress/address";
+
 export interface MapAddressDto {
   lat: number;
   long: number;
   addressDetail: string;
   fullAddress: string;
-
   addressWard: string;
-
   addressCity: string;
-
   addressCountry: string;
-
   addressLat: string;
   addressLong: string;
   addressRegion: string;
@@ -34,10 +37,15 @@ export interface NominatimResponseDto {
   lon: string;
   display_name: string;
   address?: {
+    tourism?: string;
+    office?: string;
+    residential?: string;
+    amenity?: string;
+    shop?: string;
+    building?: string;
     house_number?: string;
     road?: string;
     pedestrian?: string;
-    amenity?: string;
     hamlet?: string;
     suburb?: string;
     neighbourhood?: string;
@@ -59,40 +67,11 @@ export interface NominatimResponseDto {
 
 export class MapAddressMapper {
   private static buildAddressDetail(data: NominatimResponseDto): string {
-    const address = data.address || {};
-    const primaryLine = [address.house_number, address.road || address.pedestrian]
-      .filter(Boolean)
-      .join(" ")
-      .trim();
-
-    return (
-      primaryLine ||
-      address.amenity ||
-      address.hamlet ||
-      ""
-    );
+    return buildAddressDetailFromNominatim(data);
   }
 
   private static buildFullAddress(data: NominatimResponseDto): string {
-    const address = data.address || {};
-    const parts = [
-      MapAddressMapper.buildAddressDetail(data),
-      address.amenity,
-      address.hamlet,
-      address.suburb || address.neighbourhood || address.quarter,
-      address.city_district || address.county,
-      address.city || address.town || address.village,
-      address.state || address.province,
-      address.country,
-    ]
-      .map((part) => part?.trim())
-      .filter(Boolean) as string[];
-
-    const uniqueParts = parts.filter(
-      (part, index) => parts.findIndex((value) => value === part) === index,
-    );
-
-    return uniqueParts.join(", ") || data.display_name || "";
+    return createFullAddressFromNominatim(data);
   }
 
   static fromNominatim(
@@ -100,54 +79,11 @@ export class MapAddressMapper {
     lat: number,
     lng: number,
   ): MapAddressDto {
-    console.log("nominatim data", data);
-    const address = data.address || {};
-
-    return {
-      lat,
-      long: lng,
-      addressDetail: MapAddressMapper.buildAddressDetail(data),
-      fullAddress: MapAddressMapper.buildFullAddress(data),
-      addressWard:
-        address.suburb ||
-        address.neighbourhood ||
-        address.quarter ||
-        address.city_district ||
-        address.county ||
-        "",
-      addressCity:
-        address.city ||
-        address.town ||
-        address.village ||
-        address.state ||
-        address.province ||
-        "",
-      addressCountry: address.country || "",
-      addressLat: lat.toString(),
-      addressLong: lng.toString(),
-      addressRegion:
-        address.city ||
-        address.town ||
-        address.village ||
-        address.state ||
-        address.province ||
-        "",
-    };
+    return createMapAddressFromNominatim(data, lat, lng);
   }
 
   static createEmpty(lat: number, lng: number): MapAddressDto {
-    return {
-      lat,
-      long: lng,
-      addressDetail: "",
-      fullAddress: "",
-      addressWard: "",
-      addressCity: "",
-      addressCountry: "",
-      addressLat: lat.toString(),
-      addressLong: lng.toString(),
-      addressRegion: "",
-    };
+    return createEmptyMapAddress(lat, lng);
   }
 
   static toDisplayString(address: MapAddressDto): string {
@@ -174,8 +110,7 @@ export const AddressFieldLabels = {
   fullAddress: "Địa chỉ đầy đủ",
   addressWard: "Phường/Xã",
   addressDistrict: "Quận/Huyện",
-  addressCity: "Thành phố",
-  addressProvince: "Tỉnh/Thành",
+  addressCity: "Tỉnh/Thành phố",
   addressCountry: "Quốc gia",
   addressPostal: "Mã bưu điện",
   addressLat: "Vĩ độ",

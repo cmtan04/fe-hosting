@@ -5,11 +5,12 @@ import {
   calculateSelectedServicesTotal,
   getServiceDraftPrice,
 } from "../../../features/locationCreation/services";
-import { ServiceTag } from "../components/ServiceTag/intex";
+import { ServiceTag } from "../components/ServiceTag";
 import { SummaryPanel } from "../components/SummaryPanel";
 import { STEP_ITEMS } from "./constants";
 import type { ConfirmStepProps } from "./types";
 import icnClear from "../../../assets/svg/icn-clear.svg";
+import { LocationMediaEditor } from "@/components/LocationMediaEditor";
 
 export const ConfirmStep = ({
   draft,
@@ -21,6 +22,10 @@ export const ConfirmStep = ({
   onCancel,
   onStepChange,
   isSubmitting,
+  isUploading,
+  onUpload,
+  onRemoveMedia,
+  onSetAvatar,
 }: ConfirmStepProps) => {
   const selectedType = typeList?.find(
     (item) => item.typeCode === draft.basicInfo.typeCode,
@@ -129,6 +134,20 @@ export const ConfirmStep = ({
           </div>
         </Col>
         <Col span={8}>
+          <div className="renter-sectionBand">
+            <div className="renter-sectionBand-header">
+              <h2>Tập đính kèm</h2>
+            </div>
+            <LocationMediaEditor
+              media={draft.basicInfo.media}
+              isUploading={isUploading}
+              inputId="upload-basic-media"
+              emptyLabel="Chưa tải lên tập đính kèm nào"
+              onUpload={onUpload}
+              onRemove={onRemoveMedia}
+              onSetAvatar={onSetAvatar}
+            />
+          </div>
           <SummaryPanel
             title="Chi phi va dich vu"
             rows={[

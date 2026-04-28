@@ -3,6 +3,10 @@ import type {
   LocationServiceSelectionDto,
 } from "../../api/dtos/location.dto";
 import {
+  DEFAULT_LOCATION_LATITUDE,
+  DEFAULT_LOCATION_LONGITUDE,
+} from "../mapAddress/locationDefaults";
+import {
   mapEditableMediaToRequest,
   type EditableLocationMediaItem,
 } from "./media";
@@ -57,15 +61,15 @@ export const createEmptyLocationDraft = (): CreateLocationDraft => ({
     city: "",
     country: "",
     region: "",
-    latitude: 21.0285,
-    longitude: 105.8542,
+    latitude: DEFAULT_LOCATION_LATITUDE,
+    longitude: DEFAULT_LOCATION_LONGITUDE,
     description: "",
     note: "",
   },
   services: [],
 });
 
-export const mapDraftToCreateLocationRequest = (
+export const createCreateLocationRequestFromDraft = (
   draft: CreateLocationDraft,
 ): CreateLocationRequestDto => ({
   typeCode: draft.basicInfo.typeCode,
@@ -107,8 +111,8 @@ export const mapDraftToCreateLocationRequest = (
           serviceCode: service.serviceCode,
           name: service.name,
           description: service.description,
-          pricingType: "FULL",
-          customPrice: 0,
+          pricingType: service.pricingType ?? "FULL",
+          customPrice: Number(service.customPrice ?? 0),
         }
       : {
           ...service,
@@ -118,3 +122,7 @@ export const mapDraftToCreateLocationRequest = (
   ),
   media: mapEditableMediaToRequest(draft.basicInfo.media),
 });
+
+export const mapDraftToCreateLocationRequest = (
+  draft: CreateLocationDraft,
+): CreateLocationRequestDto => createCreateLocationRequestFromDraft(draft);

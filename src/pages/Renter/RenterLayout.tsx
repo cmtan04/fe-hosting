@@ -147,10 +147,8 @@ export const RenterLayout = () => {
 
   const handleAddressAndServicesDraftChange = (
     address: AddressDraftPatch,
-    servicesValue: AddressAndServicesStepSubmitValue["services"],
   ) => {
     updateAddress(address);
-    updateServices(servicesValue ?? []);
   };
 
   const handleStepChange = (nextStep: number) => {
@@ -213,7 +211,10 @@ export const RenterLayout = () => {
           reset();
           navigate(-1);
         }}
-        onDraftChange={handleAddressAndServicesDraftChange}
+        onAddressDraftChange={handleAddressAndServicesDraftChange}
+        onServicesDraftChange={(servicesValue) =>
+          updateServices(servicesValue ?? [])
+        }
         onNext={handleAddressAndServicesNext}
         onStepChange={handleStepChange}
       />
@@ -234,6 +235,18 @@ export const RenterLayout = () => {
       }}
       onSubmit={() => handleCreateLocation()}
       onStepChange={handleStepChange}
+      isUploading={uploadMutation.isPending}
+      onUpload={handleUploadMedia}
+      onRemoveMedia={(id) => {
+        updateBasicInfo({
+          media: removeEditableMediaById(draft.basicInfo.media, id),
+        });
+      }}
+      onSetAvatar={(id) => {
+        updateBasicInfo({
+          media: markEditableMediaAsLogo(draft.basicInfo.media, id),
+        });
+      }}
     />
   );
 };

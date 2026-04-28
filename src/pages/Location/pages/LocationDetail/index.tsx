@@ -31,7 +31,7 @@ import { MediaGallery } from "../../../../components/MediaComponent";
 import { useLoading } from "../../../../providers/loadingProvider";
 import { useNotification } from "../../../../providers/notificationProvider";
 import { ROUTER_PATH } from "../../../../router/Route";
-import { ServiceTag } from "../../../Renter/components/ServiceTag/intex";
+import { ServiceTag } from "../../../Renter/components/ServiceTag";
 import { useRequireLoginAction } from "../../../../common/hooks/useRequireLoginAction";
 import { LocationComment } from "../../components/LocationComment";
 import { LocationCard } from "../../components/LocationCard";
@@ -93,7 +93,10 @@ export const LocationDetail = () => {
     isLoading: relatedLocationLoading,
     isError: relatedLocationError,
   } = useQuery({
-    queryKey: [`${LocationEndpoint.GET_RELATED_LOCATION}/related`, locationCode],
+    queryKey: [
+      `${LocationEndpoint.GET_RELATED_LOCATION}/related`,
+      locationCode,
+    ],
     queryFn: () =>
       getRelatedLocation({
         locationCode: locationCode ?? "",
@@ -251,19 +254,18 @@ export const LocationDetail = () => {
                     key={`${item.addressName}-${index}`}
                     className="wrap-content-row"
                   >
-                    
                     <div className="wrap-content-row-info">
                       <img src={pin} alt="" />
                       <div className="content">
                         <p className="name">{item.addressName}</p>
-                      <a
-                        className="wrap-content-row-map-open note"
-                        href={`https://www.google.com/maps/search/?api=1&query=${item.addressLat},${item.addressLong}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {item.fullAddress}
-                      </a>
+                        <a
+                          className="wrap-content-row-map-open note"
+                          href={`https://www.google.com/maps/search/?api=1&query=${item.addressLat},${item.addressLong}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {item.fullAddress}
+                        </a>
                       </div>
                     </div>
 
@@ -281,7 +283,6 @@ export const LocationDetail = () => {
                         }%2C${Number(item.addressLong) + 0.01}%2C${Number(item.addressLat) + 0.01}&layer=mapnik&marker=${item.addressLat}%2C${item.addressLong}`}
                         style={{ border: "none" }}
                       />
-                      
                     </div>
                   </div>
                 ))}
@@ -342,9 +343,7 @@ export const LocationDetail = () => {
               <div className="sum-price">
                 <p className="sum-price-end">
                   <sup>đ</sup>
-                  {formatMoney(
-                    locationDetail?.locationPriceAfterDeal,
-                  )}
+                  {formatMoney(locationDetail?.locationPriceAfterDeal)}
                 </p>
                 <p className="sum-price-detail">
                   <span>
@@ -380,9 +379,7 @@ export const LocationDetail = () => {
                   <p className="detail-price-label">Giá thuê</p>
                   <p className="detail-price-value">
                     <sup>đ</sup>
-                    {formatMoney(
-                      locationDetail?.locationPriceAfterDeal,
-                    )}
+                    {formatMoney(locationDetail?.locationPriceAfterDeal)}
                   </p>
                 </div>
 

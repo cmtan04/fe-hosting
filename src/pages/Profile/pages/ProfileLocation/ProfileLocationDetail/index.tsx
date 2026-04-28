@@ -9,13 +9,8 @@ import {
   updateLocation,
 } from "../../../../../api/configs/location.config";
 import { getAllService } from "../../../../../api/configs/service.config";
-import {
-  MapAddressMapper,
-  type MapAddressDto,
-} from "../../../../../api/dtos/map.dto";
-import type {
-  LocationAddressDto,
-} from "../../../../../api/dtos/location.dto";
+import { createDraftAddressFromMapResult } from "../../../../../features/mapAddress/address";
+import type { LocationAddressDto } from "../../../../../api/dtos/location.dto";
 import { LocationEndpoint } from "../../../../../api/endpoints/location.endpoint";
 import { ServiceEndpoint } from "../../../../../api/endpoints/service.endpoint";
 import add from "../../../../../assets/svg/profile/add.svg";
@@ -36,7 +31,7 @@ import { FormTextArea } from "../../../../../components/FormTextArea/formTextAre
 import { LocationMediaEditor } from "../../../../../components/LocationMediaEditor";
 import { MapViewCommon } from "../../../../../components/MapViewCommon";
 import { useLoading } from "../../../../../providers/loadingProvider";
-import { ServiceTag } from "../../../../Renter/components/ServiceTag/intex";
+import { ServiceTag } from "../../../../Renter/components/ServiceTag";
 import { uploadImage } from "../../../../../api/configs/common.config";
 import { isAxiosError } from "axios";
 import { useNotification } from "../../../../../providers/notificationProvider";
@@ -51,11 +46,11 @@ import {
 } from "../../../../../features/locationCreation/media";
 import {
   createEmptyPrimaryAddress,
-  mapPrimaryAddressToMapData,
   normalizeLocationAddress,
 } from "../../../../../features/locationCreation/address";
 import { calculateSelectedServicesTotal } from "../../../../../features/locationCreation/services";
 import { uploadLocationMediaFiles } from "../../../../../features/locationCreation/upload";
+import { useMapAddressPicker } from "../../../../../features/mapAddress/useMapAddressPicker";
 
 dayjs.extend(customParseFormat);
 
@@ -93,12 +88,49 @@ export const ProfileLocationDetail = () => {
   const [showDelete, setShowDelete] = useState<boolean>(false);
   const [mediaList, setMediaList] = useState<EditableLocationMediaItem[]>([]);
   const { showNotification } = useNotification();
-  const [locationDefault, setLocationDefault] = useState<MapAddressDto>(
-    MapAddressMapper.createEmpty(21.0285, 105.8542),
-  );
   const [primaryAddress, setPrimaryAddress] = useState<LocationAddressDto>(
     createEmptyPrimaryAddress(),
   );
+  const { mapData, resolveCoordinates, searchState } = useMapAddressPicker({
+    initialAddress: {
+      addressDetail: primaryAddress.addressDetail ?? "",
+      fullAddress: primaryAddress.fullAddress,
+      ward: primaryAddress.ward,
+      city: primaryAddress.city,
+      country: primaryAddress.country,
+      region: primaryAddress.region,
+      latitude: primaryAddress.latitude,
+      longitude: primaryAddress.longitude,
+      description: primaryAddress.description ?? "",
+      note: primaryAddress.note ?? "",
+    },
+    hasSearch: true,
+    onAddressResolved: (value) => {
+      const nextDraft = createDraftAddressFromMapResult(value, {
+        addressDetail: primaryAddress.addressDetail ?? "",
+        fullAddress: primaryAddress.fullAddress,
+        ward: primaryAddress.ward,
+        city: primaryAddress.city,
+        country: primaryAddress.country,
+        region: primaryAddress.region,
+        latitude: primaryAddress.latitude,
+        longitude: primaryAddress.longitude,
+        description: primaryAddress.description ?? "",
+        note: primaryAddress.note ?? "",
+      });
+
+      address.setFieldsValue({
+        fullAddress: nextDraft.fullAddress,
+        addressWard: nextDraft.ward,
+        addressDistrict: primaryAddress.district ?? nextDraft.ward,
+        addressCity: nextDraft.city,
+        addressProvince: primaryAddress.province ?? nextDraft.city,
+        addressCountry: nextDraft.country,
+        addressPostal: primaryAddress.postalCode ?? "",
+        addressRegion: nextDraft.region,
+      });
+    },
+  });
 
   const { data: locationData, isLoading: locationLoading } = useQuery({
     queryKey: [LocationEndpoint.GET_LOCATION_BY_CODE, locationCode],
@@ -164,8 +196,15 @@ export const ProfileLocationDetail = () => {
   });
 
   useEffect(() => {
-    setLoading(locationLoading || uploadMutation.isPending || updateMutation.isPending);
-  }, [locationLoading, setLoading, updateMutation.isPending, uploadMutation.isPending]);
+    setLoading(
+      locationLoading || uploadMutation.isPending || updateMutation.isPending,
+    );
+  }, [
+    locationLoading,
+    setLoading,
+    updateMutation.isPending,
+    uploadMutation.isPending,
+  ]);
 
   useEffect(() => {
     if (locationData) {
@@ -187,7 +226,6 @@ export const ProfileLocationDetail = () => {
       });
 
       setPrimaryAddress(nextPrimaryAddress);
-      setLocationDefault(mapPrimaryAddressToMapData(nextPrimaryAddress));
       setMediaList(
         mapLocationMediaToEditable(
           locationData.media,
@@ -237,29 +275,12 @@ export const ProfileLocationDetail = () => {
     });
   };
 
-  const handleMapClick = (data: MapAddressDto) => {
-    setLocationDefault(data);
-
-    address.setFieldsValue({
-      fullAddress: data.fullAddress,
-      addressWard: data.addressWard,
-      addressDistrict: data.addressDistrict,
-      addressCity: data.addressCity,
-      addressProvince: data.addressProvince,
-      addressCountry: data.addressCountry,
-      addressPostal: data.addressPostal,
-      addressRegion: data.addressRegion,
-    });
-  };
-
   const handleUpdateClick = (addressCode?: string) => {
     if (validString(addressCode ?? "")) {
       const addressData = locationData?.address?.find(
         (item) => item.addressCode === addressCode,
       );
       const resolvedAddress = normalizeLocationAddress(addressData);
-
-      setLocationDefault(mapPrimaryAddressToMapData(resolvedAddress));
 
       address.setFieldsValue({
         addressName: resolvedAddress.name,
@@ -318,7 +339,9 @@ export const ProfileLocationDetail = () => {
       note: values.locationNote || undefined,
       pricing: {
         priceStart: Number(values.locationPriceStart ?? 0),
-        priceEnd: Number(locationData.locationPriceEnd ?? values.locationPriceStart ?? 0),
+        priceEnd: Number(
+          locationData.locationPriceEnd ?? values.locationPriceStart ?? 0,
+        ),
         priceAfterDeal: Number(values.locationPriceAfterDeal ?? 0),
       },
       availability: {
@@ -353,27 +376,13 @@ export const ProfileLocationDetail = () => {
       country: values.addressCountry,
       postalCode: values.addressPostal,
       region: values.addressRegion,
-      latitude: Number(locationDefault.lat || locationDefault.addressLat || 0),
-      longitude: Number(locationDefault.long || locationDefault.addressLong || 0),
+      latitude: Number(mapData.lat || 0),
+      longitude: Number(mapData.long || 0),
       description: values.addressDescription || undefined,
       note: values.addressNote || undefined,
     };
 
     setPrimaryAddress(nextAddress);
-    setLocationDefault({
-      lat: nextAddress.latitude,
-      long: nextAddress.longitude,
-      addressLat: String(nextAddress.latitude),
-      addressLong: String(nextAddress.longitude),
-      fullAddress: nextAddress.fullAddress,
-      addressWard: nextAddress.ward,
-      addressDistrict: nextAddress.district,
-      addressCity: nextAddress.city,
-      addressProvince: nextAddress.province,
-      addressCountry: nextAddress.country,
-      addressPostal: nextAddress.postalCode,
-      addressRegion: nextAddress.region,
-    });
     setShowUpdate(false);
   };
 
@@ -775,10 +784,10 @@ export const ProfileLocationDetail = () => {
                   <p>
                     {formatCurrencyVND(
                       selectedPaidServices.reduce((sum, item) => {
-                          const price = Number(item.servicePrice || 0);
-                          const discount = Number(item.serviceDiscount || 0);
-                          return sum + (price * discount) / 100;
-                        }, 0) || 0,
+                        const price = Number(item.servicePrice || 0);
+                        const discount = Number(item.serviceDiscount || 0);
+                        return sum + (price * discount) / 100;
+                      }, 0) || 0,
                     )}
                   </p>
                 </Col>
@@ -792,10 +801,10 @@ export const ProfileLocationDetail = () => {
                   <p>
                     {formatCurrencyVND(
                       selectedPaidServices.reduce((sum, item) => {
-                          const price = Number(item.servicePrice || 0);
-                          const discount = Number(item.serviceDiscount || 0);
-                          return sum + price * (1 - discount / 100);
-                        }, 0) || 0,
+                        const price = Number(item.servicePrice || 0);
+                        const discount = Number(item.serviceDiscount || 0);
+                        return sum + price * (1 - discount / 100);
+                      }, 0) || 0,
                     )}
                   </p>
                 </Col>
@@ -871,9 +880,12 @@ export const ProfileLocationDetail = () => {
             <Row gutter={[16, 16]} className="modal__body">
               <Col span={12}>
                 <MapViewCommon
-                  data={locationDefault}
-                  hasInputSearch={true}
-                  onMapClick={handleMapClick}
+                  center={{
+                    lat: mapData.lat,
+                    lng: mapData.long,
+                  }}
+                  searchState={searchState}
+                  onCoordinateSelect={resolveCoordinates}
                 />
               </Col>
               <Col span={12}>
