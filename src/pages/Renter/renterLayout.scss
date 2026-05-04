@@ -72,9 +72,8 @@
   .header-close {
     width: 24px;
     height: 24px;
-    padding: 4px;
-    border-radius: 999px;
-    background: #f8fafc;
+    border: none;
+    background: transparent;
     cursor: pointer;
     transition: background-color 0.2s ease;
 
@@ -521,12 +520,42 @@
     width: 112px;
   }
 
+  .renter-inlineControl--quantity {
+    width: 72px;
+  }
+
   .renter-inlinePriceInput {
     width: 100%;
     height: 28px;
     padding: 4px 10px;
     border-radius: 8px;
     font-weight: 600;
+  }
+
+  .renter-inlineQuantityInput {
+    width: 100%;
+    height: 28px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  .renter-selectedServiceDescription {
+    flex-basis: 100%;
+    color: #61758a;
+    font-size: 12px;
+    line-height: 20px;
+  }
+
+  .renter-inlineDescriptionInput {
+    flex-basis: 100%;
+    width: 100%;
+    min-height: 58px;
+    margin-top: 2px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 20px;
   }
 
   .renter-selectedServiceActions {

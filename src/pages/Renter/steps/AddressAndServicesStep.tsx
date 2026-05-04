@@ -14,11 +14,8 @@ import {
   createCustomServiceSelection,
   DEFAULT_SERVICE_PRICING_TYPE,
   filterAvailableCatalogServices,
-  getServiceDraftPrice,
-  isCatalogServiceSelection,
-  isServicePaid,
 } from "../../../features/locationCreation/services";
-import { ServiceTag } from "../components/ServiceTag";
+import { useCreateService } from "../../../features/locationCreation/useCreateService";
 import { STEP_ITEMS } from "./constants";
 import type {
   AddressAndServicesStepProps,
@@ -26,16 +23,15 @@ import type {
 } from "./types";
 import icnClear from "../../../assets/svg/icn-clear.svg";
 import { useAddressDraftController } from "./useAddressDraftController";
-import { CheckOutlined } from "@ant-design/icons";
-import { NUMBER_REGEX } from "@/common/constants/regexs";
 import { ServiceList } from "../components/serviceList";
 
 const DEFAULT_CUSTOM_SERVICE_STATE: CustomServiceComposerState = {
   name: "",
   description: "",
   chargeType: "FREE",
-  pricingType: DEFAULT_SERVICE_PRICING_TYPE,
-  price: "",
+  unit: DEFAULT_SERVICE_PRICING_TYPE,
+  basePrice: "",
+  quantity: "",
 };
 
 export const AddressAndServicesStep = ({
@@ -50,6 +46,7 @@ export const AddressAndServicesStep = ({
   onServicesDraftChange,
 }: AddressAndServicesStepProps) => {
   const [form] = Form.useForm();
+  const { mutate: createService } = useCreateService();
   const {
     initialFormValues,
     handleMapAddressResolved,
@@ -78,23 +75,25 @@ export const AddressAndServicesStep = ({
     [selectedServices, serviceQuery, services],
   );
 
-  const addCatalogService = (serviceCode: string) => {
-    const selectedCatalogService = services?.find(
-      (service) => service.serviceCode === serviceCode,
-    );
-
-    if (!selectedCatalogService) {
-      return;
+  const getServiceOptions = useMemo(() => {
+    if (filteredCatalog.length > 0) {
+      return filteredCatalog.map((service: ServiceDto) => ({
+        value: service.serviceCode,
+        label: `${service.serviceName}`,
+      }));
     }
 
-    const nextServices = [
-      ...selectedServices,
-      createCatalogServiceSelection(selectedCatalogService),
-    ];
-    setSelectedServices(nextServices);
-    onServicesDraftChange(nextServices);
-    setServiceQuery("");
-  };
+    if (serviceQuery.trim()) {
+      return [
+        {
+          value: "__create_new__",
+          label: `Tạo mới: ${serviceQuery}`,
+        },
+      ];
+    }
+
+    return [];
+  }, [filteredCatalog, serviceQuery]);
 
   const updateSelectedService = (
     index: number,
@@ -126,8 +125,9 @@ export const AddressAndServicesStep = ({
         name: customService.name,
         description: customService.description,
         chargeType: customService.chargeType,
-        pricingType: customService.pricingType,
-        price: customService.price,
+        unit: customService.unit,
+        basePrice: customService.basePrice,
+        quantity: customService.quantity,
       }),
     ];
     setSelectedServices(nextServices);
@@ -139,12 +139,17 @@ export const AddressAndServicesStep = ({
     <div className="renter">
       <div className="renter__fillAddress-header">
         <h1 className="header-title">Địa chỉ & Tiện ích</h1>
-        <img
-          src={icnClear}
+        <button
           className="header-close"
-          alt="X"
           onClick={onCancel}
-        />
+          type="button"
+          aria-label="Close"
+        >
+          <img
+            src={icnClear}
+            alt="X"
+          />
+        </button>
       </div>
       <Steps
         current={currentStep}
@@ -286,27 +291,77 @@ export const AddressAndServicesStep = ({
                 <h2>Tiện ích và dịch vụ</h2>
               </div>
 
-              <label className="composer-label">Thêm dịch vụ mới</label>
+              <div>
+                <label htmlFor="service-select" className="composer-label">
+                  Thêm dịch vụ mới
+                </label>
+              </div>
               <Row gutter={[12, 12]}>
                 <Col span={18}>
                   <Select
+                    id="service-select"
                     showSearch
-                    value={customService.name}
-                    options={filteredCatalog.map((service: ServiceDto) => ({
-                      value: service.serviceCode,
-                      label: `${service.serviceName}`,
-                    }))}
+                    filterOption={false}
+                    value={customService.name || undefined}
+                    options={getServiceOptions}
                     placeholder=" Thêm dịch vụ"
                     style={{ width: "100%" }}
+                    onSearch={(value) => setServiceQuery(value)}
+                    notFoundContent={
+                      serviceQuery.trim() ? (
+                        <div
+                          onClick={() => {
+                            createService(
+                              { name: serviceQuery, category: "GENERAL" },
+                              {
+                                onSuccess: (newService) => {
+                                  const nextServices = [
+                                    ...selectedServices,
+                                    createCatalogServiceSelection(newService),
+                                  ];
+                                  setSelectedServices(nextServices);
+                                  onServicesDraftChange(nextServices);
+                                  setServiceQuery("");
+                                  setCustomService(
+                                    DEFAULT_CUSTOM_SERVICE_STATE,
+                                  );
+                                },
+                              },
+                            );
+                          }}
+                          style={{ padding: "8px 12px", cursor: "pointer" }}
+                        >
+                          Tạo mới: {serviceQuery}
+                        </div>
+                      ) : null
+                    }
                     onChange={(value) => {
-                      const selectedService = services?.find(
-                        (service) => service.serviceCode === value,
-                      );
+                      if (value === "__create_new__") {
+                        createService(
+                          { name: serviceQuery, category: "GENERAL" },
+                          {
+                            onSuccess: (newService) => {
+                              const nextServices = [
+                                ...selectedServices,
+                                createCatalogServiceSelection(newService),
+                              ];
+                              setSelectedServices(nextServices);
+                              onServicesDraftChange(nextServices);
+                              setServiceQuery("");
+                              setCustomService(DEFAULT_CUSTOM_SERVICE_STATE);
+                            },
+                          },
+                        );
+                      } else {
+                        const selectedService = services?.find(
+                          (service) => service.serviceCode === value,
+                        );
 
-                      setCustomService((prev) => ({
-                        ...prev,
-                        name: selectedService?.serviceName ?? String(value),
-                      }));
+                        setCustomService((prev) => ({
+                          ...prev,
+                          name: selectedService?.serviceName ?? String(value),
+                        }));
+                      }
                     }}
                   />
                 </Col>
@@ -327,13 +382,19 @@ export const AddressAndServicesStep = ({
                 {customService.chargeType === "PAID" && (
                   <>
                     <Col span={10}>
-                      <label className="composer-subLabel">Kiểu tính giá</label>
+                      <label
+                        htmlFor="pricing-type"
+                        className="composer-subLabel"
+                      >
+                        Kiểu tính giá
+                      </label>
                       <Select
-                        value={customService.pricingType}
+                        id="pricing-type"
+                        value={customService.unit}
                         onChange={(value) =>
                           setCustomService((prev) => ({
                             ...prev,
-                            pricingType: value as ServicePricingType,
+                            unit: value as ServicePricingType,
                           }))
                         }
                         options={[
@@ -343,16 +404,17 @@ export const AddressAndServicesStep = ({
                       />
                     </Col>
                     <Col span={14}>
-                      <label className="composer-subLabel">
+                      <label htmlFor="base-price" className="composer-subLabel">
                         Giá áp dụng(vnđ)
                       </label>
                       <input
+                        id="base-price"
                         className="renter-nativeInput"
-                        value={customService.price}
+                        value={customService.basePrice}
                         onChange={(event) =>
                           setCustomService((prev) => ({
                             ...prev,
-                            price: event.target.value,
+                            basePrice: event.target.value,
                           }))
                         }
                         placeholder="0"
@@ -361,8 +423,14 @@ export const AddressAndServicesStep = ({
                   </>
                 )}
                 <Col span={23}>
-                  <label className="composer-subLabel">Mô tả</label>
+                  <label
+                    htmlFor="service-description"
+                    className="composer-subLabel"
+                  >
+                    Mô tả
+                  </label>
                   <textarea
+                    id="service-description"
                     className="renter-nativeTextarea"
                     value={customService.description}
                     onChange={(event) =>

@@ -172,6 +172,42 @@
         position: relative;
         overflow: hidden;
         border-radius: 25px 25px 0 0;
+
+        &-upload {
+          display: flex;
+          position: absolute;
+          right: 24px;
+          bottom: 24px;
+          width: 44px;
+          height: 44px;
+          z-index: 10;
+          cursor: pointer;
+
+          &::before {
+            width: 44px;
+            height: 44px;
+            z-index: 10;
+            content: "";
+            display: block;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: rgba(0, 41, 58, 0.6) url("../../../assets/svg/profile/camera.svg")
+              no-repeat center;
+            background-size: 20px;
+            pointer-events: none;
+            transition: background 0.3s ease;
+          }
+
+          &:hover::before {
+            background-color: rgba(0, 41, 58, 0.8);
+          }
+
+          & input {
+            position: absolute;
+            visibility: hidden;
+            z-index: -1;
+          }
+        }
       }
 
       & .profile__information-avatar-bridge {
@@ -251,7 +287,6 @@
           rgba(9, 31, 42, 0.08) 0%,
           rgba(9, 31, 42, 0.45) 100%
         );
-        backdrop-filter: blur(2px);
         box-shadow: inset 1px -1px 12px rgba(255, 255, 255, 0.2);
         pointer-events: none;
       }
@@ -386,7 +421,6 @@
             font-weight: 500;
             color: $primary-color;
             font-family: $font_family_1 !important;
-            margin-bottom: 16px;
           }
         }
 

@@ -40,23 +40,11 @@ export const FormPassword = ({
   status,
   visibilityToggle = true,
 }: IFormPassword) => {
-  const navigate = useNavigate();
-
   return (
-    <div className={`form-input`}>
-      <div className="label">
-        <span className="label__right">{label}</span>
-        <span
-          className="label__left"
-          onClick={() => {
-            navigate(ROUTER_PATH.FORGOT_PASSWORD);
-          }}
-        >
-          {subLabel}
-        </span>
-      </div>
       <Form.Item
+        label={label}
         name={name}
+        className={`form-input ${vertical ? "form-input--vertical" : ""}`}
         {...formItemProps}
         labelCol={vertical  ? { span: 24 } : undefined}
       >
@@ -74,6 +62,5 @@ export const FormPassword = ({
           {...passwordProps}
         />
       </Form.Item>
-    </div>
   );
 };

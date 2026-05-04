@@ -125,9 +125,11 @@ export interface ConfirmStepProps {
 }
 
 export interface CustomServiceComposerState {
+  serviceCode?: string;
   name: string;
   description: string;
   chargeType: "FREE" | "PAID";
-  pricingType: ServicePricingType;
-  price: string;
+  unit: ServicePricingType;
+  basePrice: string;
+  quantity: string;
 }

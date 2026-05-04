@@ -109,15 +109,18 @@ export const createCreateLocationRequestFromDraft = (
     service.serviceCode
       ? {
           serviceCode: service.serviceCode,
-          name: service.name,
-          description: service.description,
-          pricingType: service.pricingType ?? "FULL",
-          customPrice: Number(service.customPrice ?? 0),
+          isFree: service.isFree ?? Number(service.basePrice ?? 0) <= 0,
+          basePrice: Number(service.basePrice ?? 0),
+          unit: service.unit ?? "FULL",
+          quantity: Number(service.quantity ?? 1),
         }
       : {
-          ...service,
-          pricingType: service.pricingType ?? "FULL",
-          customPrice: Number(service.customPrice ?? 0),
+          name: service.name,
+          description: service.description,
+          isFree: service.isFree ?? Number(service.basePrice ?? 0) <= 0,
+          basePrice: Number(service.basePrice ?? 0),
+          unit: service.unit ?? "FULL",
+          quantity: Number(service.quantity ?? 1),
         },
   ),
   media: mapEditableMediaToRequest(draft.basicInfo.media),

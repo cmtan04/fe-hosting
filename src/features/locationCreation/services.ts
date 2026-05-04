@@ -10,8 +10,12 @@ export const getServiceDraftPrice = (
   service: Partial<LocationServiceSelectionDto>,
   fallbackPrice?: number | string,
 ) => {
-  if (service.customPrice !== undefined && service.customPrice !== null) {
-    return Number(service.customPrice);
+  if (service.isFree === true) {
+    return 0;
+  }
+
+  if (service.basePrice !== undefined && service.basePrice !== null) {
+    return Number(service.basePrice);
   }
 
   if (fallbackPrice !== undefined && fallbackPrice !== null) {
@@ -64,8 +68,10 @@ export const createCatalogServiceSelection = (
   serviceCode: service.serviceCode,
   name: service.serviceName,
   description: service.serviceDescription,
-  pricingType: DEFAULT_SERVICE_PRICING_TYPE,
-  customPrice: 0,
+  isFree: service.isFree ?? true,
+  basePrice: Number(service.basePrice ?? service.servicePrice ?? 0),
+  unit: service.unit ?? DEFAULT_SERVICE_PRICING_TYPE,
+  quantity: service.quantity ?? 1,
 });
 
 export const createCustomServiceSelection = (
@@ -73,35 +79,44 @@ export const createCustomServiceSelection = (
     name: string;
     description?: string;
     chargeType: "FREE" | "PAID";
-    pricingType?: ServicePricingType;
-    price?: number | string;
+    unit?: ServicePricingType;
+    basePrice?: number | string;
+    quantity?: number | string;
   },
 ): LocationServiceSelectionDto => {
-  const normalizedPrice = Number(payload.price || 0);
+  const normalizedPrice = Number(payload.basePrice || 0);
   const resolvedPrice =
     payload.chargeType === "PAID" && Number.isFinite(normalizedPrice)
       ? normalizedPrice
       : 0;
+  const normalizedQuantity = Number(payload.quantity || 1);
 
   return {
     name: payload.name.trim(),
     description: payload.description?.trim() || undefined,
-    pricingType: payload.pricingType ?? DEFAULT_SERVICE_PRICING_TYPE,
-    customPrice: resolvedPrice,
+    isFree: payload.chargeType === "FREE",
+    basePrice: resolvedPrice,
+    unit: payload.unit ?? DEFAULT_SERVICE_PRICING_TYPE,
+    quantity:
+      Number.isFinite(normalizedQuantity) && normalizedQuantity > 0
+        ? normalizedQuantity
+        : 1,
   };
 };
 
 export const calculateSelectedServicesTotal = (
   services: Array<{
     servicePrice?: number | string;
-    customPrice?: number | string;
+    basePrice?: number | string;
+    isFree?: boolean;
   }>,
 ) =>
   services.reduce(
     (total, item) =>
       total +
-      Number(
-        item.customPrice !== undefined ? item.customPrice : item.servicePrice ?? 0,
-      ),
+      (item.isFree
+        ? 0
+        : Number(item.basePrice ?? item.servicePrice ?? 0) *
+          Number((item as { quantity?: number | string }).quantity ?? 1)),
     0,
   );

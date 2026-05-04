@@ -1,4 +1,4 @@
-@import "../../../color.scss";
+@import "@/color.scss";
 
 .sign_in {
   &-title {
@@ -57,7 +57,13 @@
               width: 100%;
             }
           }
-
+          .tool-bar {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+          
           .remember-me {
             width: 100%;
             margin-top: -4px;
@@ -65,7 +71,7 @@
             color: $primary-color;
             font-family: $font_family_1;
             display: flex;
-            justify-content: flex-end;
+            justify-content: flex-start;
             align-items: flex-start;
 
             .ant-form-item-control-input-content {
@@ -78,6 +84,22 @@
               font-family: inherit;
             }
           }
+          .forgot-password {
+            width: 100%;
+            text-align: right;
+            font-weight: 400;
+            color: $color-text-primary;
+            font-size: 14px;
+            line-height: 1.5;
+            font-family: $font_family_1;
+            font-style: italic;
+            cursor: pointer;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
         }
 
         &-3 {

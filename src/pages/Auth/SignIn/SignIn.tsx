@@ -144,14 +144,24 @@ export const SignIn = () => {
                 ],
               }}
             />
-            
-            <Form.Item
-              className="remember-me"
-              name="rememberMe"
-              valuePropName="checked"
-            >
-              <Checkbox>Ghi nhớ đăng nhập</Checkbox>
-            </Form.Item>
+            <div className="tool-bar">
+              <Form.Item
+                className="remember-me"
+                name="rememberMe"
+                valuePropName="checked"
+              >
+                <Checkbox>Ghi nhớ đăng nhập</Checkbox>
+              </Form.Item>
+
+              <span
+                className="forgot-password"
+                onClick={() => {
+                  navigate(ROUTER_PATH.FORGOT_PASSWORD);
+                }}
+              >
+                Quên mật khẩu?
+              </span>
+            </div>
           </div>
           <div className="form-row-3">
             <Button htmlType="submit" className="button-submit">

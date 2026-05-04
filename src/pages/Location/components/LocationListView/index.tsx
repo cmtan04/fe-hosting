@@ -12,6 +12,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { LocationCard } from "../LocationCard";
 import "../style.scss";
 import type { LocationDto } from "../../../../api/dtos/location.dto";
+import { LocationFilterDrawer } from "../LocationFilterDrawer";
+import { FilterOutlined } from "@ant-design/icons";
+import { Button } from "antd";
 
 interface LocationListViewProps {
   searchValue?: string;
@@ -64,6 +67,11 @@ const parseFilterFromSearchParams = (
     searchValue: normalizeSearchValue(querySearchValue),
     page: parsePositiveInt(searchParams.get("page")),
     limit: parsePositiveInt(searchParams.get("limit")),
+    minPrice: parsePositiveInt(searchParams.get("minPrice")),
+    maxPrice: parsePositiveInt(searchParams.get("maxPrice")),
+    minArea: parsePositiveInt(searchParams.get("minArea")),
+    maxArea: parsePositiveInt(searchParams.get("maxArea")),
+    addressCity: cleanString(searchParams.get("city")),
   };
 };
 
@@ -75,6 +83,11 @@ const normalizeFilter = (
     addressRegion: cleanString(filter.addressRegion),
     locationType: cleanString(filter.locationType),
     searchValue: normalizeSearchValue(filter.searchValue),
+    minPrice: filter.minPrice,
+    maxPrice: filter.maxPrice,
+    minArea: filter.minArea,
+    maxArea: filter.maxArea,
+    addressCity: cleanString(filter.addressCity),
     page:
       typeof filter.page === "number" && filter.page > 0
         ? filter.page
@@ -122,6 +135,11 @@ const getFilterSignature = (filter: ProfileLocationFilter) => {
     addressRegion: normalizedFilter.addressRegion ?? "",
     locationType: normalizedFilter.locationType ?? "",
     searchValue: normalizedFilter.searchValue ?? "",
+    minPrice: normalizedFilter.minPrice ?? "",
+    maxPrice: normalizedFilter.maxPrice ?? "",
+    minArea: normalizedFilter.minArea ?? "",
+    maxArea: normalizedFilter.maxArea ?? "",
+    addressCity: normalizedFilter.addressCity ?? "",
     page: normalizedFilter.page ?? DEFAULT_PAGE,
     limit: normalizedFilter.limit ?? DEFAULT_LIMIT,
   });
@@ -131,7 +149,12 @@ const hasScopedLocationFilter = (filter: ProfileLocationFilter) => {
   return Boolean(
     cleanString(filter.locationType) ||
       cleanString(filter.addressRegion) ||
-      cleanString(filter.searchValue),
+      cleanString(filter.searchValue) ||
+      filter.minPrice !== undefined ||
+      filter.maxPrice !== undefined ||
+      filter.minArea !== undefined ||
+      filter.maxArea !== undefined ||
+      cleanString(filter.addressCity),
   );
 };
 
@@ -149,6 +172,26 @@ const buildSearchParamsFromFilter = (filter: ProfileLocationFilter) => {
 
   if (normalizedFilter.searchValue) {
     nextSearchParams.set("q", normalizedFilter.searchValue);
+  }
+  
+  if (normalizedFilter.minPrice !== undefined) {
+    nextSearchParams.set("minPrice", String(normalizedFilter.minPrice));
+  }
+  
+  if (normalizedFilter.maxPrice !== undefined) {
+    nextSearchParams.set("maxPrice", String(normalizedFilter.maxPrice));
+  }
+  
+  if (normalizedFilter.minArea !== undefined) {
+    nextSearchParams.set("minArea", String(normalizedFilter.minArea));
+  }
+  
+  if (normalizedFilter.maxArea !== undefined) {
+    nextSearchParams.set("maxArea", String(normalizedFilter.maxArea));
+  }
+  
+  if (normalizedFilter.addressCity) {
+    nextSearchParams.set("city", normalizedFilter.addressCity);
   }
 
   if ((normalizedFilter.page ?? DEFAULT_PAGE) > DEFAULT_PAGE) {
@@ -168,6 +211,7 @@ export const LocationListView = (props: LocationListViewProps) => {
   const navigate = useNavigate();
   const isEmbedded = Boolean(props.embedded);
   const fetchLocations = props.fetchLocations ?? getLocationByFilter;
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [filter, setFilter] = useState<ProfileLocationFilter>(() => {
     if (isEmbedded) {
@@ -311,11 +355,22 @@ export const LocationListView = (props: LocationListViewProps) => {
 
   return (
     <div className="location__list">
-      {props.hideTitle ? null : (
-        <h2 className="location__list-title">
-          {props.title ?? "Danh sách địa điểm"}
-        </h2>
-      )}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+        {props.hideTitle ? <div /> : (
+          <h2 className="location__list-title" style={{ margin: 0 }}>
+            {props.title ?? "Danh sách địa điểm"}
+          </h2>
+        )}
+        
+        {!isEmbedded && (
+          <Button 
+            icon={<FilterOutlined />} 
+            onClick={() => setIsFilterOpen(true)}
+          >
+            Lọc kết quả
+          </Button>
+        )}
+      </div>
 
       {canFetchLocations && isFetching && !locationLoading && (
         <p className="location__list-status">Đang cập nhật danh sách...</p>
@@ -396,6 +451,17 @@ export const LocationListView = (props: LocationListViewProps) => {
           onPageChange={handlePageChange}
         />
       ) : null}
+
+      {!isEmbedded && (
+        <LocationFilterDrawer
+          open={isFilterOpen}
+          onClose={() => setIsFilterOpen(false)}
+          initialFilter={filter}
+          onApply={(newFilter) => {
+            setFilter(newFilter);
+          }}
+        />
+      )}
     </div>
   );
 };

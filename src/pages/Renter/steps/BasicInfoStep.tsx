@@ -12,10 +12,7 @@ import { LocationMediaEditor } from "../../../components/LocationMediaEditor";
 import { LocationTypeCard } from "../components/LocationTypeCard/locationTypeCard";
 import { SummaryPanel } from "../components/SummaryPanel";
 import { STEP_ITEMS } from "./constants";
-import type {
-  BasicInfoStepFormValues,
-  BasicInfoStepProps,
-} from "./types";
+import type { BasicInfoStepFormValues, BasicInfoStepProps } from "./types";
 
 export const BasicInfoStep = ({
   draft,
@@ -64,12 +61,14 @@ export const BasicInfoStep = ({
       <div className="renter_location-type-header">
         <h1 className="header-title">Thông tin cơ bản</h1>
 
-        <img
-          src={icnClear}
+        <button
           className="header-close"
-          alt="X"
           onClick={onCancel}
-        />
+          type="button"
+          aria-label="Close"
+        >
+          <img src={icnClear} alt="X" />
+        </button>
       </div>
 
       <Steps
@@ -145,7 +144,9 @@ export const BasicInfoStep = ({
                   <div
                     className={`item ${selectedTypeCode === item.typeCode ? "active" : ""}`}
                     key={item.typeCode}
-                    onClick={() => form.setFieldValue("typeCode", item.typeCode)}
+                    onClick={() =>
+                      form.setFieldValue("typeCode", item.typeCode)
+                    }
                   >
                     <LocationTypeCard
                       typeName={item.typeName}
@@ -204,7 +205,10 @@ export const BasicInfoStep = ({
                     vertical={true}
                     formItemProps={{
                       rules: [
-                        { required: true, message: "Trường này là trường bắt buộc" },
+                        {
+                          required: true,
+                          message: "Trường này là trường bắt buộc",
+                        },
                         {
                           pattern: NUMBER_REGEX,
                           message: "Vui lòng nhập đúng số",

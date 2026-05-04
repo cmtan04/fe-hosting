@@ -55,8 +55,10 @@ export interface LocationServiceSelectionDto {
   serviceCode?: string;
   name?: string;
   description?: string;
-  pricingType?: ServicePricingType;
-  customPrice?: number;
+  isFree?: boolean;
+  basePrice?: number;
+  unit?: string;
+  quantity?: number;
 }
 
 export interface CreateLocationRequestDto {
@@ -85,9 +87,12 @@ export interface ServiceDto {
   servicePriceType?: ServicePriceType;
   serviceDiscount?: number;
   isActive?: number;
-  pricingType?: ServicePricingType;
   isCustom?: boolean;
-  customPrice?: number;
+  category?: string;
+  isFree?: boolean;
+  basePrice?: number;
+  unit?: string;
+  quantity?: number;
 }
 
 export interface LocationOwnerDto {

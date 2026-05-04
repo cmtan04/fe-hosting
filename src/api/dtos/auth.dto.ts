@@ -2,6 +2,8 @@ export interface SignUpPayloadDto {
   userName: string;
   email: string;
   password: string;
+  phoneNumber: string;
+  dateOfBirth: Date;
 }
 
 export interface SignUpResponseDto {

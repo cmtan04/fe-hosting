@@ -45,10 +45,12 @@ export const ConfirmStep = ({
       serviceLogo: catalogService?.serviceLogo ?? "",
       servicePrice: getServiceDraftPrice(
         selected,
-        catalogService?.servicePrice,
+        catalogService?.basePrice ?? catalogService?.servicePrice,
       ),
-      pricingType:
-        selected.pricingType ?? catalogService?.pricingType ?? "FULL",
+      unit: selected.unit ?? catalogService?.unit ?? "FULL",
+      isFree: selected.isFree ?? Number(selected.basePrice ?? 0) <= 0,
+      basePrice: Number(selected.basePrice ?? catalogService?.basePrice ?? 0),
+      quantity: Number(selected.quantity ?? catalogService?.quantity ?? 1),
     };
   });
 
@@ -93,12 +95,17 @@ export const ConfirmStep = ({
     <div className="renter">
       <div className="renter__confirm-header">
         <h1 className="header-title">Xac nhan thong tin</h1>
-        <img
-          src={icnClear}
+        <button
           className="header-close"
-          alt="X"
           onClick={onCancel}
-        />
+          type="button"
+          aria-label="Close"
+        >
+          <img
+            src={icnClear}
+            alt="X"
+          />
+        </button>
       </div>
       <Steps
         current={currentStep}
@@ -172,7 +179,7 @@ export const ConfirmStep = ({
                 <ServiceTag
                   key={`${item.serviceCode}-${item.serviceName}`}
                   icon={item.serviceLogo}
-                  name={`${item.serviceName}${item.pricingType === "DAILY" ? " - Theo ngay" : " - Tron goi"}`}
+                  name={`${item.serviceName}${item.unit === "DAILY" ? " - Theo ngay" : " - Tron goi"} x${item.quantity}`}
                   price={item.servicePrice}
                   description={item.serviceDescription}
                   active={true}

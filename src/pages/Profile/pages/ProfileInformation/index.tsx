@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Col, DatePicker, Form, Modal, Row } from "antd";
+import { Button, Col, Form, Modal, Row, Image, Spin } from "antd";
 import { UserEndpoint } from "@api/endpoints/user.endpoint";
 import {
   getUserPRofile,
@@ -22,6 +22,7 @@ import { isAxiosError } from "axios";
 import { useLoading } from "@providers/loadingProvider";
 import { useNotification } from "@providers/notificationProvider";
 import { FormInput } from "@components/FormInput/formInput";
+import { FormDatePicker } from "@components/FormDatePicker/formDatePicker";
 import { FormTextArea } from "@components/FormTextArea/formTextArea";
 import type {
   UserAddressDto,
@@ -41,7 +42,9 @@ export const ProfileInformation = () => {
   const { setLoading } = useLoading();
   const { showNotification } = useNotification();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileCoverInputRef = useRef<HTMLInputElement | null>(null);
   const [url, setUrl] = useState<string>("");
+  const [coverUrl, setCoverUrl] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>();
   const [address, setAddress] = useState<UserAddressDto>();
   const [addressDraft, setAddressDraft] = useState(() =>
@@ -74,9 +77,28 @@ export const ProfileInformation = () => {
   const uploadMutation = useMutation({
     mutationFn: (payload: FormData) => uploadImage(payload),
     onSuccess: (data) => {
-      refetch();
       setUrl(data.imageUrl);
-      showNotification(data.message, NOTI_SUCCESS);
+      
+      const values = form.getFieldsValue();
+      const payload: UserUpdatePayloadDto = {
+        userName: values.username,
+        fullName: values.fullName,
+        phone: values.phone,
+        bio: values.bio,
+        fullAddress: values.fullAddress,
+        dateOfBirth: values.dateOfBirth ? dayjs(values.dateOfBirth).format(DATE_FORMAT) : undefined,
+        avatarUrl: data.imageUrl,
+        coverUrl: coverUrl,
+        userWard: address?.userWard,
+        userDistrict: address?.userDistrict,
+        userCity: address?.userCity,
+        userProvince: address?.userProvince,
+        userCountry: address?.userCountry,
+        userPortal: address?.userPortal,
+        userLat: address?.userLat,
+        userLong: address?.userLong,
+      };
+      updateUserMutation.mutate(payload);
     },
     onError: (error) => {
       let message = DEFAULT_MESSAGE;
@@ -89,14 +111,48 @@ export const ProfileInformation = () => {
         }
       }
       showNotification(message, NOTI_ERROR);
-      setUrl("");
+      setUrl(user?.avatarUrl || "");
     },
+  });
 
-    onMutate: () => {
-      setLoading(true);
+  const uploadCoverMutation = useMutation({
+    mutationFn: (payload: FormData) => uploadImage(payload),
+    onSuccess: (data) => {
+      setCoverUrl(data.imageUrl);
+      
+      const values = form.getFieldsValue();
+      const payload: UserUpdatePayloadDto = {
+        userName: values.username,
+        fullName: values.fullName,
+        phone: values.phone,
+        bio: values.bio,
+        fullAddress: values.fullAddress,
+        dateOfBirth: values.dateOfBirth ? dayjs(values.dateOfBirth).format(DATE_FORMAT) : undefined,
+        avatarUrl: url,
+        coverUrl: data.imageUrl,
+        userWard: address?.userWard,
+        userDistrict: address?.userDistrict,
+        userCity: address?.userCity,
+        userProvince: address?.userProvince,
+        userCountry: address?.userCountry,
+        userPortal: address?.userPortal,
+        userLat: address?.userLat,
+        userLong: address?.userLong,
+      };
+      updateUserMutation.mutate(payload);
     },
-    onSettled: () => {
-      setLoading(false);
+    onError: (error) => {
+      let message = DEFAULT_MESSAGE;
+      if (isAxiosError(error)) {
+        const apiMessage = error.response?.data?.message;
+        if (typeof apiMessage === "string") {
+          message = apiMessage;
+        } else if (Array.isArray(apiMessage) && apiMessage[0]) {
+          message = apiMessage[0];
+        }
+      }
+      showNotification(message, NOTI_ERROR);
+      setCoverUrl(user?.coverUrl || "");
     },
   });
 
@@ -131,6 +187,7 @@ export const ProfileInformation = () => {
   useEffect(() => {
     if (user) {
       setUrl(user.avatarUrl);
+      setCoverUrl(user.coverUrl);
       const nextAddressDraft = createDraftAddressFromUserAddress(user);
       setAddressDraft(nextAddressDraft);
       setAddress(mapDraftAddressToUserAddress(nextAddressDraft));
@@ -151,9 +208,21 @@ export const ProfileInformation = () => {
     if (!file) {
       return;
     }
+    setUrl(URL.createObjectURL(file)); // Local preview
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("image", file);
     uploadMutation.mutate(formData);
+  };
+
+  const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      return;
+    }
+    setCoverUrl(URL.createObjectURL(file)); // Local preview
+    const formData = new FormData();
+    formData.append("image", file);
+    uploadCoverMutation.mutate(formData);
   };
 
   const onSubmit = () => {
@@ -167,6 +236,7 @@ export const ProfileInformation = () => {
       fullAddress: values.fullAddress,
       dateOfBirth: dayjs(values.dateOfBirth).format(DATE_FORMAT),
       avatarUrl: url,
+      coverUrl: coverUrl,
       userWard: address?.userWard,
       userDistrict: address?.userDistrict,
       userCity: address?.userCity,
@@ -180,7 +250,7 @@ export const ProfileInformation = () => {
     updateUserMutation.mutate(payload);
   };
 
-  const headerCover = user?.coverUrl || fallbackCover;
+  const headerCover = coverUrl || user?.coverUrl || fallbackCover;
   const headerAvatar = url || user?.avatarUrl || fallbackAvatar;
   const headerName = user?.fullName || "Người dùng";
   const headerEmail = user?.email || "Chưa cập nhật email";
@@ -193,23 +263,45 @@ export const ProfileInformation = () => {
       <h1 className="title">Thông tin cá nhân</h1>
       <Col className="profile__information-header">
         <div className="profile__information-cover">
-          <img
-            className="image-background"
-            crossOrigin="anonymous"
+          <Image
+            rootClassName="image-background"
             src={headerCover}
             alt="Ảnh bìa hồ sơ"
+            preview={{ mask: 'Xem to' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
+          {uploadCoverMutation.isPending && (
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'rgba(255,255,255,0.4)', zIndex: 11 }}>
+              <Spin size="large" />
+            </div>
+          )}
           <div className="blur-blender"></div>
+          <label htmlFor="upload-cover" className="profile__information-cover-upload">
+            <input
+              id="upload-cover"
+              type="file"
+              accept="image/*"
+              ref={fileCoverInputRef}
+              onChange={handleCoverFileChange}
+            />
+          </label>
         </div>
 
         <div className="profile__information-avatar-bridge">
           <div className="content__avatar">
-            <figure style={{ margin: 0 }}>
-              <img
-                className="content__avatar-url"
+            <figure style={{ margin: 0, position: 'relative', width: 212, height: 212 }}>
+              <Image
+                rootClassName="content__avatar-url"
                 src={headerAvatar}
                 alt="Ảnh đại diện"
+                preview={{ mask: 'Xem to' }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
               />
+              {uploadMutation.isPending && (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'rgba(255,255,255,0.5)', borderRadius: '50%', zIndex: 11 }}>
+                  <Spin size="large" />
+                </div>
+              )}
             </figure>
             <label htmlFor="upload" className="content__avatar-upload">
               <input
@@ -326,23 +418,24 @@ export const ProfileInformation = () => {
               />
             </Col>
             <Col span={8} className="time-wrapper">
-              <Form.Item
+              <FormDatePicker
                 label="Ngày sinh"
                 name="dateOfBirth"
                 vertical={true}
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng chọn ngày sinh",
-                  },
-                ]}
-              >
-                <DatePicker
-                  format={DATE_FORMAT}
-                  placeholder="Chọn ngày sinh"
-                  style={{ width: "100%" }}
-                />
-              </Form.Item>
+                formItemProps={{
+                  rules: [
+                    {
+                      required: true,
+                      message: "Vui lòng chọn ngày sinh",
+                    },
+                  ],
+                }}
+                datePickerProps={{
+                  format: DATE_FORMAT,
+                  placeholder: "Chọn ngày sinh",
+                  disabledDate: (current) => current.isAfter(dayjs()),
+                }}
+              />
             </Col>
           </Row>
 

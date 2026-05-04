@@ -1,13 +1,19 @@
 export interface GetAllServiceDto {
   id: number;
-  serviceBackGround: string;
+  code?: string;
+  name?: string;
+  description?: string;
+  category?: string;
+  isActive?: boolean;
   serviceCode: string;
   serviceDescription: string;
-  serviceDiscount: number;
-  serviceLogo: string;
   serviceName: string;
-  servicePrice: string;
-  pricingType?: "FULL" | "DAILY";
-  isCustom?: boolean;
-  customPrice?: number;
+  serviceBackGround?: string;
+  serviceDiscount?: number;
+  serviceLogo?: string;
+  servicePrice?: string | number;
+  isFree?: boolean;
+  basePrice?: number;
+  unit?: string;
+  quantity?: number;
 }

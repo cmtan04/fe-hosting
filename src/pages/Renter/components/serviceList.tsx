@@ -3,7 +3,6 @@ import { Button, Select } from "antd";
 import type {
   LocationServiceSelectionDto,
   ServiceDto,
-  ServicePricingType,
 } from "@/api/dtos/location.dto";
 import {
   DEFAULT_SERVICE_PRICING_TYPE,
@@ -27,7 +26,6 @@ export const ServiceList = (props: serviceList) => {
     updateSelectedService,
     removeSelectedService,
   } = props;
-  
 
   return (
     <div className="renter-selectedServices">
@@ -47,9 +45,13 @@ export const ServiceList = (props: serviceList) => {
           catalogService?.servicePrice,
         );
         const paid = isServicePaid(service, catalogService?.servicePrice);
+        const quantity = Number(service.quantity ?? 1);
+        const isCustomService = !service.serviceCode;
         const resolvePaidPrice = () => {
-          const currentPrice = Number(service.customPrice ?? 0);
-          const catalogPrice = Number(catalogService?.servicePrice ?? 0);
+          const currentPrice = Number(service.basePrice ?? 0);
+          const catalogPrice = Number(
+            catalogService?.basePrice ?? catalogService?.servicePrice ?? 0,
+          );
 
           if (currentPrice > 0) {
             return currentPrice;
@@ -79,17 +81,14 @@ export const ServiceList = (props: serviceList) => {
 
             <div className="renter-selectedServiceRow__content">
               <div className="renter-selectedServiceText">
-                <span>Dịch vụ này đang</span>
                 <span className="renter-inlineControl renter-inlineControl--status">
                   <Select
                     size="small"
-                    value={service.customPrice === 0 ? "FREE" : "PAID"}
+                    value={paid ? "PAID" : "FREE"}
                     onChange={(value) =>
                       updateSelectedService(index, {
-                        customPrice:
-                          value === "FREE"
-                            ? 0
-                            : resolvePaidPrice(),
+                        isFree: value === "FREE",
+                        basePrice: value === "FREE" ? 0 : resolvePaidPrice(),
                       })
                     }
                     options={[
@@ -100,41 +99,60 @@ export const ServiceList = (props: serviceList) => {
                 </span>
                 {paid && (
                   <>
-                    <span>, tính giá</span>
-                    <span className="renter-inlineControl renter-inlineControl--type">
-                      <Select
-                        size="small"
-                        value={
-                          service.pricingType ?? DEFAULT_SERVICE_PRICING_TYPE
-                        }
-                        onChange={(value) =>
-                          updateSelectedService(index, {
-                            pricingType: value as ServicePricingType,
-                          })
-                        }
-                        options={[
-                          { value: "FULL", label: "trọn gói" },
-                          { value: "DAILY", label: "theo ngày" },
-                        ]}
-                      />
-                    </span>
-                    <span>, giá áp dụng là</span>
-                    <span className="renter-inlineControl renter-inlineControl--price">
-                      <input
-                        className="renter-nativeInput renter-inlinePriceInput"
-                        value={String(servicePrice)}
-                        disabled={!paid}
-                        onChange={(event) =>
-                          updateSelectedService(index, {
-                            customPrice: Number(event.target.value || 0),
-                          })
-                        }
-                        placeholder="0"
-                        inputMode="numeric"
-                      />
-                    </span>
-                    <span>vnđ.</span>
+                  <span>, Đơn giá:</span>
+                <span className="renter-inlineControl renter-inlineControl--price">
+                  <input
+                    className="renter-nativeInput renter-inlinePriceInput"
+                    value={String(servicePrice)}
+                    disabled={!paid}
+                    onChange={(event) =>
+                      updateSelectedService(index, {
+                        basePrice: Number(event.target.value || 0),
+                        isFree: Number(event.target.value || 0) <= 0,
+                      })
+                    }
+                    placeholder="0"
+                    inputMode="numeric"
+                  />
+                </span>
+                <span>, số lượng</span>
+                <span className="renter-inlineControl renter-inlineControl--quantity">
+                  <input
+                    className="renter-nativeInput renter-inlineQuantityInput"
+                    value={String(quantity)}
+                    onChange={(event) => {
+                      const nextQuantity = Number(event.target.value || 1);
+                      updateSelectedService(index, {
+                        quantity:
+                          Number.isFinite(nextQuantity) && nextQuantity > 0
+                            ? nextQuantity
+                            : 1,
+                      });
+                    }}
+                    placeholder="1"
+                    inputMode="numeric"
+                  />
+                </span>
+                <span>.</span>
                   </>
+                )}
+                
+                {serviceDescription && !isCustomService && (
+                  <span className="renter-selectedServiceDescription">
+                    {serviceDescription}
+                  </span>
+                )}
+                {isCustomService && (
+                  <textarea
+                    className="renter-nativeTextarea renter-inlineDescriptionInput"
+                    value={service.description ?? ""}
+                    onChange={(event) =>
+                      updateSelectedService(index, {
+                        description: event.target.value,
+                      })
+                    }
+                    placeholder="Mô tả ngắn về dịch vụ"
+                  />
                 )}
               </div>
 

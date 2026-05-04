@@ -26,18 +26,19 @@
     "skipLibCheck": true,
 
     "ignoreDeprecations": "6.0",
+    
     "baseUrl": "./",
     "paths": {
-      "@/*":["src/*"],
-      "@api/*":["src/api/*"],
-      "@assets/*":["src/assets/*"],
-      "@common/*":["src/common/*"],
-      "@components/*":["src/components/*"],
-      "@features/*":["src/features/*"],
-      "@pages/*":["src/pages/*"],
-      "@providers/*":["src/providers/*"],
-      "@router/*":["src/router/*"],
-      "@socket/*":["src/socket/*"]
+      "@/*": ["src/*"],
+      "@api/*": ["src/api/*"],
+      "@assets/*": ["src/assets/*"],
+      "@common/*": ["src/common/*"],
+      "@components/*": ["src/components/*"],
+      "@features/*": ["src/features/*"],
+      "@pages/*": ["src/pages/*"],
+      "@providers/*": ["src/providers/*"],
+      "@router/*": ["src/router/*"],
+      "@socket/*": ["src/socket/*"]
     }
   },
   "include": ["src"]
