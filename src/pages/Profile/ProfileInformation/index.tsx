@@ -4,6 +4,7 @@ import { ProfileForm } from "./components/ProfileForm";
 import { AddressModal } from "./components/AddressModal";
 import { Row, Col } from "antd";
 import { ProfileColumn } from "./components/ProfileColumn";
+import "./style.scss";
 
 export const ProfileInformation = () => {
   const {
@@ -26,7 +27,7 @@ export const ProfileInformation = () => {
   } = useProfileInformation();
 
   return (
-    <div>
+    <div className="profile__information">
       <ProfileHeader
         user={user}
         url={url}
@@ -37,11 +38,11 @@ export const ProfileInformation = () => {
         onCoverChange={handleCoverFileChange}
       />
 
-      <Row gutter={[16, 16]}>
-        <Col span={8}>
+      <Row gutter={[16, 16]} className="profile__information-body">
+        <Col xs={24} lg={8}>
           <ProfileColumn user={user} onClick={() => setIsEditing(true)} />
         </Col>
-        <Col span={16}>
+        <Col xs={24} lg={16}>
           {isEditing && (
             <ProfileForm
               form={form}

@@ -10,7 +10,7 @@ export const Profile = () => {
         <TopBar />
       </div>
       <Row gutter={[16, 16]} className="profile__body">
-        <Col span={18} className="profile__body-content">
+        <Col lg={18} xs={24} className="profile__body-content">
           <Outlet />
         </Col>
       </Row>

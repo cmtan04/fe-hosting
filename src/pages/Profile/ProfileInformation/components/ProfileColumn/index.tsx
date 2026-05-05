@@ -12,8 +12,8 @@ interface ProfileColumnProps {
 
 export const ProfileColumn = ({ user, onClick }: ProfileColumnProps) => {
   return (
-    <div className="column">
-      <h2 style={{ marginTop: "0px" }}>Giới thiệu</h2>
+    <Col className="column">
+      <h2 style={{ marginTop: "0px", paddingLeft: "8px" }}>Giới thiệu</h2>
       <p className="subtitle">{user?.bio}</p>
       <div className="meta">
         <p className="meta-item">
@@ -32,6 +32,6 @@ export const ProfileColumn = ({ user, onClick }: ProfileColumnProps) => {
       <Button type="primary" size="large" onClick={onClick}>
         Cập nhật thông tin
       </Button>
-    </div>
+    </Col>
   );
 };

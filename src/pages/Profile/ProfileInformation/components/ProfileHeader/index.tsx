@@ -29,7 +29,7 @@ export const ProfileHeader = ({
   const headerSub =user?.username || "";
 
   return (
-    <Col className="profile__information-header">
+    <Col md={24}className="profile__information-header">
       <div className="profile__information-cover">
         <Image
           rootClassName="image-background"
@@ -70,7 +70,7 @@ export const ProfileHeader = ({
       </div>
 
       <Row gutter={[16, 16]}>
-        <Col lg={5} md={24} xs={24}>
+        <Col lg={6} md={24} xs={24}>
           <div className="avatar-container">
             <Image
               rootClassName="avatar-img"
@@ -116,7 +116,7 @@ export const ProfileHeader = ({
           </div>
         </Col>
 
-        <Col lg={19} md={24} xs={24} className="profile__information-header-content">
+        <Col lg={18} md={24} xs={24} className="profile__information-header-content">
           <div className="content__info">
             <div className="content__info-head">
               <p className="content__info-text name">{headerName}</p>

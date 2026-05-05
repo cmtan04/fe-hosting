@@ -1,0 +1,9 @@
+@import "@/color.scss";
+
+.profile__information {
+    width: 100%;
+    margin: 0 0 8px 0;
+    &-body{
+        margin-top: 16px;
+    }
+}

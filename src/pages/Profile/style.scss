@@ -2,6 +2,7 @@
 
 .profile {
   width: 100%;
+
   &__top {
     width: 100%;
     height: 67px;
@@ -10,12 +11,12 @@
 
   &__body {
     min-width: 100%;
-    height: calc(100% - 67px);
-    padding: 12px 24px;
+    height: calc(100% - 64px);
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap !important;
     align-items: stretch;
+    margin: 0 !important;
 
     > .ant-col {
       min-width: 0;
@@ -25,9 +26,7 @@
   &__body-content {
     display: flex;
     flex-direction: column;
-    width: min(1200px, calc(100% - 32px));
     margin: 0 auto;
-    padding: 24px 0;
     height: fit-content;
   }
 }

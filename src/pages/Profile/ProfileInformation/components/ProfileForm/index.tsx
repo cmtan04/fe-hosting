@@ -14,7 +14,8 @@ interface ProfileFormProps {
 
 export const ProfileForm = ({ form, onFinish, onOpenAddressModal }: ProfileFormProps) => {
   return (
-    <div className="profile__information-body">
+    <Col className="profile__information-form">
+      <h2 style={{ marginTop: "0px" }}>Chỉnh sửa thông tin cá nhân</h2>
       <Form form={form} onFinish={onFinish}>
         <Row gutter={[16, 16]}>
           <Col span={8}>
@@ -120,6 +121,6 @@ export const ProfileForm = ({ form, onFinish, onOpenAddressModal }: ProfileFormP
           </Button>
         </Row>
       </Form>
-    </div>
+    </Col>
   );
 };
