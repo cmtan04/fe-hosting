@@ -1,29 +1,25 @@
-import { Button, Col, Form, Row } from "antd";
-import { FormInput } from "../../../../components/FormInput/formInput";
-import { SelectCommon } from "../../../../components/SelectCommon";
+import { Button, Form, Row } from "antd";
+import "./style.scss";
 import type {
   SelectOptionProps,
   TableCommonProps,
-} from "../../../../common/types/common";
-import { LocationEndpoint } from "../../../../api/endpoints/location.endpoint";
+} from "@common/types/common";
+import { LocationEndpoint } from "@api/endpoints/location.endpoint";
 import { useQuery } from "@tanstack/react-query";
 import {
   getAllLocationType,
-  getLocationByFilter,
   getOwnerLocations,
-} from "../../../../api/configs/location.config";
-import { useLoading } from "../../../../providers/loadingProvider";
-import { use, useEffect, useState } from "react";
-import { CommonTable } from "../../../../components/CommonTable";
-import add from "../../../../assets/svg/profile/add.svg";
-import find from "../../../../assets/svg/profile/find.svg";
-import information from "../../../../assets/svg/profile/information.svg";
-import type { ProfileLocationFilter } from "../../../../common/types/profile";
+} from "@api/configs/location.config";
+import { useLoading } from "@providers/loadingProvider";
+import { useEffect, useState } from "react";
+import { CommonTable } from "@components/CommonTable";
+import add from "@assets/svg/profile/add.svg";
+import information from "@assets/svg/profile/information.svg";
+import type { ProfileLocationFilter } from "@common/types/profile";
 import { useNavigate } from "react-router-dom";
-import { ROUTER_PATH } from "../../../../router/Route";
-import type { LocationDto } from "../../../../api/dtos/location.dto";
-import { useAuth } from "../../../../common/contexts/authContext";
-import { FormSearch } from "../../../../components/FormSearch/formSearch";
+import { ROUTER_PATH } from "@/router/Route";
+import { useAuth } from "@common/contexts/authContext";
+import { FormSearch } from "@components/FormSearch/formSearch";
 
 export const ProfileLocation = () => {
   const [form] = Form.useForm();

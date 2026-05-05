@@ -1,6 +1,7 @@
 export const AuthEndPoints = {
   SIGN_UP: "/auth/signup",
   SIGN_IN: "/auth/signin",
+  REFRESH: "/auth/refresh",
   FORGOT_PASSWORD: "/auth/forgot-password",
   RESET_PASSWORD: "/auth/reset-password",
   SEND_OTP: "/auth/send-otp",

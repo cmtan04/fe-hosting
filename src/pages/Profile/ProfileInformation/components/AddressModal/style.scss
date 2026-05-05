@@ -1,0 +1,19 @@
+@import "@/color.scss";
+
+.profile__information-modal {
+  width: 60% !important;
+  & .ant-modal-container {
+    height: 520px !important;
+
+    .map {
+      &__view {
+        max-height: 100% !important;
+        &__container {
+          .leaflet-container {
+            min-height: 480px;
+          }
+        }
+      }
+    }
+  }
+}

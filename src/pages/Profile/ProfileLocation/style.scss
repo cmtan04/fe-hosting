@@ -1,0 +1,188 @@
+@import "@/color.scss";
+
+.profile__location {
+  padding: 0px 32px;
+  &-header {
+    h1 {
+      font-size: 32px;
+      font-weight: bold;
+      color: $primary-color;
+      font-family: $font_family_1 !important;
+      margin: 0px !important;
+    }
+
+    p {
+      font-size: 14px;
+      font-weight: 400;
+      color: $primary-color;
+      font-family: $font_family_1 !important;
+      display: flex;
+      align-items: center;
+      margin-top: 0px !important;
+    }
+  }
+
+  &-body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    .search {
+      width: min(720px, 100%);
+
+      .form-input {
+        margin-bottom: 0;
+      }
+    }
+    .button-add {
+      width: 15%;
+      height: 50px;
+      background-color: $primary_color;
+      color: $white_color;
+      font-family: $font_family_1;
+      border: none;
+      font-weight: bold;
+      border-radius: 24px;
+      &:hover {
+        background-color: darken($primary_color, 10%);
+        color: $white_color;
+        border: 1px solid darken($primary_color, 10%) !important;
+      }
+    }
+
+    &-result {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-radius: 12px;
+      padding: 12px 22px;
+      box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12);
+
+      .header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        .result__count {
+          font-size: 14px;
+          font-weight: 500;
+          color: $primary-color;
+          font-family: $font_family_1 !important;
+          display: flex;
+          align-items: center;
+        }
+      }
+
+      .location__table {
+        .button-infor {
+          border: unset !important;
+          padding: 0 !important;
+          box-shadow: unset;
+          transition: transform 0.3s ease;
+
+          &:hover {
+            transform: scale(1.1);
+          }
+        }
+      }
+    }
+  }
+
+  &-modal {
+    width: fit-content !important;
+
+    &-delete {
+      & .ant-modal-container {
+        .map {
+          &__view {
+            max-height: 100% !important;
+            &__container {
+              .leaflet-container {
+                min-height: 480px;
+              }
+            }
+          }
+        }
+      }
+
+      .ant-modal-body {
+        font-size: 16px;
+        font-weight: 400;
+        color: $primary-color;
+        font-family: $font_family_1 !important;
+        margin: 0px !important;
+        padding: 12px 24px;
+        text-align: center;
+      }
+
+      .ant-modal-footer {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        height: auto;
+        justify-content: flex-end;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid #00293a38;
+
+        .ant-btn {
+          width: 150px;
+          font-family: $font_family_1;
+          font-weight: bold;
+          height: 40px;
+          &-default {
+            color: $primary_color;
+          }
+
+          &-primary {
+            color: $white_color;
+            background-color: darken($primary_color, 10%);
+          }
+        }
+      }
+    }
+
+    &-update {
+      min-width: 70%;
+      & .ant-modal-container {
+        min-height: 580px;
+        .map {
+          &__view {
+            max-height: 100% !important;
+            &__container {
+              .leaflet-container {
+                min-height: 580px;
+              }
+            }
+          }
+        }
+      }
+
+      .ant-modal-footer {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        height: auto;
+        justify-content: flex-end;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid #00293a38;
+
+        .ant-btn {
+          width: 150px;
+          font-family: $font_family_1;
+          font-weight: bold;
+          height: 40px;
+          &-default {
+            color: $primary_color;
+          }
+
+          &-primary {
+            color: $white_color;
+            background-color: darken($primary_color, 10%);
+          }
+        }
+      }
+    }
+  }
+}

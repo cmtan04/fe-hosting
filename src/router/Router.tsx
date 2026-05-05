@@ -1,21 +1,21 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import { ForgotPassword } from "../pages/Auth/ForgotPassword/ForgotPassword";
-import { ResetPassword } from "../pages/Auth/ResetPassword/ResetPassword";
-import { SignIn } from "../pages/Auth/SignIn/SignIn";
-import { SignUp } from "../pages/Auth/SignUp/SignUp";
-import { VerifyEmail } from "../pages/Auth/VerifyEmail/VerifyEmail";
-import { RenterLayout } from "../pages/Renter/RenterLayout";
+import { ForgotPassword } from "@pages/Auth/ForgotPassword/ForgotPassword";
+import { ResetPassword } from "@pages/Auth/ResetPassword/ResetPassword";
+import { SignIn } from "@pages/Auth/SignIn/SignIn";
+import { SignUp } from "@pages/Auth/SignUp/SignUp";
+import { VerifyEmail } from "@pages/Auth/VerifyEmail/VerifyEmail";
+import { RenterLayout } from "@pages/Renter/RenterLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import { ROUTER_PATH } from "./Route";
-import { Profile } from "../pages/Profile/pages";
-import { ProfileInformation } from "../pages/Profile/pages/ProfileInformation";
-import { ProfileLocation } from "../pages/Profile/pages/ProfileLocation";
-import { ProfileLocationDetail } from "../pages/Profile/pages/ProfileLocation/ProfileLocationDetail";
-import { ProfileChat } from "../pages/Profile/pages/ProfileChat";
-import { LocationList } from "../pages/Location/pages/LocationList";
-import { Home } from "../pages/Home/pages/Home";
-import { HomePage } from "../pages/Home/pages/HomePage/HomePage";
-import { LocationDetail } from "../pages/Location/pages/LocationDetail";
+import { Profile } from "@pages/Profile";
+import { ProfileInformation } from "@pages/Profile/ProfileInformation";
+import { ProfileLocation } from "@pages/Profile/ProfileLocation";
+import { ProfileLocationDetail } from "@pages/Profile/ProfileLocation/ProfileLocationDetail";
+import { ProfileChat } from "@pages/Profile/ProfileChat";
+import { LocationList } from "@pages/Location/pages/LocationList";
+import { Home } from "@pages/Home/pages/Home";
+import { HomePage } from "@pages/Home/pages/HomePage/HomePage";
+import { LocationDetail } from "@pages/Location/pages/LocationDetail";
 
 export const WebRouter = () => (
   <Routes>

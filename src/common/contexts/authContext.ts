@@ -18,6 +18,8 @@ import {
   isStoredAuthRemembered,
   setStoredAuth,
   setStoredRole,
+  setStoredRefreshToken,
+  clearStoredRefreshToken,
 } from "../utils/authStorage";
 import type {
   SignInPayloadDto,
@@ -77,6 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const signOut = useCallback(() => {
     clearStoredAuth();
+    clearStoredRefreshToken();
     setToken(null);
     setCurrentUser(null);
   }, []);
@@ -115,8 +118,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const remember = options?.remember ?? false;
       setIsLoading(true);
       try {
-        const response = await signInApi(payload);
+        // Gửi rememberMe lên BE để BE quyết định cấp refresh token hay không
+        const apiPayload: SignInPayloadDto = {
+          ...payload,
+          rememberMe: remember,
+        };
+        const response = await signInApi(apiPayload);
         applyAuthenticatedState(response.access_token, null, remember);
+
+        // Lưu refresh token nếu BE trả về (khi rememberMe = true)
+        if (response.refresh_token) {
+          setStoredRefreshToken(response.refresh_token);
+        }
+
         await fetchAndApplyUserProfile(response.access_token, remember);
         return response;
       } catch (error) {

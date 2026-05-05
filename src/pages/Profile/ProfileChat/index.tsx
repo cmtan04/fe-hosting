@@ -1,16 +1,16 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getAllConversation } from "../../../../api/configs/chat.config";
-import { getUserPRofile } from "../../../../api/configs/user.config";
-import type { ConversationResponseDto } from "../../../../api/dtos/chat.dto";
-import { ConverationEndpoint } from "../../../../api/endpoints/chat.endpoint";
-import { UserEndpoint } from "../../../../api/endpoints/user.endpoint";
-import { chatSocket } from "../../../../socket/domains/chat.socket";
+import { getAllConversation } from "@api/configs/chat.config";
+import { getUserPRofile } from "@api/configs/user.config";
+import type { ConversationResponseDto } from "@api/dtos/chat.dto";
+import { ConverationEndpoint } from "@api/endpoints/chat.endpoint";
+import { UserEndpoint } from "@api/endpoints/user.endpoint";
+import { chatSocket } from "@socket/domains/chat.socket";
 
-import { ChatItem } from "../../../../components/Chat/ChatItem";
-import { ChatPanel } from "../../../../components/Chat/ChatPanel";
-import "../style.scss";
+import { ChatItem } from "@components/Chat/ChatItem";
+import { ChatPanel } from "@components/Chat/ChatPanel";
+import "./style.scss";
 
 type ProfileChatLocationState = {
   conversationId?: number;

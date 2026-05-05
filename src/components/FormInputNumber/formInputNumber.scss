@@ -1,4 +1,4 @@
-@import "../../color.scss";
+@import "@/color.scss";
 
 .form-input {
   margin-bottom: 16px;
@@ -34,12 +34,6 @@
     &.ant-input-number-focused {
       border-color: $color-blue-5;
       box-shadow: 0 0 0 2px $shadow-focus-blue;
-    }
-
-    &.ant-input-number-disabled {
-      background-color: $color-gray-2;
-      color: $color-gray-6;
-      cursor: not-allowed;
     }
 
     &.ant-input-number-status-error {
@@ -114,6 +108,9 @@
 
     // Disabled handlers
     &.ant-input-number-disabled {
+      background-color: $color-gray-2;
+      color: $color-gray-6;
+      cursor: not-allowed;
       .ant-input-number-handler-wrap {
         .ant-input-number-handler {
           cursor: not-allowed;

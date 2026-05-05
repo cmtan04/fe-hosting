@@ -1,41 +1,39 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Checkbox, Col, DatePicker, Form, Modal, Row } from "antd";
+import "./style.scss";
 import dayjs, { type Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  getLocationByCode,
-  updateLocation,
-} from "../../../../../api/configs/location.config";
-import { getAllService } from "../../../../../api/configs/service.config";
-import { createDraftAddressFromMapResult } from "../../../../../features/mapAddress/address";
-import type { LocationAddressDto } from "../../../../../api/dtos/location.dto";
-import { LocationEndpoint } from "../../../../../api/endpoints/location.endpoint";
-import { ServiceEndpoint } from "../../../../../api/endpoints/service.endpoint";
-import add from "../../../../../assets/svg/profile/add.svg";
-import back from "../../../../../assets/svg/profile/back.svg";
-import deleteIcn from "../../../../../assets/svg/profile/delete.svg";
-import pen from "../../../../../assets/svg/profile/pen.svg";
+import { getLocationByCode, updateLocation } from "@api/configs/location.config";
+import { getAllService } from "@api/configs/service.config";
+import { createDraftAddressFromMapResult } from "@features/mapAddress/address";
+import type { LocationAddressDto } from "@api/dtos/location.dto";
+import { LocationEndpoint } from "@api/endpoints/location.endpoint";
+import { ServiceEndpoint } from "@api/endpoints/service.endpoint";
+import add from "@assets/svg/profile/add.svg";
+import back from "@assets/svg/profile/back.svg";
+import deleteIcn from "@assets/svg/profile/delete.svg";
+import pen from "@assets/svg/profile/pen.svg";
 import {
   DATE_FORMAT,
   DEFAULT_MESSAGE,
   NOTI_ERROR,
   NOTI_SUCCESS,
-} from "../../../../../common/constants/constants";
-import { formatCurrencyVND } from "../../../../../common/contexts/format";
-import { validString } from "../../../../../common/contexts/helper";
-import { CommonTable } from "../../../../../components/CommonTable";
-import { FormInput } from "../../../../../components/FormInput/formInput";
-import { FormTextArea } from "../../../../../components/FormTextArea/formTextArea";
-import { LocationMediaEditor } from "../../../../../components/LocationMediaEditor";
-import { MapViewCommon } from "../../../../../components/MapViewCommon";
-import { useLoading } from "../../../../../providers/loadingProvider";
-import { ServiceTag } from "../../../../Renter/components/ServiceTag";
-import { uploadImage } from "../../../../../api/configs/common.config";
+} from "@common/constants/constants";
+import { formatCurrencyVND } from "@common/contexts/format";
+import { validString } from "@common/contexts/helper";
+import { CommonTable } from "@components/CommonTable";
+import { FormInput } from "@components/FormInput/formInput";
+import { FormTextArea } from "@components/FormTextArea/formTextArea";
+import { LocationMediaEditor } from "@components/LocationMediaEditor";
+import { MapViewCommon } from "@components/MapViewCommon";
+import { useLoading } from "@providers/loadingProvider";
+import { ServiceTag } from "@pages/Renter/components/ServiceTag";
+import { uploadImage } from "@api/configs/common.config";
 import { isAxiosError } from "axios";
-import { useNotification } from "../../../../../providers/notificationProvider";
-import type { ProfileLocationFilter } from "../../../../../common/types/profile";
+import { useNotification } from "@providers/notificationProvider";
+import type { ProfileLocationFilter } from "@common/types/profile";
 import {
   appendEditableMedia,
   mapEditableMediaToRequest,
@@ -43,14 +41,14 @@ import {
   markEditableMediaAsLogo,
   removeEditableMediaById,
   type EditableLocationMediaItem,
-} from "../../../../../features/locationCreation/media";
+} from "@features/locationCreation/media";
 import {
   createEmptyPrimaryAddress,
   normalizeLocationAddress,
-} from "../../../../../features/locationCreation/address";
-import { calculateSelectedServicesTotal } from "../../../../../features/locationCreation/services";
-import { uploadLocationMediaFiles } from "../../../../../features/locationCreation/upload";
-import { useMapAddressPicker } from "../../../../../features/mapAddress/useMapAddressPicker";
+} from "@features/locationCreation/address";
+import { calculateSelectedServicesTotal } from "@features/locationCreation/services";
+import { uploadLocationMediaFiles } from "@features/locationCreation/upload";
+import { useMapAddressPicker } from "@features/mapAddress/useMapAddressPicker";
 
 dayjs.extend(customParseFormat);
 

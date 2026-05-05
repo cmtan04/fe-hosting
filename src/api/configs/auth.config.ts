@@ -2,6 +2,8 @@ import axiosClient from "../axiosClient";
 import type {
   ForgotPasswordPayloadDto,
   ForgotPasswordResponseDto,
+  RefreshTokenPayloadDto,
+  RefreshTokenResponseDto,
   ResetPasswordPayloadDto,
   ResetPasswordResponseDto,
   SendOtpPayloadDto,
@@ -67,5 +69,12 @@ export const verifyOtp = async (
   payload: VerifyEmailPayloadDto,
 ): Promise<VerifyEmailResponseDto> => {
   const response = await axiosClient.post(AuthEndPoints.VERIFY_OTP, payload);
+  return response.data;
+};
+
+export const refreshToken = async (
+  payload: RefreshTokenPayloadDto,
+): Promise<RefreshTokenResponseDto> => {
+  const response = await axiosClient.post(AuthEndPoints.REFRESH, payload);
   return response.data;
 };

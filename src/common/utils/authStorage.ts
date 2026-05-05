@@ -1,4 +1,5 @@
 const TOKEN_STORAGE_KEY = "token";
+const REFRESH_TOKEN_STORAGE_KEY = "refreshToken";
 const ROLE_STORAGE_KEY = "userRole";
 const REMEMBER_LOGIN_STORAGE_KEY = "rememberLogin";
 const REMEMBERED_EMAIL_STORAGE_KEY = "rememberedEmail";
@@ -60,7 +61,19 @@ export const setStoredRole = (role: string | null) => {
 
 export const clearStoredAuth = () => {
   clearStorageItem(TOKEN_STORAGE_KEY);
+  clearStorageItem(REFRESH_TOKEN_STORAGE_KEY);
   clearStorageItem(ROLE_STORAGE_KEY);
+};
+
+export const getStoredRefreshToken = () =>
+  localStorage.getItem(REFRESH_TOKEN_STORAGE_KEY);
+
+export const setStoredRefreshToken = (refreshToken: string) => {
+  localStorage.setItem(REFRESH_TOKEN_STORAGE_KEY, refreshToken);
+};
+
+export const clearStoredRefreshToken = () => {
+  localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
 };
 
 export const getRememberedSignIn = () => ({
