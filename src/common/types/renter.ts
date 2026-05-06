@@ -15,8 +15,8 @@ export interface BasicInfoStepFormValues {
   description?: string;
   note?: string;
   area?: string;
-  basePrice?: string;
-  finalPrice?: string;
+  price?: string;
+  priceUnit?: string;
   hasTimeLimit?: boolean;
   availableFrom?: dayjs.Dayjs;
   availableTo?: dayjs.Dayjs;
@@ -28,8 +28,8 @@ export interface BasicInfoStepSubmitValue {
   description?: string;
   note?: string;
   area?: number;
-  basePrice?: number;
-  finalPrice?: number;
+  price?: number;
+  priceUnit: string;
   hasTimeLimit: boolean;
   availableFrom?: string;
   availableTo?: string;
@@ -41,8 +41,8 @@ export interface BasicInfoDraftPatch {
   description?: string;
   note?: string;
   area?: number;
-  basePrice?: number;
-  finalPrice?: number;
+  price?: number;
+  priceUnit?: string;
   hasTimeLimit?: boolean;
   availableFrom?: string;
   availableTo?: string;

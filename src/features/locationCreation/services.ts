@@ -55,9 +55,12 @@ export const filterAvailableCatalogServices = (
       return true;
     }
 
+    const serviceName = (service.serviceName || (service as any).name || "").toLowerCase();
+    const serviceDescription = (service.serviceDescription || (service as any).description || "").toLowerCase();
+
     return (
-      (service.serviceName ?? "").toLowerCase().includes(normalizedQuery) ||
-      (service.serviceDescription ?? "").toLowerCase().includes(normalizedQuery)
+      serviceName.includes(normalizedQuery) ||
+      serviceDescription.includes(normalizedQuery)
     );
   });
 };
@@ -66,8 +69,8 @@ export const createCatalogServiceSelection = (
   service: ServiceDto,
 ): LocationServiceSelectionDto => ({
   serviceCode: service.serviceCode,
-  name: service.serviceName,
-  description: service.serviceDescription,
+  name: service.serviceName || (service as any).name,
+  description: service.serviceDescription || (service as any).description,
   isFree: service.isFree ?? true,
   basePrice: Number(service.basePrice ?? service.servicePrice ?? 0),
   unit: service.unit ?? DEFAULT_SERVICE_PRICING_TYPE,

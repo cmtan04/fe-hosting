@@ -1,4 +1,4 @@
-import { Dropdown, Modal, type MenuProps, Button } from "antd";
+import { Dropdown, Modal, type MenuProps, Button, Col, Row } from "antd";
 import { useState } from "react";
 import type { EditableLocationMediaItem } from "../../features/locationCreation/media";
 import "./style.scss";
@@ -79,9 +79,9 @@ export const LocationMediaEditor = ({
         {media.length === 0 ? (
           <p className="location-media-editor__empty">{emptyLabel}</p>
         ) : (
-          <div className="location-media-editor__list">
+          <Row gutter={[12, 4]} className="location-media-editor__list">
             {media.map((item) => (
-              <div key={item.id} className="location-media-editor__item">
+              <Col span={24} key={item.id} className="location-media-editor__item">
                 <div
                   style={{ display: "flex", alignItems: "center", minWidth: 0 }}
                 >
@@ -129,9 +129,9 @@ export const LocationMediaEditor = ({
                     onClick={() => onRemove(item.id)}
                   />
                 </div>
-              </div>
+              </Col>
             ))}
-          </div>
+          </Row>
         )}
 
         {uploadLabel && (

@@ -218,9 +218,9 @@ export const ProfileLocationDetail = () => {
         maxTimeLimit: parseLocationDate(locationData.maxTime),
         locationDescription: locationData.locationDescription,
         locationNote: locationData.locationNote,
-        locationPriceStart: locationData.locationPriceStart,
-        locationPriceAfterDeal:
-          locationData.locationPriceAfterDeal ?? locationData.locationPriceEnd,
+        locationPrice: locationData.locationPrice,
+        locationPriceUnit: locationData.locationPriceUnit || "tháng",
+        locationPriceAfterDeal: locationData.locationPriceAfterDeal,
       });
 
       setPrimaryAddress(nextPrimaryAddress);
@@ -336,10 +336,8 @@ export const ProfileLocationDetail = () => {
       description: values.locationDescription || undefined,
       note: values.locationNote || undefined,
       pricing: {
-        priceStart: Number(values.locationPriceStart ?? 0),
-        priceEnd: Number(
-          locationData.locationPriceEnd ?? values.locationPriceStart ?? 0,
-        ),
+        price: Number(values.locationPrice ?? 0),
+        priceUnit: values.locationPriceUnit || "tháng",
         priceAfterDeal: Number(values.locationPriceAfterDeal ?? 0),
       },
       availability: {
@@ -518,30 +516,50 @@ export const ProfileLocationDetail = () => {
                   }}
                 />
 
-                <FormInput
-                  label="Giá thấp nhât"
-                  name="locationPriceStart"
-                  placeholder="Nhập mức giá mong muốn"
-                  vertical={true}
-                  formItemProps={{
-                    rules: [
-                      {
-                        required: true,
-                        message: "Trường này là trường bắt buộc.",
-                      },
-                    ],
-                  }}
-                />
+                <Row gutter={[16, 16]}>
+                  <Col span={12}>
+                    <FormInput
+                      label="Giá cho thuê (VNĐ)"
+                      name="locationPrice"
+                      placeholder="Nhập mức giá"
+                      vertical={true}
+                      formItemProps={{
+                        rules: [
+                          {
+                            required: true,
+                            message: "Trường này là trường bắt buộc.",
+                          },
+                        ],
+                      }}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <FormInput
+                      label="Đơn vị tính"
+                      name="locationPriceUnit"
+                      placeholder="VD: tháng, ngày"
+                      vertical={true}
+                      formItemProps={{
+                        rules: [
+                          {
+                            required: true,
+                            message: "Trường này là trường bắt buộc.",
+                          },
+                        ],
+                      }}
+                    />
+                  </Col>
+                </Row>
 
                 <FormInput
-                  label="Giá cho thuê"
+                  label="Giá sau thương lượng (VNĐ)"
                   name="locationPriceAfterDeal"
-                  placeholder="Nhập mức giá mong muốn"
+                  placeholder="Nhập mức giá sau thương lượng (nếu có)"
                   vertical={true}
                   formItemProps={{
                     rules: [
                       {
-                        required: true,
+                        required: false,
                         message: "Trường này là trường bắt buộc.",
                       },
                     ],

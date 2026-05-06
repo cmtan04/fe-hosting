@@ -4,7 +4,7 @@ import { ResetPassword } from "@pages/Auth/ResetPassword/ResetPassword";
 import { SignIn } from "@pages/Auth/SignIn/SignIn";
 import { SignUp } from "@pages/Auth/SignUp/SignUp";
 import { VerifyEmail } from "@pages/Auth/VerifyEmail/VerifyEmail";
-import { RenterLayout } from "@pages/Renter/RenterLayout";
+import { RenterLayout } from "@pages/Renter/";
 import ProtectedRoute from "./ProtectedRoute";
 import { ROUTER_PATH } from "./Route";
 import { Profile } from "@pages/Profile";

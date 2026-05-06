@@ -436,6 +436,8 @@ export const LocationListView = (props: LocationListViewProps) => {
                 description={location.locationDescription}
                 address={location.address?.[0]?.fullAddress}
                 rate={location.locationRate}
+                price={location.locationPrice}
+                priceUnit={location.locationPriceUnit}
                 image={location.locationLogo}
                 isFavourite={false}
                 onClick={handleCardClick}

@@ -10,9 +10,9 @@ export interface LocationTypeDto {
 }
 
 export interface LocationPricingDto {
-  priceStart: number;
-  priceEnd?: number;
-  priceAfterDeal: number;
+  price: number;
+  priceUnit: string;
+  priceAfterDeal?: number;
 }
 
 export interface LocationAvailabilityDto {
@@ -83,10 +83,10 @@ export interface ServiceDto {
   serviceDescription?: string;
   serviceLogo?: string;
   serviceBackGround?: string;
-  servicePrice: number | string;
+  servicePrice?: number | string;
   servicePriceType?: ServicePriceType;
   serviceDiscount?: number;
-  isActive?: number;
+  isActive?: boolean | number;
   isCustom?: boolean;
   category?: string;
   isFree?: boolean;
@@ -154,8 +154,8 @@ export interface LocationDto {
   locationDescription?: string;
   locationNote?: string;
   locationLogo?: string;
-  locationPriceStart: number;
-  locationPriceEnd: number;
+  locationPrice: number;
+  locationPriceUnit: string;
   locationPriceAfterDeal: number;
   locationArea?: number | null;
   minTime?: string;

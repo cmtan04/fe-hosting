@@ -1,4 +1,4 @@
-import "./locationTypeCard.scss";
+import "./styles.scss";
 
 interface LocationTypeCardProps {
   typeName: string;

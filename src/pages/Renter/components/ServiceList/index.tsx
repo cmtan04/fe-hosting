@@ -10,7 +10,7 @@ import {
   isServicePaid,
 } from "@features/locationCreation/services";
 import { ServiceTag } from "../ServiceTag";
-import "./serviceList.scss";
+import "./styles.scss";
 
 interface ServiceListProps {
   selectedServices: LocationServiceSelectionDto[];

@@ -96,12 +96,10 @@ export const ProfileLocation = () => {
     {
       key: 3,
       label: "Giá niêm yết",
-      value: "locationPriceStart",
-    },
-    {
-      key: 4,
-      label: "Giá thuê",
-      value: "locationPriceEnd",
+      value: "locationPrice",
+      render: (value: number, record: any) => (
+        <span>{value?.toLocaleString()} VNĐ{record.locationPriceUnit}</span>
+      )
     },
     {
       key: 5,

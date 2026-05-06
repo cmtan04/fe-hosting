@@ -40,5 +40,5 @@
       "@socket/*": ["src/socket/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "src/pages/Renter/.tsx"]
 }

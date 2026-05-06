@@ -1,5 +1,5 @@
-import type { SummaryPanelRow } from "../../../../common/types/renter";
-import "./summaryPanel.scss";
+import type { SummaryPanelRow } from "@common/types/renter";
+import "./styles.scss";
 
 export const SummaryPanel = ({
   title,

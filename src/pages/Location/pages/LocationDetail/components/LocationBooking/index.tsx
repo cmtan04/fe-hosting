@@ -26,45 +26,29 @@ export const LocationBooking = ({
         <div className="sum-price">
           <p className="sum-price-end">
             <sup>đ</sup>
-            {formatMoney(locationDetail?.locationPriceAfterDeal)}
-          </p>
-          <p className="sum-price-detail">
-            <span>
-              <sup>đ</sup>
-              {formatMoney(locationDetail?.locationPriceStart)}
-            </span>
-            <span> - </span>
-            <span>
-              <sup>đ</sup>
-              {formatMoney(locationDetail?.locationPriceEnd)}
-            </span>
+            {formatMoney(locationDetail?.locationPrice)} {locationDetail?.locationPriceUnit}
           </p>
         </div>
 
         <div className="detail-price">
-          <div className="detail-price-start">
-            <p className="detail-price-label">Giá gốc từ</p>
-            <p className="detail-price-value">
-              <sup>đ</sup>
-              {formatMoney(locationDetail?.locationPriceStart)}
-            </p>
-          </div>
-
-          <div className="detail-price-end">
-            <p className="detail-price-label">Giá gốc đến</p>
-            <p className="detail-price-value">
-              <sup>đ</sup>
-              {formatMoney(locationDetail?.locationPriceEnd)}
-            </p>
-          </div>
-
           <div className="detail-price-rent">
             <p className="detail-price-label">Giá thuê</p>
             <p className="detail-price-value">
               <sup>đ</sup>
-              {formatMoney(locationDetail?.locationPriceAfterDeal)}
+              {formatMoney(locationDetail?.locationPrice)} {locationDetail?.locationPriceUnit}
             </p>
           </div>
+
+          {locationDetail?.locationPriceAfterDeal !== undefined &&
+            locationDetail.locationPriceAfterDeal > 0 && (
+              <div className="detail-price-deal">
+                <p className="detail-price-label">Giá sau thương lượng</p>
+                <p className="detail-price-value">
+                  <sup>đ</sup>
+                  {formatMoney(locationDetail?.locationPriceAfterDeal)} {locationDetail?.locationPriceUnit}
+                </p>
+              </div>
+            )}
 
           {locationDetail?.minTime && locationDetail?.maxTime && (
             <div className="detail-price-time">

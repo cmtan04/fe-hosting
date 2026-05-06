@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { WebRouter } from "./Router";
-import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
+import { ScrollToTop } from "@components/ScrollToTop";
 
 const RouterWeb = () => {
   return (

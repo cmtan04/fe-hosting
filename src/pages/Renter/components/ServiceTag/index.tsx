@@ -1,6 +1,6 @@
 import { Col, Row } from "antd";
-import { formatMoney } from "../../../../common/contexts/format";
-import "./serviceTag.scss";
+import { formatMoney } from "@common/contexts/format";
+import "./styles.scss";
 
 interface ServiceTagProps {
   icon: any;

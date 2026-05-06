@@ -23,6 +23,7 @@ interface LocationCardProps {
   address?: string;
   rate?: number;
   price?: number;
+  priceUnit?: string;
   image: string;
   isFavourite: boolean;
   showEdit?: boolean;
@@ -113,7 +114,7 @@ export const LocationCard = (props: LocationCardProps) => {
             <EnvironmentOutlined /> {props.address}
           </p>
           <p className="location__card-price">
-            <TagOutlined /> <span>{props.price?.toLocaleString()} VNĐ</span>
+            <TagOutlined /> <span>{props.price?.toLocaleString()} VNĐ{props.priceUnit || ""}</span>
           </p>
         </div>
       </div>

@@ -6,7 +6,11 @@ import {
   createLocation,
   getAllLocationType,
 } from "../../../api/configs/location.config";
-import { uploadImage } from "../../../api/configs/common.config";
+import {
+  uploadImage,
+  uploadVideo,
+  uploadFile,
+} from "../../../api/configs/common.config";
 import { getAllService } from "../../../api/configs/service.config";
 import { LocationEndpoint } from "../../../api/endpoints/location.endpoint";
 import { ServiceEndpoint } from "../../../api/endpoints/service.endpoint";
@@ -15,6 +19,7 @@ import {
   NOTI_ERROR,
   NOTI_SUCCESS,
 } from "../../../common/constants/constants";
+import type { UploadImageResponseDto } from "../../../api/dtos/common.dto";
 import {
   appendEditableMedia,
   markEditableMediaAsLogo,
@@ -50,8 +55,30 @@ export const useRenterPostRoom = () => {
     queryFn: () => getAllService(),
   });
 
-  const uploadMutation = useMutation({
+  const uploadMutation = useMutation<UploadImageResponseDto, Error, FormData>({
     mutationFn: (payload: FormData) => uploadImage(payload),
+    onError: (error) => {
+      const apiMessage =
+        isAxiosError(error) && typeof error.response?.data?.message === "string"
+          ? error.response?.data?.message
+          : DEFAULT_MESSAGE;
+      showNotification(apiMessage, NOTI_ERROR);
+    },
+  });
+
+  const uploadVideoMutation = useMutation<UploadImageResponseDto, Error, FormData>({
+    mutationFn: (payload: FormData) => uploadVideo(payload),
+    onError: (error) => {
+      const apiMessage =
+        isAxiosError(error) && typeof error.response?.data?.message === "string"
+          ? error.response?.data?.message
+          : DEFAULT_MESSAGE;
+      showNotification(apiMessage, NOTI_ERROR);
+    },
+  });
+
+  const uploadFileMutation = useMutation<UploadImageResponseDto, Error, FormData>({
+    mutationFn: (payload: FormData) => uploadFile(payload),
     onError: (error) => {
       const apiMessage =
         isAxiosError(error) && typeof error.response?.data?.message === "string"
@@ -82,6 +109,8 @@ export const useRenterPostRoom = () => {
       typeLoading ||
         serviceLoading ||
         uploadMutation.isPending ||
+        uploadVideoMutation.isPending ||
+        uploadFileMutation.isPending ||
         createMutation.isPending,
     );
   }, [
@@ -90,6 +119,8 @@ export const useRenterPostRoom = () => {
     setLoading,
     typeLoading,
     uploadMutation.isPending,
+    uploadVideoMutation.isPending,
+    uploadFileMutation.isPending,
   ]);
 
   const handleBasicInfoNext = (value: BasicInfoStepSubmitValue) => {
@@ -99,8 +130,8 @@ export const useRenterPostRoom = () => {
       description: value.description ?? "",
       note: value.note ?? "",
       area: value.area,
-      basePrice: value.basePrice,
-      finalPrice: value.finalPrice,
+      price: value.price,
+      priceUnit: value.priceUnit,
       hasTimeLimit: value.hasTimeLimit,
       availableFrom: value.availableFrom,
       availableTo: value.availableTo,
@@ -144,13 +175,15 @@ export const useRenterPostRoom = () => {
       const uploadedMedia = await uploadLocationMediaFiles(
         files,
         uploadMutation.mutateAsync,
+        uploadVideoMutation.mutateAsync,
+        uploadFileMutation.mutateAsync,
       );
       updateBasicInfo({
         media: appendEditableMedia(draft.basicInfo.media, uploadedMedia),
       });
       showNotification("Tai media thanh cong", NOTI_SUCCESS);
-    } catch {
-      // Error notification handled by mutation.
+    } catch (error) {
+      console.error("Media upload error:", error);
     }
   };
 

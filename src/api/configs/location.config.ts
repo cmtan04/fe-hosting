@@ -70,10 +70,8 @@ const mapLocationSummary = (location: LocationSummaryDto): LocationDto => ({
   locationDescription: location.description,
   locationNote: location.note,
   locationLogo: location.logo,
-  locationPriceStart: Number(location.pricing.priceStart ?? 0),
-  locationPriceEnd: Number(
-    location.pricing.priceEnd ?? location.pricing.priceStart ?? 0,
-  ),
+  locationPrice: Number(location.pricing.price ?? 0),
+  locationPriceUnit: location.pricing.priceUnit || "tháng",
   locationPriceAfterDeal: Number(location.pricing.priceAfterDeal ?? 0),
   locationArea: location.area,
   minTime: location.availability.availableFrom,

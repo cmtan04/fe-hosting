@@ -18,8 +18,8 @@ export interface CreateLocationDraft {
     description: string;
     note: string;
     area?: number;
-    basePrice?: number;
-    finalPrice?: number;
+    price?: number;
+    priceUnit: string;
     hasTimeLimit: boolean;
     availableFrom?: string;
     availableTo?: string;
@@ -47,8 +47,8 @@ export const createEmptyLocationDraft = (): CreateLocationDraft => ({
     description: "",
     note: "",
     area: undefined,
-    basePrice: undefined,
-    finalPrice: undefined,
+    price: undefined,
+    priceUnit: "tháng",
     hasTimeLimit: false,
     availableFrom: undefined,
     availableTo: undefined,
@@ -78,9 +78,9 @@ export const createCreateLocationRequestFromDraft = (
   note: draft.basicInfo.note || undefined,
   area: draft.basicInfo.area,
   pricing: {
-    priceStart: Number(draft.basicInfo.basePrice ?? 0),
-    priceEnd: Number(draft.basicInfo.finalPrice ?? draft.basicInfo.basePrice ?? 0),
-    priceAfterDeal: Number(draft.basicInfo.finalPrice ?? 0),
+    price: Number(draft.basicInfo.price ?? 0),
+    priceUnit: draft.basicInfo.priceUnit,
+    priceAfterDeal: Number(draft.basicInfo.price ?? 0),
   },
   availability: draft.basicInfo.hasTimeLimit
     ? {
@@ -92,7 +92,7 @@ export const createCreateLocationRequestFromDraft = (
     : {
         hasTimeLimit: false,
         isRented: false,
-  },
+      },
   primaryAddress: {
     addressDetail: draft.address.addressDetail,
     fullAddress: draft.address.fullAddress,
