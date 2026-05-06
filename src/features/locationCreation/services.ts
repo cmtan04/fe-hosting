@@ -37,9 +37,9 @@ export const isCatalogServiceSelection = (
 export const filterAvailableCatalogServices = (
   services: ServiceDto[] | undefined,
   selectedServices: LocationServiceSelectionDto[],
-  query: string,
+  query?: string,
 ) => {
-  const normalizedQuery = query.trim().toLowerCase();
+  const normalizedQuery = (query ?? "").trim().toLowerCase();
   const takenCodes = new Set(
     selectedServices
       .map((service) => service.serviceCode)
@@ -56,7 +56,7 @@ export const filterAvailableCatalogServices = (
     }
 
     return (
-      service.serviceName.toLowerCase().includes(normalizedQuery) ||
+      (service.serviceName ?? "").toLowerCase().includes(normalizedQuery) ||
       (service.serviceDescription ?? "").toLowerCase().includes(normalizedQuery)
     );
   });

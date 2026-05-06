@@ -1,0 +1,42 @@
+.renter {
+  .renter-summaryPanel {
+    padding: 14px 16px;
+    border: 1px solid #e6edf3;
+    border-radius: 10px;
+    background: #f8fafc;
+  }
+
+  .renter-summaryPanel-title {
+    margin: 0 0 10px;
+    color: #102a43;
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .renter-summaryPanel-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .renter-summaryPanel-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+    line-height: 20px;
+
+    .label {
+      color: #61758a;
+    }
+
+    .value {
+      color: #102a43;
+      font-weight: 600;
+      text-align: right;
+    }
+  }
+}

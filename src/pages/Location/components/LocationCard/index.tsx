@@ -1,10 +1,19 @@
 import "../style.scss";
-import share from "../../../../assets/svg/location/share.svg";
-import favouriteblack from "../../../../assets/svg/location/favourite-black.svg";
-import favouritered from "../../../../assets/svg/location/favourite-red.svg";
 import { Col, Rate, Row, Tooltip } from "antd";
 import { useState } from "react";
 import { useRequireLoginAction } from "../../../../common/hooks/useRequireLoginAction";
+
+import {
+  EditOutlined,
+  EnvironmentOutlined,
+  FileTextOutlined,
+  HeartFilled,
+  HeartOutlined,
+  HomeOutlined,
+  InfoCircleOutlined,
+  ShareAltOutlined,
+  TagOutlined,
+} from "@ant-design/icons";
 
 interface LocationCardProps {
   code: string;
@@ -13,10 +22,13 @@ interface LocationCardProps {
   description?: string;
   address?: string;
   rate?: number;
+  price?: number;
   image: string;
   isFavourite: boolean;
+  showEdit?: boolean;
   onFavouriteToggle?: (code: string) => void;
   onShare?: (code: string) => void;
+  onEdit?: (code: string) => void;
   onClick?: (code: string) => void;
 }
 
@@ -37,6 +49,11 @@ export const LocationCard = (props: LocationCardProps) => {
     );
   };
 
+  const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    props.onEdit?.(props.code);
+  };
+
   const handleShare = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     props.onShare?.(props.code);
@@ -47,26 +64,12 @@ export const LocationCard = (props: LocationCardProps) => {
       title={() => (
         <div className="location__card-toolTip">
           <Row gutter={[16, 16]}>
-            <Col span={8}>
-              <img
-                className="location__card-toolTip-img"
-                src={props.image}
-                alt=""
-              />
-            </Col>
-            <Col span={16}>
-              <h3 className="location__card-toolTip-title">
-                {props.typeName} <span>:</span> {props.name}
-              </h3>
-            </Col>
-          </Row>
-          <Row gutter={[16, 16]}>
             <Col span={24}>
               <p className="location__card-toolTip-description">
-                {props.description}
+                <InfoCircleOutlined /> {props.description}
               </p>
               <p className="location__card-toolTip-address">
-                Địa chỉ: {props.address}
+                <EnvironmentOutlined /> {props.address}
               </p>
               <Rate disabled defaultValue={Number(props.rate)} />
             </Col>
@@ -83,20 +86,35 @@ export const LocationCard = (props: LocationCardProps) => {
           <img src={props.image} alt="" />
           <div className="action">
             <button className="action--favourite" onClick={handleFavourite}>
-              <img src={isFavourite ? favouritered : favouriteblack} alt="" />
+              {isFavourite ? (
+                <HeartFilled style={{ color: "#ff1818" }} />
+              ) : (
+                <HeartOutlined />
+              )}
             </button>
             <button className="action--share" onClick={handleShare}>
-              <img src={share} alt="" />
+              <ShareAltOutlined />
             </button>
+            {props.showEdit && (
+              <button className="action--edit" onClick={handleEdit}>
+                <EditOutlined />
+              </button>
+            )}
           </div>
         </div>
         <div className="location__card-content">
-          <h3 className="location__card-title">
-            {props.typeName} <span>:</span> {props.name}
-          </h3>
-          <p className="location__card-description">{props.description}</p>
-          <p className="location__card-address">Địa chỉ: {props.address}</p>
-          <Rate disabled defaultValue={Number(props.rate)} />
+          <h4 className="location__card-title">
+            <HomeOutlined /> {props.name}
+          </h4>
+          <p className="location__card-description">
+            <FileTextOutlined /> {props.description}
+          </p>
+          <p className="location__card-address">
+            <EnvironmentOutlined /> {props.address}
+          </p>
+          <p className="location__card-price">
+            <TagOutlined /> <span>{props.price?.toLocaleString()} VNĐ</span>
+          </p>
         </div>
       </div>
     </Tooltip>

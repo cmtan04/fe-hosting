@@ -1,0 +1,65 @@
+@import "@/color.scss";
+
+.related-locations {
+  box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12);
+  margin-top: 32px;
+  border-radius: 12px;
+
+  .ant-col {
+    padding: 0 !important;
+  }
+
+  .title {
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 1.4;
+    opacity: 0.8;
+    color: $primary_color;
+    font-family: $font_family_1 !important;
+    margin: 0;
+    padding: 24px 0 0 24px;
+  }
+
+  .list {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 16px;
+    overflow-x: auto;
+    align-items: stretch;
+    padding: 24px;
+
+    &.ant-row {
+      flex-wrap: nowrap !important;
+      align-items: stretch !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    & > * {
+      flex: 0 0 auto;
+      height: auto;
+    }
+
+    .ant-col {
+      display: flex;
+      flex-direction: column;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    .related-state {
+      width: 100%;
+      margin: 0;
+      padding: 20px 24px;
+      border: 1px dashed #d8cbb8;
+      border-radius: 12px;
+      color: #7a6e62;
+      font-size: 14px;
+      line-height: 1.6;
+      text-align: center;
+      background: #fdfaf4;
+    }
+  }
+}

@@ -1,0 +1,32 @@
+@import "@/color.scss";
+
+.location-reviews {
+  .row-3 {
+    &-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #e9ab0d;
+      margin-bottom: 12px;
+      font-family: $font_family_1 !important;
+    }
+
+    &-note {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.4;
+      opacity: 0.6;
+      color: #00293a;
+      font-family: "DM Sans", "system-ui", sans-serif !important;
+    }
+
+    &-title {
+      font-family: "Playfair Display", serif;
+      font-size: 1.6rem;
+      color: #1a1410;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+  }
+}

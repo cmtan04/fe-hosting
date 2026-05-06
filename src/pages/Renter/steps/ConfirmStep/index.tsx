@@ -1,16 +1,34 @@
 import { Button, Col, Row, Steps } from "antd";
 import { useMemo } from "react";
-import { formatCurrencyVND } from "../../../common/contexts/format";
+import icnClear from "../../../../assets/svg/icn-clear.svg";
+import { STEP_ITEMS } from "../../../../common/constants/renter";
+import { formatCurrencyVND } from "../../../../common/contexts/format";
+import type { LocationTypeDto, ServiceDto } from "../../../../api/dtos/location.dto";
+import type { CreateLocationDraft } from "../../../../features/locationCreation/types";
 import {
   calculateSelectedServicesTotal,
   getServiceDraftPrice,
-} from "../../../features/locationCreation/services";
-import { ServiceTag } from "../components/ServiceTag";
-import { SummaryPanel } from "../components/SummaryPanel";
-import { STEP_ITEMS } from "./constants";
-import type { ConfirmStepProps } from "./types";
-import icnClear from "../../../assets/svg/icn-clear.svg";
+} from "../../../../features/locationCreation/services";
 import { LocationMediaEditor } from "@/components/LocationMediaEditor";
+import { ServiceTag } from "../../components/ServiceTag";
+import { SummaryPanel } from "../../components/SummaryPanel";
+import "./confirmStep.scss";
+
+interface ConfirmStepProps {
+  draft: CreateLocationDraft;
+  typeList?: LocationTypeDto[];
+  services?: ServiceDto[];
+  currentStep: number;
+  onBack: () => void;
+  onCancel: () => void;
+  onSubmit: () => void;
+  onStepChange: (nextStep: number) => void;
+  isSubmitting: boolean;
+  isUploading: boolean;
+  onUpload: (files: FileList) => void;
+  onRemoveMedia: (id: string) => void;
+  onSetAvatar: (id: string) => void;
+}
 
 export const ConfirmStep = ({
   draft,

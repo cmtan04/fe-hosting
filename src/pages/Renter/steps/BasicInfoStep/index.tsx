@@ -1,18 +1,38 @@
 import { Button, Checkbox, Col, DatePicker, Form, Row, Steps } from "antd";
 import dayjs from "dayjs";
 import { useMemo } from "react";
-import type { LocationTypeDto } from "../../../api/dtos/location.dto";
-import icnClear from "../../../assets/svg/icn-clear.svg";
-import { DATE_FORMAT } from "../../../common/constants/constants";
-import { NUMBER_REGEX } from "../../../common/constants/regexs";
-import { formatCurrencyVND } from "../../../common/contexts/format";
-import { FormInput } from "../../../components/FormInput/formInput";
-import { FormTextArea } from "../../../components/FormTextArea/formTextArea";
-import { LocationMediaEditor } from "../../../components/LocationMediaEditor";
-import { LocationTypeCard } from "../components/LocationTypeCard/locationTypeCard";
-import { SummaryPanel } from "../components/SummaryPanel";
-import { STEP_ITEMS } from "./constants";
-import type { BasicInfoStepFormValues, BasicInfoStepProps } from "./types";
+import type { LocationTypeDto } from "../../../../api/dtos/location.dto";
+import icnClear from "../../../../assets/svg/icn-clear.svg";
+import { DATE_FORMAT } from "../../../../common/constants/constants";
+import { STEP_ITEMS } from "../../../../common/constants/renter";
+import { NUMBER_REGEX } from "../../../../common/constants/regexs";
+import { formatCurrencyVND } from "../../../../common/contexts/format";
+import type {
+  BasicInfoDraftPatch,
+  BasicInfoStepFormValues,
+  BasicInfoStepSubmitValue,
+} from "../../../../common/types/renter";
+import { FormInput } from "../../../../components/FormInput/formInput";
+import { FormTextArea } from "../../../../components/FormTextArea/formTextArea";
+import { LocationMediaEditor } from "../../../../components/LocationMediaEditor";
+import type { CreateLocationDraft } from "../../../../features/locationCreation/types";
+import { LocationTypeCard } from "../../components/LocationTypeCard/locationTypeCard";
+import { SummaryPanel } from "../../components/SummaryPanel";
+import "./basicInfoStep.scss";
+
+interface BasicInfoStepProps {
+  draft: CreateLocationDraft;
+  typeList?: LocationTypeDto[];
+  isUploading: boolean;
+  currentStep: number;
+  onNext: (value: BasicInfoStepSubmitValue) => void;
+  onStepChange: (nextStep: number) => void;
+  onDraftChange: (patch: BasicInfoDraftPatch) => void;
+  onCancel: () => void;
+  onUpload: (files: FileList) => void;
+  onRemoveMedia: (id: string) => void;
+  onSetAvatar: (id: string) => void;
+}
 
 export const BasicInfoStep = ({
   draft,

@@ -1,16 +1,17 @@
-@import "../../../color.scss";
+@import "@/color.scss";
 
 .location {
   &__card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: fit-content;
+    width: 220px;
     height: 100%;
     border-radius: 24px;
     box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12);
     cursor: pointer;
     transition: transform 0.2s ease;
+    padding-bottom: 8px;
 
     &:hover {
       transform: scale(1.1);
@@ -19,7 +20,7 @@
     &-image {
       position: relative;
       & img {
-        width: 224px;
+        width: 220px;
         height: 220px;
         object-fit: cover;
         border-radius: 24px 24px 0px 0px;
@@ -32,68 +33,162 @@
       .action {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 8px;
         position: absolute;
-        right: 12px;
-        bottom: 24px;
+        right: 16px;
+        top: 12px; // Changed from bottom to top for better visibility on images
 
         & button {
           width: 32px;
           height: 32px;
           border-radius: 50%;
           border: none !important;
+          background-color: rgba(255, 255, 255, 0.9);
           display: flex;
-          flex-direction: column;
           justify-content: center;
           align-items: center;
+          padding: 0;
           cursor: pointer;
+          transition: all 0.2s ease;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          font-size: clamp(
+            14px,
+            2vw,
+            18px
+          ); // Responsive icon size for Ant icons
+
+          &.action--edit {
+            color: $primary-color;
+            &:hover {
+              color: $color-green-5;
+            }
+          }
+
+          &.action--favourite {
+            color: $primary-color;
+            &:hover {
+              color: $color-red-5;
+            }
+          }
+          &.action--share {
+            color: $primary-color;
+            &:hover {
+              color: $color-blue-6;
+            }
+          }
+
+          &:hover {
+            transform: scale(1.1);
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+          }
+
+          &:active {
+            transform: scale(0.95);
+          }
         }
+
         & img {
-          width: 32px;
-          height: 32px;
+          width: 24px;
+          height: 24px;
+          object-fit: contain;
         }
       }
     }
 
     &-content {
+      width: 100%;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      padding: 0px 12px 12px 12px;
-      max-width: 200px;
+      gap: 6px;
+      padding: 0;
+      align-items: flex-start;
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+
+    &-title,
+    &-description,
+    &-address,
+    &-price {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0px !important;
+      font-family: $font_family_1 !important;
+
+      & .anticon {
+        font-size: 14px;
+        color: $primary-color;
+        flex-shrink: 0;
+      }
     }
 
     &-title {
-      margin: 0px !important;
-      font-size: 16px;
       font-weight: bold;
       color: $primary-color;
-      font-family: $font_family_1 !important;
       word-wrap: break-word;
       overflow-wrap: break-word;
     }
 
     &-description,
     &-address {
-      margin: 0px !important;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 400;
       line-height: 1.4;
-      color: $primary-color;
-      font-family: $font_family_1 !important;
+      color: rgba(0, 0, 0, 0.65);
 
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 1;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
 
+    &-price {
+      margin-top: 4px !important;
+      font-size: 15px;
+      font-weight: 700;
+      color: $color-red-5;
+
+      & .anticon {
+        color: $color-red-5;
+      }
+    }
+
     &-toolTip {
+      padding: 4px;
       &-img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         border-radius: 12px;
+      }
+
+      &-title,
+      &-description,
+      &-address {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px !important;
+        color: #fff;
+
+        & .anticon {
+          color: #fff;
+          font-size: 14px;
+        }
+      }
+
+      &-title {
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      &-description,
+      &-address {
+        font-size: 12px;
+        opacity: 0.9;
       }
     }
   }
@@ -429,7 +524,7 @@
       }
     }
   }
-  &__login-required{
+  &__login-required {
     justify-self: center;
   }
 }

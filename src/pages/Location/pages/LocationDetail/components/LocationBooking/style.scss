@@ -1,0 +1,119 @@
+@import "@/color.scss";
+
+.location-booking {
+  background: #1a1410;
+  color: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 20px;
+
+  .row-1 {
+    background: #c9a84c;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #1a1410;
+      margin-bottom: 0px !important;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: #1a1410;
+      background: rgba(26, 20, 16, 0.12);
+      padding: 3px 10px;
+      margin-bottom: 0px !important;
+      border-radius: 20px;
+    }
+  }
+
+  .row-2 {
+    padding: 28px;
+
+    & * {
+      margin-bottom: 0px !important;
+    }
+
+    .sum-price {
+      &-end {
+        font-family: "Playfair Display", serif;
+        font-size: 2.4rem;
+        color: #c9a84c;
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+
+      &-detail {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.45);
+        text-decoration: line-through;
+        margin-bottom: 20px;
+      }
+    }
+
+    .detail-price {
+      &-value {
+        color: #fff;
+        font-size: 13px;
+        font-family: "DM Sans", sans-serif;
+        font-weight: 500;
+      }
+
+      div {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.6);
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      &-rent {
+        .detail-price-value {
+          color: #c9a84c;
+          font-weight: 500;
+          font-size: 13px;
+          font-family: "DM Sans", sans-serif;
+        }
+      }
+    }
+
+    .ant-btn {
+      display: block;
+      width: 100%;
+      height: 50px;
+      padding: 16px;
+      background: #c9a84c;
+      color: #1a1410;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-align: center;
+      border: none;
+      border-radius: 4px;
+      margin-top: 24px;
+      cursor: pointer;
+
+      &:hover {
+        background: #b8963f !important;
+        transform: translateY(-2px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+}

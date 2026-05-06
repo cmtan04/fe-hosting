@@ -1,7 +1,6 @@
 import { Col, Row } from "antd";
-import "../../renterLayout.scss";
 import { formatMoney } from "../../../../common/contexts/format";
-import { icon } from "leaflet";
+import "./serviceTag.scss";
 
 interface ServiceTagProps {
   icon: any;

@@ -1,11 +1,8 @@
 import type dayjs from "dayjs";
 import type {
   LocationServiceSelectionDto,
-  LocationTypeDto,
-  ServiceDto,
   ServicePricingType,
-} from "../../../api/dtos/location.dto";
-import type { CreateLocationDraft } from "../../../features/locationCreation/types";
+} from "../../api/dtos/location.dto";
 
 export interface SummaryPanelRow {
   label: string;
@@ -80,48 +77,6 @@ export interface AddressAndServicesStepSubmitValue {
   latitude: number;
   longitude: number;
   services: LocationServiceSelectionDto[];
-}
-
-export interface BasicInfoStepProps {
-  draft: CreateLocationDraft;
-  typeList?: LocationTypeDto[];
-  isUploading: boolean;
-  currentStep: number;
-  onNext: (value: BasicInfoStepSubmitValue) => void;
-  onStepChange: (nextStep: number) => void;
-  onDraftChange: (patch: BasicInfoDraftPatch) => void;
-  onCancel: () => void;
-  onUpload: (files: FileList) => void;
-  onRemoveMedia: (id: string) => void;
-  onSetAvatar: (id: string) => void;
-}
-
-export interface AddressAndServicesStepProps {
-  draft: CreateLocationDraft;
-  services?: ServiceDto[];
-  currentStep: number;
-  onBack: () => void;
-  onCancel: () => void;
-  onNext: (value: AddressAndServicesStepSubmitValue) => void;
-  onStepChange: (nextStep: number) => void;
-  onAddressDraftChange: (patch: AddressDraftPatch) => void;
-  onServicesDraftChange: (services: ServicesDraftPatch["services"]) => void;
-}
-
-export interface ConfirmStepProps {
-  draft: CreateLocationDraft;
-  typeList?: LocationTypeDto[];
-  services?: ServiceDto[];
-  currentStep: number;
-  onBack: () => void;
-  onCancel: () => void;
-  onSubmit: () => void;
-  onStepChange: (nextStep: number) => void;
-  isSubmitting: boolean;
-  isUploading: boolean;
-  onUpload: (files: FileList) => void;
-  onRemoveMedia: (id: string) => void;
-  onSetAvatar: (id: string) => void;
 }
 
 export interface CustomServiceComposerState {

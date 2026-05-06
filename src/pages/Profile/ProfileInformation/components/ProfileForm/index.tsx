@@ -4,18 +4,35 @@ import { FormDatePicker } from "@components/FormDatePicker/formDatePicker";
 import { FormTextArea } from "@components/FormTextArea/formTextArea";
 import { DATE_FORMAT } from "@common/constants/constants";
 import dayjs from "dayjs";
+import icnClear from "@/assets/svg/icn-clear.svg";
 import "./style.scss";
 
 interface ProfileFormProps {
   form: FormInstance;
   onFinish: () => void;
   onOpenAddressModal: () => void;
+  onCancel: () => void;
 }
 
-export const ProfileForm = ({ form, onFinish, onOpenAddressModal }: ProfileFormProps) => {
+export const ProfileForm = ({
+  form,
+  onFinish,
+  onOpenAddressModal,
+  onCancel,
+}: ProfileFormProps) => {
   return (
     <Col className="profile__information-form">
-      <h2 style={{ marginTop: "0px" }}>Chỉnh sửa thông tin cá nhân</h2>
+      <div className="header">
+        <h2 style={{ marginTop: "0px" }}>Chỉnh sửa thông tin cá nhân</h2>
+        <button
+          className="header-close"
+          onClick={onCancel}
+          type="button"
+          aria-label="Close"
+        >
+          <img src={icnClear} alt="" />
+        </button>
+      </div>
       <Form form={form} onFinish={onFinish}>
         <Row gutter={[16, 16]}>
           <Col span={8}>
@@ -25,7 +42,9 @@ export const ProfileForm = ({ form, onFinish, onOpenAddressModal }: ProfileFormP
               placeholder="Nhập tên người dùng"
               vertical={true}
               formItemProps={{
-                rules: [{ required: true, message: "Trường này là trường bắt buộc." }],
+                rules: [
+                  { required: true, message: "Trường này là trường bắt buộc." },
+                ],
               }}
             />
           </Col>
@@ -36,7 +55,9 @@ export const ProfileForm = ({ form, onFinish, onOpenAddressModal }: ProfileFormP
               placeholder="Nhập tên đầy đủ"
               vertical={true}
               formItemProps={{
-                rules: [{ required: true, message: "Trường này là trường bắt buộc." }],
+                rules: [
+                  { required: true, message: "Trường này là trường bắt buộc." },
+                ],
               }}
             />
           </Col>
@@ -50,7 +71,9 @@ export const ProfileForm = ({ form, onFinish, onOpenAddressModal }: ProfileFormP
               placeholder="Nhập số điện thoại"
               vertical={true}
               formItemProps={{
-                rules: [{ required: true, message: "Trường này là trường bắt buộc." }],
+                rules: [
+                  { required: true, message: "Trường này là trường bắt buộc." },
+                ],
               }}
             />
           </Col>
@@ -62,7 +85,9 @@ export const ProfileForm = ({ form, onFinish, onOpenAddressModal }: ProfileFormP
               disabled
               vertical={true}
               formItemProps={{
-                rules: [{ required: true, message: "Trường này là trường bắt buộc." }],
+                rules: [
+                  { required: true, message: "Trường này là trường bắt buộc." },
+                ],
               }}
             />
           </Col>
@@ -116,7 +141,7 @@ export const ProfileForm = ({ form, onFinish, onOpenAddressModal }: ProfileFormP
         </Row>
 
         <Row gutter={[16, 16]} className="action">
-          <Button htmlType="submit" className="button-submit" >
+          <Button htmlType="submit" className="button-submit">
             Lưu
           </Button>
         </Row>

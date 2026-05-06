@@ -1,0 +1,1 @@
+export { RenterLayout } from "./RenterLayout";

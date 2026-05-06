@@ -4,6 +4,7 @@ import { ProfileForm } from "./components/ProfileForm";
 import { AddressModal } from "./components/AddressModal";
 import { Row, Col } from "antd";
 import { ProfileColumn } from "./components/ProfileColumn";
+import { ProfileRoomList } from "./components/ProfileRoomList";
 import "./style.scss";
 
 export const ProfileInformation = () => {
@@ -43,15 +44,18 @@ export const ProfileInformation = () => {
           <ProfileColumn user={user} onClick={() => setIsEditing(true)} />
         </Col>
         <Col xs={24} lg={16}>
-          {isEditing && (
+          {isEditing ? (
             <ProfileForm
               form={form}
               onFinish={() => {
                 onSubmit();
                 setIsEditing(false);
               }}
+              onCancel={() => setIsEditing(false)}
               onOpenAddressModal={() => setShowModal(true)}
             />
+          ) : (
+            <ProfileRoomList userCode={user?.userCode} />
           )}
           <AddressModal
             open={showModal}

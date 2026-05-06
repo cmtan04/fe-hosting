@@ -4,35 +4,40 @@ import type {
   LocationServiceSelectionDto,
   ServiceDto,
   ServicePricingType,
-} from "../../../api/dtos/location.dto";
-import { FormInput } from "../../../components/FormInput/formInput";
-import { FormTextArea } from "../../../components/FormTextArea/formTextArea";
-import { MapViewCommon } from "../../../components/MapViewCommon";
-import { useMapAddressPicker } from "../../../features/mapAddress/useMapAddressPicker";
+} from "../../../../api/dtos/location.dto";
+import icnClear from "../../../../assets/svg/icn-clear.svg";
+import { STEP_ITEMS, DEFAULT_CUSTOM_SERVICE_STATE } from "../../../../common/constants/renter";
+import type {
+  AddressDraftPatch,
+  AddressAndServicesStepSubmitValue,
+  CustomServiceComposerState,
+} from "../../../../common/types/renter";
+import { FormInput } from "../../../../components/FormInput/formInput";
+import { FormTextArea } from "../../../../components/FormTextArea/formTextArea";
+import { MapViewCommon } from "../../../../components/MapViewCommon";
+import type { CreateLocationDraft } from "../../../../features/locationCreation/types";
 import {
   createCatalogServiceSelection,
   createCustomServiceSelection,
-  DEFAULT_SERVICE_PRICING_TYPE,
   filterAvailableCatalogServices,
-} from "../../../features/locationCreation/services";
-import { useCreateService } from "../../../features/locationCreation/useCreateService";
-import { STEP_ITEMS } from "./constants";
-import type {
-  AddressAndServicesStepProps,
-  CustomServiceComposerState,
-} from "./types";
-import icnClear from "../../../assets/svg/icn-clear.svg";
-import { useAddressDraftController } from "./useAddressDraftController";
-import { ServiceList } from "../components/serviceList";
+} from "../../../../features/locationCreation/services";
+import { useCreateService } from "../../../../features/locationCreation/useCreateService";
+import { useMapAddressPicker } from "../../../../features/mapAddress/useMapAddressPicker";
+import { useAddressDraftController } from "../../hooks/useAddressDraftController";
+import { ServiceList } from "../../components/ServiceList";
+import "./addressAndServicesStep.scss";
 
-const DEFAULT_CUSTOM_SERVICE_STATE: CustomServiceComposerState = {
-  name: "",
-  description: "",
-  chargeType: "FREE",
-  unit: DEFAULT_SERVICE_PRICING_TYPE,
-  basePrice: "",
-  quantity: "",
-};
+interface AddressAndServicesStepProps {
+  draft: CreateLocationDraft;
+  services?: ServiceDto[];
+  currentStep: number;
+  onBack: () => void;
+  onCancel: () => void;
+  onNext: (value: AddressAndServicesStepSubmitValue) => void;
+  onStepChange: (nextStep: number) => void;
+  onAddressDraftChange: (patch: AddressDraftPatch) => void;
+  onServicesDraftChange: (services: LocationServiceSelectionDto[]) => void;
+}
 
 export const AddressAndServicesStep = ({
   draft,

@@ -9,24 +9,22 @@ import {
   getServiceDraftPrice,
   isServicePaid,
 } from "@features/locationCreation/services";
-import { ServiceTag } from "./ServiceTag";
-import "../renterLayout.scss";
+import { ServiceTag } from "../ServiceTag";
+import "./serviceList.scss";
 
-export type serviceList = {
+interface ServiceListProps {
   selectedServices: LocationServiceSelectionDto[];
   services?: ServiceDto[];
   updateSelectedService: (index: number, updatedService: any) => void;
   removeSelectedService: (index: number) => void;
-};
+}
 
-export const ServiceList = (props: serviceList) => {
-  const {
-    selectedServices,
-    services,
-    updateSelectedService,
-    removeSelectedService,
-  } = props;
-
+export const ServiceList = ({
+  selectedServices,
+  services,
+  updateSelectedService,
+  removeSelectedService,
+}: ServiceListProps) => {
   return (
     <div className="renter-selectedServices">
       {selectedServices.map((service, index) => {

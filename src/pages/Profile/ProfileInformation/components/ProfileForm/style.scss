@@ -9,6 +9,25 @@
   background-color: #ffffff;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
 
+  .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    .header-close {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-self: flex-start;
+      img {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
   .time-wrapper {
     padding-bottom: 24px;
     .ant-form-item-row {

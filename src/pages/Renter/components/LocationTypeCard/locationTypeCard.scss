@@ -1,0 +1,63 @@
+.renter {
+  .type__card {
+    display: flex;
+    flex-direction: column;
+    min-height: 120px;
+    overflow: hidden;
+    border: 1px solid #d9e2ec;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: none;
+    transition: border-color 0.18s ease;
+
+    &:hover {
+      border-color: #9fb3c8;
+    }
+  }
+
+  .type__card .back-ground {
+    display: none;
+  }
+
+  .type__card-content {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+  }
+
+  .type__card-content-logo {
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background: #f8fafc;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .type__card-content-text {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .type__card-name {
+    margin: 0 0 2px !important;
+    color: #102a43;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 700;
+  }
+
+  .type__card-description {
+    margin: 0 !important;
+    color: #52606d;
+    font-size: 12px;
+    line-height: 18px;
+  }
+}

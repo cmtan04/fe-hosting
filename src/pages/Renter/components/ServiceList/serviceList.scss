@@ -1,0 +1,175 @@
+@import "../../../../color.scss";
+
+.renter {
+  .renter-selectedServices {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .renter-selectedServiceRow {
+    display: grid;
+    grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
+    gap: 14px;
+    align-items: stretch;
+    padding: 12px;
+    border: 1px solid #e6edf3;
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .renter-selectedServiceRow__tag,
+  .renter-selectedServiceRow__content {
+    min-width: 0;
+  }
+
+  .renter-selectedServiceRow__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 2px 0;
+  }
+
+  .renter-selectedServiceText {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: #334e68;
+    font-size: 13px;
+    line-height: 28px;
+  }
+
+  .renter-inlineControl {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+
+    .ant-select {
+      min-width: 104px;
+    }
+
+    .ant-select-selector {
+      min-height: 28px !important;
+      border-color: #d9e2ec !important;
+      border-radius: 8px !important;
+      background: #fbfdff !important;
+      box-shadow: none !important;
+    }
+
+    .ant-select-selection-item {
+      color: #102a43;
+      font-size: 13px;
+      font-weight: 600;
+    }
+  }
+
+  .renter-inlineControl--type .ant-select {
+    min-width: 112px;
+  }
+
+  .renter-inlineControl--price {
+    width: 112px;
+  }
+
+  .renter-inlineControl--quantity {
+    width: 72px;
+  }
+
+  .renter-inlinePriceInput {
+    width: 100%;
+    height: 28px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  .renter-inlineQuantityInput {
+    width: 100%;
+    height: 28px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  .renter-selectedServiceDescription {
+    flex-basis: 100%;
+    color: #61758a;
+    font-size: 12px;
+    line-height: 20px;
+  }
+
+  .renter-inlineDescriptionInput {
+    flex-basis: 100%;
+    width: 100%;
+    min-height: 58px;
+    margin-top: 2px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .renter-selectedServiceActions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .config-field {
+    min-width: 0;
+  }
+
+  .config-note {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 40px;
+
+    p {
+      margin: 0;
+      color: #61758a;
+      font-size: 13px;
+      line-height: 20px;
+    }
+  }
+
+  .renter-inlineDanger {
+    min-height: 40px;
+    border-radius: 8px;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    background: #fff;
+
+    &:hover {
+      border-color: #fca5a5 !important;
+      color: #991b1b !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .renter {
+    .renter-selectedServiceRow {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .renter-selectedServiceRow__content {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .renter-selectedServiceText {
+      align-items: flex-start;
+      line-height: 28px;
+    }
+
+    .renter-selectedServiceActions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+}

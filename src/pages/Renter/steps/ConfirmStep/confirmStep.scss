@@ -1,0 +1,62 @@
+.renter {
+  &__confirm-section {
+    padding: 16px;
+    border: 1px solid #e6edf3;
+    border-radius: 10px;
+    background: #fff;
+
+    p {
+      margin: 0 0 8px;
+      color: #334e68;
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    & + & {
+      margin-top: 16px;
+    }
+  }
+
+  .renter-confirmGrid {
+    margin-top: 0 !important;
+  }
+
+  .renter-kvTable {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .row {
+      display: grid;
+      grid-template-columns: 160px minmax(0, 1fr);
+      gap: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f0f4f8;
+
+      span {
+        color: #61758a;
+        font-size: 12px;
+        line-height: 18px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      strong {
+        color: #102a43;
+        font-size: 13px;
+        line-height: 20px;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .renter {
+    .renter-kvTable .row {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+}

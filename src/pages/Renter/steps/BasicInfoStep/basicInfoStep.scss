@@ -1,0 +1,123 @@
+@import "../../../../color.scss";
+
+.renter {
+  &_location-type-body {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+
+    .item {
+      min-width: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.18s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+
+      &.active .type__card {
+        border-color: $primary_color;
+        box-shadow: 0 0 0 2px rgba(0, 108, 114, 0.12);
+      }
+    }
+  }
+
+  &_location-type-body--compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 0;
+  }
+
+  .upload-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__fillInformation-upload {
+    width: 100%;
+    min-height: 220px;
+    border: 1px dashed #d9e2ec;
+    border-radius: 10px;
+    background:
+      linear-gradient(180deg, rgba(248, 250, 252, 0.9), rgba(248, 250, 252, 1)),
+      url("../../../../assets/images/icn-rocket-box.svg") no-repeat center 40%;
+    background-size: auto, 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    > img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__fillInformation-upload-btn-upload {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: fit-content;
+    min-height: 38px;
+    padding: 0 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    color: #1f2937;
+    cursor: pointer;
+    transition: border-color 0.18s ease;
+
+    &::before {
+      content: "";
+      width: 18px;
+      height: 18px;
+      background: url("../../../../assets/images/icn-upload.svg") no-repeat center;
+      background-size: contain;
+    }
+
+    span {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 18px;
+    }
+
+    &:hover {
+      border-color: $primary_color;
+    }
+
+    input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    &.is-uploading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .renter {
+    &_location-type-body,
+    &_location-type-body--compact {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .renter {
+    &_location-type-body,
+    &_location-type-body--compact {
+      grid-template-columns: 1fr;
+    }
+  }
+}

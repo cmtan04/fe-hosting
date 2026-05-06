@@ -1,0 +1,70 @@
+@import "@/color.scss";
+
+.profile__room-list {
+  width: 100%;
+  padding: 16px 8px;
+  border-radius: 24px;
+  border: 1px solid #dfe8ec;
+  background-color: #ffffff;
+  margin-bottom: 12px;
+
+  .room-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 0 8px;
+
+    h2 {
+      margin: 0;
+      font-weight: 700;
+      color: #00293a;
+    }
+  }
+
+  .room-list-content {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 16px;
+    scroll-behavior: smooth;
+    
+    // Webkit browsers (Chrome, Safari, Edge)
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      cursor: pointer;
+    }
+
+
+    // Đảm bảo LocationCard không bị co lại khi dùng flex-nowrap
+    & > * {
+      flex: 0 0 auto;
+    }
+    
+    .location__card {
+        margin-bottom: 4px; // Chừa chỗ cho shadow nếu có
+    }
+  }
+
+  .room-list-empty {
+    width: 100%;
+    padding: 40px 0;
+    text-align: center;
+    color: #6f7e87;
+    font-size: 16px;
+  }
+
+  .room-list-status {
+    width: 100%;
+    padding: 20px 0;
+    text-align: center;
+    color: #6f7e87;
+  }
+}

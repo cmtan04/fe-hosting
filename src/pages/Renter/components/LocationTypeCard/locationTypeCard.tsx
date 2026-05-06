@@ -1,4 +1,4 @@
-import "../../renterLayout.scss";
+import "./locationTypeCard.scss";
 
 interface LocationTypeCardProps {
   typeName: string;
