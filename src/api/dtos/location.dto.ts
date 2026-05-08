@@ -48,7 +48,6 @@ export interface LocationMediaDto {
   isLogo?: boolean;
 }
 
-export type ServicePricingType = "FULL" | "DAILY";
 export type ServicePriceType = "FREE" | "PAID";
 
 export interface LocationServiceSelectionDto {

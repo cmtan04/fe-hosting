@@ -127,12 +127,12 @@ export const BasicInfoStep = ({
           {/* Bảng tổng quan thời gian thực dựa trên giá trị form hiện tại */}
           <SummaryPanel title="Tổng quan" rows={summaryRows} />
         </Col>
-        <div
-          style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}
-        >
-          <StepNavigation onNext={onNext} />
-        </div>
       </Row>
+      <div
+        style={{ width: "100%", display: "flex", justifyContent: "flex-end", marginTop: "24px" }}
+      >
+        <StepNavigation onNext={() => form.submit()} />
+      </div>
     </div>
   );
 };

@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getLocationByCode, updateLocation } from "@api/configs/location.config";
 import { getAllService } from "@api/configs/service.config";
-import { createDraftAddressFromMapResult } from "@features/mapAddress/address";
+import { createDraftAddressFromMapResult, normalizeLocationAddress } from "@features/mapAddress/address";
 import type { LocationAddressDto } from "@api/dtos/location.dto";
 import { LocationEndpoint } from "@api/endpoints/location.endpoint";
 import { ServiceEndpoint } from "@api/endpoints/service.endpoint";
@@ -44,7 +44,6 @@ import {
 } from "@features/locationCreation/media";
 import {
   createEmptyPrimaryAddress,
-  normalizeLocationAddress,
 } from "@features/locationCreation/address";
 import { calculateSelectedServicesTotal } from "@features/locationCreation/services";
 import { uploadLocationMediaFiles } from "@features/locationCreation/upload";
@@ -354,7 +353,7 @@ export const ProfileLocationDetail = () => {
       services: selectedServices.map((serviceCode) => ({
         serviceCode,
         customPrice: 0,
-        pricingType: "FULL" as const,
+        pricingType: "Trọn gói" as const,
       })),
       media: mapEditableMediaToRequest(mediaList),
     });

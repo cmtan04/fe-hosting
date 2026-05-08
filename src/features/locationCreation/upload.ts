@@ -1,6 +1,7 @@
 import type { UploadImageResponseDto } from "../../api/dtos/common.dto";
 import { createEditableMediaFromUpload } from "./media";
 
+//Upload tất cả các tệp lên server
 export const uploadLocationMediaFiles = async (
   files: FileList | File[],
   uploadImage?: (payload: FormData) => Promise<UploadImageResponseDto>,

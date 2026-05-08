@@ -1,0 +1,88 @@
+@import "@/color.scss";
+
+.renter {
+  .renter-selectedServices {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .renter-selectedServiceRow {
+    gap: 14px;
+    align-items: stretch;
+    padding: 12px;
+    border: 1px solid #e6edf3;
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .renter-selectedServiceRow__tag,
+  .renter-selectedServiceRow__content {
+    min-width: 0;
+  }
+
+  .renter-selectedServiceRow__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 2px 0;
+  }
+
+  .renter-selectedServiceDescription {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #e6edf3;
+    color: #61758a;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .renter-selectedServiceActions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .config-field {
+    min-width: 0;
+  }
+
+  .config-note {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 40px;
+
+    p {
+      margin: 0;
+      color: #61758a;
+      font-size: 13px;
+      line-height: 20px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .renter {
+    .renter-selectedServiceRow {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .renter-selectedServiceRow__content {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .renter-selectedServiceText {
+      align-items: flex-start;
+      line-height: 28px;
+    }
+
+    .renter-selectedServiceActions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+}

@@ -52,7 +52,9 @@ export const BasicInfoFields = () => {
         </Col>
 
         <Col span={24}>
-          <div style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
+          <div
+            style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}
+          >
             <div style={{ flex: 2 }}>
               <FormNumber
                 label="Giá cho thuê (VNĐ)"
@@ -63,7 +65,7 @@ export const BasicInfoFields = () => {
                 formatter={(value: any) =>
                   `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                 }
-                parser={(value: any) => value!.replace(/VNĐ|\s?|(,*)/g, "")}
+                parser={(value: any) => value!.replace(/\./g, "")}
                 formItemProps={{
                   rules: [
                     {
@@ -73,15 +75,13 @@ export const BasicInfoFields = () => {
                   ],
                 }}
               />
-              
             </div>
-            
+
             <div style={{ flex: 1 }}>
               <SelectCommon
                 label="Đơn vị tính"
                 name="priceUnit"
                 placeholder="Chọn đơn vị"
-
                 options={[
                   { key: 1, label: "tháng", value: "tháng" },
                   { key: 2, label: "ngày", value: "ngày" },

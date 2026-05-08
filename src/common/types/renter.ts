@@ -1,7 +1,6 @@
 import type dayjs from "dayjs";
 import type {
   LocationServiceSelectionDto,
-  ServicePricingType,
 } from "../../api/dtos/location.dto";
 
 export interface SummaryPanelRow {
@@ -84,7 +83,7 @@ export interface CustomServiceComposerState {
   name: string;
   description: string;
   chargeType: "FREE" | "PAID";
-  unit: ServicePricingType;
+  unit: string;
   basePrice: string;
-  quantity: string;
 }
+

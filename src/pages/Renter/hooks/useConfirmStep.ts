@@ -44,7 +44,7 @@ export const useConfirmStep = ({
           selected,
           catalogService?.basePrice ?? catalogService?.servicePrice,
         ),
-        unit: selected.unit ?? catalogService?.unit ?? "FULL",
+        unit: selected.unit ?? catalogService?.unit ?? "Trọn gói",
         isFree: selected.isFree ?? Number(selected.basePrice ?? 0) <= 0,
         basePrice: Number(selected.basePrice ?? catalogService?.basePrice ?? 0),
         quantity: Number(selected.quantity ?? catalogService?.quantity ?? 1),
@@ -57,52 +57,67 @@ export const useConfirmStep = ({
     [selectedServices],
   );
 
-  const basicData = useMemo(() => ({
-    label: "Thông tin cơ bản",
-    value: [
-      { label: "Loại", value: selectedType?.typeName || "-" },
-      { label: "Tên phòng", value: draft.basicInfo.locationName || "-" },
+  const basicData = useMemo(
+    () => ({
+      label: "Thông tin cơ bản",
+      value: [
+        { label: "Loại", value: selectedType?.typeName || "-" },
+        { label: "Tên phòng", value: draft.basicInfo.locationName || "-" },
+        {
+          label: "Diện tích",
+          value: draft.basicInfo.area ? `${draft.basicInfo.area} m2` : "-",
+        },
+        {
+          label: "Giá cho thuê",
+          value: `${formatCurrencyVND(draft.basicInfo.price ?? 0)} ${draft.basicInfo.priceUnit}`,
+        },
+        { label: "Mô tả", value: draft.basicInfo.description || "-" },
+        { label: "Ghi chú", value: draft.basicInfo.note || "-" },
+      ],
+    }),
+    [draft.basicInfo, selectedType],
+  );
+
+  const addressData = useMemo(
+    () => ({
+      label: "Địa chỉ",
+      value: [
+        {
+          label: "Thông tin chi tiết",
+          value: draft.address.addressDetail || "-",
+        },
+
+        { label: "Phường / Xã", value: draft.address.ward || "-" },
+        { label: "Tỉnh / Thành phố", value: draft.address.city || "-" },
+        { label: "Khu vực", value: draft.address.region || "-" },
+        { label: "Địa chỉ đầy đủ", value: draft.address.fullAddress || "-" },
+      ],
+    }),
+    [draft.address],
+  );
+
+  const summaryRows = useMemo(
+    () => [
       {
-        label: "Diện tích",
-        value: draft.basicInfo.area ? `${draft.basicInfo.area} m2` : "-",
+        label: "Số dịch vụ đã chọn",
+        value: String(selectedServices.length),
+      },
+      {
+        label: "Tổng phí dịch vụ",
+        value: formatCurrencyVND(totalServicePrice),
       },
       {
         label: "Giá cho thuê",
         value: `${formatCurrencyVND(draft.basicInfo.price ?? 0)} ${draft.basicInfo.priceUnit}`,
       },
-      { label: "Mô tả", value: draft.basicInfo.description || "-" },
-      { label: "Ghi chú", value: draft.basicInfo.note || "-" },
     ],
-  }), [draft.basicInfo, selectedType]);
-
-  const addressData = useMemo(() => ({
-    label: "Địa chỉ",
-    value: [
-      {
-        label: "Thông tin chi tiết",
-        value: draft.address.addressDetail || "-",
-      },
-      { label: "Địa chỉ đầy đủ", value: draft.address.fullAddress || "-" },
-      { label: "Phường / Xã", value: draft.address.ward || "-" },
-      { label: "Tỉnh / Thành phố", value: draft.address.city || "-" },
-      { label: "Khu vực", value: draft.address.region || "-" },
+    [
+      selectedServices.length,
+      totalServicePrice,
+      draft.basicInfo.price,
+      draft.basicInfo.priceUnit,
     ],
-  }), [draft.address]);
-
-  const summaryRows = useMemo(() => [
-    {
-      label: "Số dịch vụ đã chọn",
-      value: String(selectedServices.length),
-    },
-    {
-      label: "Tổng phí dịch vụ",
-      value: formatCurrencyVND(totalServicePrice),
-    },
-    {
-      label: "Giá cho thuê",
-      value: `${formatCurrencyVND(draft.basicInfo.price ?? 0)} ${draft.basicInfo.priceUnit}`,
-    },
-  ], [selectedServices.length, totalServicePrice, draft.basicInfo.price, draft.basicInfo.priceUnit]);
+  );
 
   return {
     selectedServices,

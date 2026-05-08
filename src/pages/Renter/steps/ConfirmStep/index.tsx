@@ -3,8 +3,8 @@ import { STEP_ITEMS } from "@common/constants/renter";
 import type { LocationTypeDto, ServiceDto } from "@api/dtos/location.dto";
 import type { CreateLocationDraft } from "@features/locationCreation/types";
 import { LocationMediaEditor } from "@components/LocationMediaEditor";
+import { resolveServiceUnit } from "@features/locationCreation/services";
 import { ServiceTag } from "@pages/Renter/components/ServiceTag";
-import { SummaryPanel } from "@pages/Renter/components/SummaryPanel";
 import { StepHeader } from "../../components/StepHeader";
 import { StepNavigation } from "../../components/StepNavigation";
 import { useConfirmStep } from "../../hooks/useConfirmStep";
@@ -42,16 +42,12 @@ export const ConfirmStep = ({
   onRemoveMedia,
   onSetAvatar,
 }: ConfirmStepProps) => {
-  const {
-    selectedServices,
-    basicData,
-    addressData,
-    summaryRows,
-  } = useConfirmStep({
-    draft,
-    typeList,
-    services,
-  });
+  const { selectedServices, basicData, addressData } =
+    useConfirmStep({
+      draft,
+      typeList,
+      services,
+    });
 
   return (
     <div className="renter">
@@ -64,17 +60,14 @@ export const ConfirmStep = ({
       />
       <Row gutter={[16, 16]} className="renter-confirmGrid">
         <Col span={16}>
-          <ConfirmDataSection
-            label={basicData.label}
-            items={basicData.value}
-          />
+          <ConfirmDataSection label={basicData.label} items={basicData.value} />
           <ConfirmDataSection
             label={addressData.label}
             items={addressData.value}
           />
         </Col>
         <Col span={8}>
-          <div className="renter-sectionBand">
+          <Col className="renter-sectionBand">
             <div className="renter-sectionBand-header">
               <h2>Tập đính kèm</h2>
             </div>
@@ -87,26 +80,27 @@ export const ConfirmStep = ({
               onRemove={onRemoveMedia}
               onSetAvatar={onSetAvatar}
             />
-          </div>
-          <SummaryPanel
-            title="Chi phí và dịch vụ"
-            rows={summaryRows}
-          />
-          <div className="renter__confirm-section row-3">
-            <h1 className="renter__confirm-section-title">Dịch vụ đã chọn</h1>
-            <div className="wrapper__content">
-              {selectedServices.map((item) => (
-                <ServiceTag
-                  key={`${item.serviceCode}-${item.serviceName}`}
-                  icon={item.serviceLogo}
-                  name={`${item.serviceName}${item.unit === "DAILY" ? " - Theo ngày" : " - Trọn gói"} x${item.quantity}`}
-                  price={item.servicePrice}
-                  description={item.serviceDescription}
-                  active={true}
-                />
-              ))}
+          </Col>
+          <Col className="renter-sectionBand">
+            <div className="renter-sectionBand-header">
+              <h2>Dịch vụ đã chọn ({selectedServices.length})</h2>
             </div>
-          </div>
+            <Row gutter={[8, 8]}>
+              {selectedServices.map((item) => (
+                <Col span={12} key={`${item.serviceCode}-${item.serviceName}`}>
+                  <ServiceTag
+                    icon={item.serviceLogo}
+                    name={item.serviceName}
+                    price={item.servicePrice}
+                    description={item.serviceDescription}
+                    active={true}
+                    isFree={item.isFree}
+                    unit={resolveServiceUnit(item.unit)}
+                  />
+                </Col>
+              ))}
+            </Row>
+          </Col>
         </Col>
       </Row>
 

@@ -2,6 +2,7 @@ import "../style.scss";
 import { Col, Rate, Row, Tooltip } from "antd";
 import { useState } from "react";
 import { useRequireLoginAction } from "../../../../common/hooks/useRequireLoginAction";
+import { useShare } from "@/common/hooks/useShare";
 
 import {
   EditOutlined,
@@ -36,6 +37,7 @@ interface LocationCardProps {
 export const LocationCard = (props: LocationCardProps) => {
   const [isFavourite, setIsFavourite] = useState(props.isFavourite);
   const { requireLoginAction } = useRequireLoginAction();
+  const { handleShare: shareAction } = useShare();
 
   const handleFavourite = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -57,7 +59,11 @@ export const LocationCard = (props: LocationCardProps) => {
 
   const handleShare = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    props.onShare?.(props.code);
+    if (props.onShare) {
+      props.onShare(props.code);
+    } else {
+      shareAction(props.code, props.name);
+    }
   };
 
   return (
@@ -114,7 +120,7 @@ export const LocationCard = (props: LocationCardProps) => {
             <EnvironmentOutlined /> {props.address}
           </p>
           <p className="location__card-price">
-            <TagOutlined /> <span>{props.price?.toLocaleString()} VNĐ{props.priceUnit || ""}</span>
+            <TagOutlined /> <span>{props.price?.toLocaleString()} VNĐ/ {props.priceUnit || ""}</span>
           </p>
         </div>
       </div>

@@ -11,3 +11,19 @@ export interface TableCommonProps {
   value?: string;
   render?: (value: any, record?: any) => React.ReactElement;
 }
+
+export interface RoomTypeMetadata {
+  id: string;
+  name: string;
+  title: string;
+  description: string;
+  image?: string;
+}
+
+export interface LocationMetadata {
+  id: string;
+  name: string;
+  title: string;
+  description: string;
+  image?: string;
+}

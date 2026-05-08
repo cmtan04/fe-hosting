@@ -52,7 +52,6 @@ export const MediaGallery = ({ media, className = "" }: MediaGalleryProps) => {
         <video
           controls
           className="media-viewer__content"
-          crossOrigin="anonymous"
         >
           <source src={item.url} />
           Trình duyệt không hỗ trợ video.
@@ -64,7 +63,6 @@ export const MediaGallery = ({ media, className = "" }: MediaGalleryProps) => {
         src={item.url}
         alt={`Media ${currentIndex + 1}`}
         className="media-viewer__content"
-        crossOrigin="anonymous"
       />
     );
   };
@@ -90,7 +88,6 @@ export const MediaGallery = ({ media, className = "" }: MediaGalleryProps) => {
           <img
             src={getThumbSrc(mainMedia as any)}
             alt="Preview"
-            crossOrigin="anonymous"
           />
 
           {remainingCount > 0 && (
@@ -152,7 +149,6 @@ export const MediaGallery = ({ media, className = "" }: MediaGalleryProps) => {
                 <img
                   src={getThumbSrc(item)}
                   alt={`Thumbnail ${index + 1}`}
-                  crossOrigin="anonymous"
                 />
                 {item.type === "video" && (
                   <div className="media-viewer__thumbnail-video-icon">▶</div>

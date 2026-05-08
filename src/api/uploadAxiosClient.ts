@@ -1,12 +1,12 @@
 import axios from "axios";
-import { ROUTER_PATH } from "../router/Route";
 import { getStoredToken } from "../common/utils/authStorage";
+import { setupResponseInterceptor } from "./refreshInterceptor";
 
 const BASE_URL = process.env.REACT_APP_API_URL ?? "http://localhost:8000/";
 
 const uploadAxiosClient = axios.create({
   baseURL: BASE_URL,
-  timeout: 60000,
+  timeout: 600000, // 10 minutes
 });
 
 uploadAxiosClient.interceptors.request.use(
@@ -22,17 +22,6 @@ uploadAxiosClient.interceptors.request.use(
   },
 );
 
-uploadAxiosClient.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  async (error) => {
-    if (error.response?.status === 401) {
-      console.error("Unauthorized access. Redirecting to login.");
-      globalThis.location.href = ROUTER_PATH.SIGN_IN;
-    }
-    throw error;
-  },
-);
+setupResponseInterceptor(uploadAxiosClient);
 
 export default uploadAxiosClient;

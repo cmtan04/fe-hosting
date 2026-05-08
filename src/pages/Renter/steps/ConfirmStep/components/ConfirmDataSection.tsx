@@ -10,7 +10,7 @@ export const ConfirmDataSection = ({ label, items }: ConfirmDataSectionProps) =>
       <div className="renter-kvTable">
         {items.map((item, index) => (
           <div className="row" key={index}>
-            <span>{item.label}</span>
+            <span>{item.label}: </span>
             <strong>{item.value}</strong>
           </div>
         ))}

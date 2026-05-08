@@ -13,5 +13,4 @@ export const DEFAULT_CUSTOM_SERVICE_STATE: CustomServiceComposerState = {
   chargeType: "FREE",
   unit: DEFAULT_SERVICE_PRICING_TYPE,
   basePrice: "",
-  quantity: "",
 };

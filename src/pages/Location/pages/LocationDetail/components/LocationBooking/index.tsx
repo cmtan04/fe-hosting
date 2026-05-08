@@ -26,7 +26,7 @@ export const LocationBooking = ({
         <div className="sum-price">
           <p className="sum-price-end">
             <sup>đ</sup>
-            {formatMoney(locationDetail?.locationPrice)} {locationDetail?.locationPriceUnit}
+            {formatMoney(locationDetail?.locationPrice || locationDetail?.locationPriceAfterDeal)}/ {locationDetail?.locationPriceUnit}
           </p>
         </div>
 
@@ -35,20 +35,11 @@ export const LocationBooking = ({
             <p className="detail-price-label">Giá thuê</p>
             <p className="detail-price-value">
               <sup>đ</sup>
-              {formatMoney(locationDetail?.locationPrice)} {locationDetail?.locationPriceUnit}
+              {formatMoney(locationDetail?.locationPrice || locationDetail?.locationPriceAfterDeal)}/ {locationDetail?.locationPriceUnit}
             </p>
           </div>
 
-          {locationDetail?.locationPriceAfterDeal !== undefined &&
-            locationDetail.locationPriceAfterDeal > 0 && (
-              <div className="detail-price-deal">
-                <p className="detail-price-label">Giá sau thương lượng</p>
-                <p className="detail-price-value">
-                  <sup>đ</sup>
-                  {formatMoney(locationDetail?.locationPriceAfterDeal)} {locationDetail?.locationPriceUnit}
-                </p>
-              </div>
-            )}
+          
 
           {locationDetail?.minTime && locationDetail?.maxTime && (
             <div className="detail-price-time">

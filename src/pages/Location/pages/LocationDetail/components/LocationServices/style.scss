@@ -1,43 +1,76 @@
 @import "@/color.scss";
 
 .location-services {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 
   .wrap-label {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
-    letter-spacing: 2.5px;
+    letter-spacing: 2px;
     text-transform: uppercase;
     color: #e9ab0d;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     font-family: $font_family_1 !important;
   }
 
   .wrap-title {
     font-family: "Playfair Display", serif;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     color: #1a1410;
-    margin-bottom: 16px;
-    line-height: 1.3;
+    margin-bottom: 24px;
+    line-height: 1.2;
   }
 
   .wrap-content-service {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: 16px;
+  }
 
-    .renter__serviceTag {
-      background: #fdfaf4;
-      border: 1px solid #e2d9c8;
-      border-radius: 4px;
-      transition:
-        border-color 0.2s,
-        box-shadow 0.2s;
-      cursor: default;
+  .location-serviceRow {
+    padding: 16px;
+    border: 1px solid #e2d9c8;
+    border-radius: 12px;
+    background: #fff;
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
-      .ant-col-16 {
-        gap: 0px;
+    &:hover {
+      border-color: #e9ab0d;
+      box-shadow: 0 4px 15px rgba(233, 171, 13, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .location-serviceRow__tag {
+      .renter__serviceTag {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        min-height: unset !important;
+        
+        .service-name {
+          font-size: 15px;
+          color: #1a1410;
+        }
+
+        .service-type {
+          font-size: 12px;
+        }
       }
     }
+  }
+
+  .location-serviceDescription {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed #e2d9c8;
+    color: #5c5c5c;
+    font-size: 14px;
+    line-height: 1.5;
+    flex-grow: 1;
+    font-style: italic;
   }
 }

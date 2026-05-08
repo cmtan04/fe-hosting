@@ -1,25 +1,17 @@
 import { Form } from "antd";
-import { useMemo, useState, useCallback } from "react";
+import { useCallback } from "react";
 import type {
   LocationServiceSelectionDto,
   ServiceDto,
-  ServicePricingType,
 } from "@api/dtos/location.dto";
-import { DEFAULT_CUSTOM_SERVICE_STATE } from "@common/constants/renter";
 import type {
   AddressDraftPatch,
   AddressAndServicesStepSubmitValue,
-  CustomServiceComposerState,
 } from "@common/types/renter";
 import type { CreateLocationDraft } from "@features/locationCreation/types";
-import {
-  createCatalogServiceSelection,
-  createCustomServiceSelection,
-  filterAvailableCatalogServices,
-} from "@features/locationCreation/services";
-import { useCreateService } from "@features/locationCreation/useCreateService";
 import { useMapAddressPicker } from "@features/mapAddress/useMapAddressPicker";
 import { useAddressDraftController } from "@pages/Renter/hooks/useAddressDraftController";
+import { useServiceManager } from "../steps/AddressAndServicesStep/hooks/useServiceManager";
 
 interface UseAddressAndServicesStepProps {
   draft: CreateLocationDraft;
@@ -30,6 +22,10 @@ interface UseAddressAndServicesStepProps {
   onServicesDraftChange: (services: LocationServiceSelectionDto[]) => void;
 }
 
+/**
+ * Hook điều phối chính cho Step 2: Địa chỉ và Dịch vụ
+ * Kết hợp logic quản lý bản đồ, tìm kiếm địa chỉ và quản lý danh sách dịch vụ
+ */
 export const useAddressAndServicesStep = ({
   draft,
   services,
@@ -39,8 +35,8 @@ export const useAddressAndServicesStep = ({
   onServicesDraftChange,
 }: UseAddressAndServicesStepProps) => {
   const [form] = Form.useForm();
-  const { mutate: createService } = useCreateService();
 
+  // Hook quản lý dữ liệu bản nháp địa chỉ và đồng bộ với Form của AntD
   const {
     initialFormValues,
     handleMapAddressResolved,
@@ -53,126 +49,78 @@ export const useAddressAndServicesStep = ({
     onAddressDraftChange,
   });
 
+  // Hook quản lý việc tìm kiếm và chọn vị trí trên bản đồ Leaflet
   const { resolveCoordinates, searchState } = useMapAddressPicker({
     initialAddress: draft.address,
     hasSearch: true,
     onAddressResolved: handleMapAddressResolved,
   });
 
-  const [selectedServices, setSelectedServices] = useState<
-    LocationServiceSelectionDto[]
-  >(draft.services);
-  const [serviceQuery, setServiceQuery] = useState("");
-  const [customService, setCustomService] =
-    useState<CustomServiceComposerState>(DEFAULT_CUSTOM_SERVICE_STATE);
+  // Hook chuyên biệt để quản lý toàn bộ logic nghiệp vụ của phần Dịch vụ & Tiện ích
+  const {
+    selectedServices,
+    serviceQuery,
+    customService,
+    serviceOptions,
+    setServiceQuery,
+    setCustomService,
+    removeService,
+    updateService,
+    handleAddCustom: handleAddCustomRaw,
+    handleSelectChange,
+  } = useServiceManager({
+    initialServices: draft.services,
+    catalogServices: services,
+    onServicesChange: onServicesDraftChange,
+    form,
+  });
 
-  const filteredCatalog = useMemo(
-    () =>
-      filterAvailableCatalogServices(services, selectedServices, serviceQuery),
-    [selectedServices, serviceQuery, services],
+  /**
+   * Đồng bộ giá trị từ Form sang State của Custom Service và Địa chỉ
+   */
+  const handleFormValuesChangeInternal = useCallback(
+    (allValues: any) => {
+      // 1. Cập nhật địa chỉ (qua controller)
+      handleFormValuesChange(allValues);
+
+      // 2. Cập nhật thông tin dịch vụ đang soạn thảo nếu có thay đổi đơn giá hoặc đơn vị
+      if (allValues.basePrice !== undefined || allValues.unit !== undefined) {
+        setCustomService((prev) => ({
+          ...prev,
+          basePrice:
+            allValues.basePrice !== undefined
+              ? String(allValues.basePrice)
+              : prev.basePrice,
+          unit: allValues.unit !== undefined ? allValues.unit : prev.unit,
+        }));
+      }
+    },
+    [handleFormValuesChange, setCustomService],
   );
 
-  const serviceOptions = useMemo(() => {
-    if (filteredCatalog.length > 0) {
-      return filteredCatalog.map((service: ServiceDto) => ({
-        value: service.serviceCode,
-        label: `${service.serviceName || (service as any).name}`,
-      }));
-    }
+  /**
+   * Thêm dịch vụ và reset các trường liên quan trong Form
+   */
+  const handleAddCustom = useCallback(() => {
+    handleAddCustomRaw();
+    form.setFieldsValue({
+      basePrice: undefined,
+      unit: undefined,
+    });
+  }, [form, handleAddCustomRaw]);
 
-    if (serviceQuery.trim()) {
-      return [
-        {
-          value: "__create_new__",
-          label: `Tạo mới: ${serviceQuery}`,
-        },
-      ];
-    }
-
-    return [];
-  }, [filteredCatalog, serviceQuery]);
-
-  const updateSelectedService = useCallback((
-    index: number,
-    value: Partial<LocationServiceSelectionDto>,
-  ) => {
-    const nextServices = selectedServices.map((service, serviceIndex) =>
-      serviceIndex === index ? { ...service, ...value } : service,
-    );
-    setSelectedServices(nextServices);
-    onServicesDraftChange(nextServices);
-  }, [onServicesDraftChange, selectedServices]);
-
-  const removeSelectedService = useCallback((index: number) => {
-    const nextServices = selectedServices.filter(
-      (_, serviceIndex) => serviceIndex !== index,
-    );
-    setSelectedServices(nextServices);
-    onServicesDraftChange(nextServices);
-  }, [onServicesDraftChange, selectedServices]);
-
-  const addCustomService = useCallback(() => {
-    if (!customService.name.trim()) {
-      return;
-    }
-
-    const nextServices = [
-      ...selectedServices,
-      createCustomServiceSelection({
-        name: customService.name,
-        description: customService.description,
-        chargeType: customService.chargeType,
-        unit: customService.unit,
-        basePrice: customService.basePrice,
-        quantity: customService.quantity,
-      }),
-    ];
-    setSelectedServices(nextServices);
-    onServicesDraftChange(nextServices);
-    setCustomService(DEFAULT_CUSTOM_SERVICE_STATE);
-  }, [customService, onServicesDraftChange, selectedServices]);
-
-  const handleCreateNewService = useCallback(() => {
-    if (!serviceQuery.trim()) return;
-
-    createService(
-      { name: serviceQuery, category: "GENERAL" },
-      {
-        onSuccess: (newService) => {
-          const nextServices = [
-            ...selectedServices,
-            createCatalogServiceSelection(newService),
-          ];
-          setSelectedServices(nextServices);
-          onServicesDraftChange(nextServices);
-          setServiceQuery("");
-          setCustomService(DEFAULT_CUSTOM_SERVICE_STATE);
-        },
-      },
-    );
-  }, [createService, onServicesDraftChange, selectedServices, serviceQuery]);
-
-  const handleServiceSelectChange = useCallback((value: string | number) => {
-    if (value === "__create_new__") {
-      handleCreateNewService();
-    } else {
-      const selectedService = services?.find(
-        (service) => service.serviceCode === value,
-      );
-
-      setCustomService((prev) => ({
-        ...prev,
-        name: selectedService?.serviceName || (selectedService as any)?.name || String(value),
-      }));
-    }
-  }, [handleCreateNewService, services]);
-
+  /**
+   * Lưu trạng thái hiện tại vào bản nháp và chuyển sang step khác
+   */
   const handleStepChangeInternal = useCallback((nextStep: number) => {
     onAddressDraftChange(buildSubmitValue(form.getFieldsValue(true)));
     onServicesDraftChange(selectedServices);
     onStepChange(nextStep);
   }, [buildSubmitValue, form, onAddressDraftChange, onServicesDraftChange, onStepChange, selectedServices]);
 
+  /**
+   * Hoàn thành Step 2 và chuyển sang Step tiếp theo
+   */
   const handleFinish = useCallback((values: any) => {
     onNext({
       ...buildSubmitValue(values),
@@ -186,19 +134,22 @@ export const useAddressAndServicesStep = ({
     searchState,
     resolveCoordinates,
     initialFormValues,
+    // Trạng thái dịch vụ
     selectedServices,
     serviceQuery,
     customService,
     serviceOptions,
     setServiceQuery,
     setCustomService,
-    updateSelectedService,
-    removeSelectedService,
-    addCustomService,
-    handleServiceSelectChange,
-    handleCreateNewService,
-    handleFormValuesChange,
+    updateService,
+    removeService,
+    handleAddCustom,
+    handleSelectChange,
+    // Trạng thái form và điều hướng
+    handleFormValuesChange: handleFormValuesChangeInternal,
     handleStepChange: handleStepChangeInternal,
     handleFinish,
   };
 };
+
+

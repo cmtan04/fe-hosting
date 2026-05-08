@@ -1,10 +1,9 @@
 import type {
   LocationServiceSelectionDto,
   ServiceDto,
-  ServicePricingType,
 } from "../../api/dtos/location.dto";
 
-export const DEFAULT_SERVICE_PRICING_TYPE: ServicePricingType = "FULL";
+export const DEFAULT_SERVICE_PRICING_TYPE: string = "Trọn gói";
 
 export const getServiceDraftPrice = (
   service: Partial<LocationServiceSelectionDto>,
@@ -82,7 +81,7 @@ export const createCustomServiceSelection = (
     name: string;
     description?: string;
     chargeType: "FREE" | "PAID";
-    unit?: ServicePricingType;
+    unit?: string;
     basePrice?: number | string;
     quantity?: number | string;
   },
@@ -123,3 +122,7 @@ export const calculateSelectedServicesTotal = (
           Number((item as { quantity?: number | string }).quantity ?? 1)),
     0,
   );
+export const resolveServiceUnit = (unit?: string): string => {
+  if (!unit || unit.toUpperCase() === "FULL" || unit === "Trọn gói") return "Trọn gói";
+  return unit;
+};

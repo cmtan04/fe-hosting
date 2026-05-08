@@ -1,9 +1,9 @@
-import { Dropdown, Modal, type MenuProps, Button, Col, Row } from "antd";
+import { Modal, Button, Col, Row, Skeleton, Typography } from "antd";
 import { useState } from "react";
+import { DeleteOutlined } from "@ant-design/icons";
 import type { EditableLocationMediaItem } from "../../features/locationCreation/media";
 import "./style.scss";
-import { DeleteOutlined } from "@ant-design/icons";
-import { Typography } from "antd";
+
 const { Text } = Typography;
 
 interface LocationMediaEditorProps {
@@ -33,45 +33,6 @@ export const LocationMediaEditor = ({
 }: LocationMediaEditorProps) => {
   const [previewMedia, setPreviewMedia] =
     useState<EditableLocationMediaItem | null>(null);
-
-  const handleMenuClick =
-    (item: EditableLocationMediaItem): MenuProps["onClick"] =>
-    ({ domEvent, key }) => {
-      domEvent.stopPropagation();
-
-      if (key === "preview") {
-        setPreviewMedia(item);
-        return;
-      }
-
-      if (key === "avatar") {
-        onSetAvatar(item.id);
-        return;
-      }
-
-      if (key === "remove") {
-        onRemove(item.id);
-      }
-    };
-
-  const getMenuItems = (
-    item: EditableLocationMediaItem,
-  ): MenuProps["items"] => [
-    {
-      key: "preview",
-      label: "Xem truoc",
-    },
-    {
-      key: "avatar",
-      label: item.isLogo ? "Dang la avatar" : "Dat lam avatar",
-      disabled: item.isLogo,
-    },
-    {
-      key: "remove",
-      label: "Xoa",
-      danger: true,
-    },
-  ];
 
   return (
     <>
@@ -131,6 +92,26 @@ export const LocationMediaEditor = ({
                 </div>
               </Col>
             ))}
+            {isUploading && (
+              <>
+                <Col span={24} className="location-media-editor__item">
+                  <Skeleton.Avatar active shape="square" size={32} />
+                  <Skeleton
+                    active
+                    paragraph={{ rows: 0 }}
+                    style={{ marginLeft: 8 }}
+                  />
+                </Col>
+                <Col span={24} className="location-media-editor__item">
+                  <Skeleton.Avatar active shape="square" size={32} />
+                  <Skeleton
+                    active
+                    paragraph={{ rows: 0 }}
+                    style={{ marginLeft: 8 }}
+                  />
+                </Col>
+              </>
+            )}
           </Row>
         )}
 

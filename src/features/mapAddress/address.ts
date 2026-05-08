@@ -191,7 +191,7 @@ export const buildAddressDetailFromNominatim = (
     .join(", ")
     .trim();
 
-  return primaryLine ? primaryLine : " ";
+  return primaryLine || " ";
 };
 
 export const createFullAddressFromNominatim = (

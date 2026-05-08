@@ -129,19 +129,7 @@ export const items = () => [
             Miền Nam
           </Link>
         ),
-      },
-      {
-        key: 34,
-        value: LOCATION_TYPE.WEST,
-        label: (
-          <Link
-            to={ROUTER_PATH.LOCATIONS}
-            state={{ location: LOCATION_TYPE.WEST, page: 1 }}
-          >
-            Miền Tây
-          </Link>
-        ),
-      },
+      }
     ],
   },
   {

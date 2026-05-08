@@ -152,7 +152,7 @@ export const useBasicInfoStep = ({
       },
       {
         label: "Tên không gian",
-        value: watchedName ? watchedName : "-",
+        value: watchedName || "-",
       },
       {
         label: "Diện tích",

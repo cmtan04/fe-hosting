@@ -11,7 +11,7 @@ import {
 const STORAGE_KEY = "create_location_draft_v2";
 
 const readDraft = (): CreateLocationDraft => {
-  if (typeof window === "undefined") {
+  if (!globalThis.window) {
     return createEmptyLocationDraft();
   }
 
@@ -55,7 +55,7 @@ export const useCreateLocationDraft = () => {
   const [draft, setDraft] = useState<CreateLocationDraft>(readDraft);
 
   useEffect(() => {
-    if (typeof window === "undefined") {
+    if (!globalThis.window) {
       return;
     }
 
@@ -85,7 +85,7 @@ export const useCreateLocationDraft = () => {
       reset: () => {
         const nextDraft = createEmptyLocationDraft();
         setDraft(nextDraft);
-        if (typeof window !== "undefined") {
+        if (globalThis.window) {
           sessionStorage.removeItem(STORAGE_KEY);
         }
       },

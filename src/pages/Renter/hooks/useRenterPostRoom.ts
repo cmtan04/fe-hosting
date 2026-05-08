@@ -199,14 +199,39 @@ export const useRenterPostRoom = () => {
     });
   };
 
+  /**
+   * Kiểm tra các trường thông tin bắt buộc trước khi gửi lên Server
+   */
+  const validateDraft = () => {
+    const { basicInfo, address } = draft;
+    const errors: string[] = [];
+
+    // Kiểm tra thông tin cơ bản
+    if (!basicInfo.typeCode) errors.push("Loại phòng");
+    if (!basicInfo.locationName?.trim()) errors.push("Tên địa điểm");
+    if (!basicInfo.price || basicInfo.price <= 0) errors.push("Giá cho thuê");
+    if (!basicInfo.area || basicInfo.area <= 0) errors.push("Diện tích");
+    if (basicInfo.media.length === 0) errors.push("Hình ảnh/video thực tế");
+
+
+    return errors;
+  };
+
+  /**
+   * Xử lý gửi dữ liệu đăng phòng
+   */
   const handleCreateLocation = () => {
-    //Validate data before submit
-    try {
-      // If valid, submit data
-      createMutation.mutate();
-    } catch (error) {
-      throw error; // Let the mutation's onError handle the notification
+    const missingFields = validateDraft();
+
+    if (missingFields.length > 0) {
+      showNotification(
+        `Vui lòng bổ sung đầy đủ ${missingFields.join(", ")} trước khi đăng phòng!`,
+        NOTI_ERROR,
+      );
+      return;
     }
+
+    createMutation.mutate();
   };
 
   const handleCancel = () => {

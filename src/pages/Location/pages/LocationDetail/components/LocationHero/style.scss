@@ -14,7 +14,61 @@
     min-height: clamp(320px, 42vw, 520px);
     max-height: 520px;
     border-radius: 8px;
-    object-fit: cover;
+    position: relative;
+    z-index: 1;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.4) 100%
+      );
+      z-index: 2;
+      pointer-events: none;
+    }
+  }
+
+  &__share-btn {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+
+    span {
+      font-size: 14px;
+      font-weight: 600;
+      color: $primary-color;
+      font-family: $font_family_1 !important;
+    }
+
+    &:hover {
+      background: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
   }
 
   &__info {

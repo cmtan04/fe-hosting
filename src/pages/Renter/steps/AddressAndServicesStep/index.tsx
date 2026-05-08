@@ -10,12 +10,12 @@ import type {
 } from "@common/types/renter";
 import { MapViewCommon } from "@components/MapViewCommon";
 import type { CreateLocationDraft } from "@features/locationCreation/types";
-import { ServiceList } from "@pages/Renter/components/ServiceList";
 import { StepHeader } from "../../components/StepHeader";
 import { StepNavigation } from "../../components/StepNavigation";
 import { useAddressAndServicesStep } from "../../hooks/useAddressAndServicesStep";
 import { AddressFields } from "./components/AddressFields";
 import { ServiceComposer } from "./components/ServiceComposer";
+import { ServiceList } from "./components/ServiceList";
 import "./styles.scss";
 
 interface AddressAndServicesStepProps {
@@ -53,11 +53,10 @@ export const AddressAndServicesStep = ({
     serviceOptions,
     setServiceQuery,
     setCustomService,
-    updateSelectedService,
-    removeSelectedService,
-    addCustomService,
-    handleServiceSelectChange,
-    handleCreateNewService,
+    updateService,
+    removeService,
+    handleAddCustom,
+    handleSelectChange,
     handleFormValuesChange,
     handleStepChange,
     handleFinish,
@@ -80,7 +79,7 @@ export const AddressAndServicesStep = ({
         onChange={handleStepChange}
       />
       <Row gutter={[24, 24]} className="renter__fillAddress-body">
-        <Col span={12}>
+        <Col span={12} >
           <div className="renter-sectionBand renter-sectionBand--sticky">
             <MapViewCommon
               center={{
@@ -106,11 +105,12 @@ export const AddressAndServicesStep = ({
               customService={customService}
               serviceQuery={serviceQuery}
               serviceOptions={serviceOptions}
-              setServiceQuery={setServiceQuery}
-              setCustomService={setCustomService}
-              handleCreateNewService={handleCreateNewService}
-              handleServiceSelectChange={handleServiceSelectChange}
-              addCustomService={addCustomService}
+              onQueryChange={setServiceQuery}
+              onCustomServiceChange={(patch) =>
+                setCustomService((prev) => ({ ...prev, ...patch }))
+              }
+              onSelectChange={handleSelectChange}
+              onAddCustom={handleAddCustom}
             />
 
             <div className="wrapper renter-sectionBand">
@@ -119,9 +119,8 @@ export const AddressAndServicesStep = ({
               </h1>
               <ServiceList
                 selectedServices={selectedServices}
-                services={services}
-                updateSelectedService={updateSelectedService}
-                removeSelectedService={removeSelectedService}
+                catalogServices={services}
+                onRemove={removeService}
               />
             </div>
 
@@ -132,3 +131,4 @@ export const AddressAndServicesStep = ({
     </div>
   );
 };
+

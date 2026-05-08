@@ -5,51 +5,42 @@ import type {
 } from "../../api/dtos/location.dto";
 import type { CreateLocationDraft } from "./types";
 import {
-  buildLocationFullAddress,
   createDraftAddressFromMapResult,
   createEmptyResolvedMapAddress,
   createMapViewDataFromDraftAddress,
-  getRegionByCity,
   mapResolvedAddressToLocationAddress,
-  normalizeLocationAddress,
 } from "../mapAddress/address";
-import {
-  DEFAULT_LOCATION_LATITUDE,
-  DEFAULT_LOCATION_LONGITUDE,
-} from "../mapAddress/locationDefaults";
 
-export {
-  buildLocationFullAddress,
-  getRegionByCity,
-  normalizeLocationAddress,
-} from "../mapAddress/address";
-export {
-  DEFAULT_LOCATION_LATITUDE,
-  DEFAULT_LOCATION_LONGITUDE,
-} from "../mapAddress/locationDefaults";
+//Tạo địa chỉ rỗng khi người dùng mới truy cập trang
+export const createEmptyLocationAddress =
+  (): CreateLocationDraft["address"] => ({
+    ...createEmptyResolvedMapAddress(),
+    description: "",
+    note: "",
+  });
 
-export const createEmptyLocationAddress = (): CreateLocationDraft["address"] => ({
-  ...createEmptyResolvedMapAddress(),
-  description: "",
-  note: "",
-});
-
+//Tạo địa chỉ chính rỗng 
 export const createEmptyPrimaryAddress = (): LocationAddressDto =>
   mapResolvedAddressToLocationAddress(createEmptyResolvedMapAddress());
 
+//Map địa chỉ từ draft sang map data
 export const mapDraftAddressToMapData = (
   address: Partial<CreateLocationDraft["address"]>,
 ): MapAddressDto => createMapViewDataFromDraftAddress(address);
 
+//Map địa chỉ từ map data sang draft
 export const mapMapAddressToDraftAddress = (
   value: MapAddressDto,
   current?: Partial<CreateLocationDraft["address"]>,
-): CreateLocationDraft["address"] => createDraftAddressFromMapResult(value, current);
+): CreateLocationDraft["address"] =>
+  createDraftAddressFromMapResult(value, current);
 
+//Kiểm tra địa chỉ có phải là địa chỉ cũ không
 export const isLegacyAddress = (
   address: AddressDto | LocationAddressDto,
 ): address is AddressDto => "addressName" in address;
 
+//Map địa chỉ chính sang map data
 export const mapPrimaryAddressToMapData = (
   address: LocationAddressDto,
 ): MapAddressDto =>

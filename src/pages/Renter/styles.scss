@@ -154,10 +154,9 @@
   /* ─── Section band (shared) ─── */
   .renter-sectionBand {
     border: 1px solid #e6edf3;
-    border-radius: 10px;
+    border-radius: 8px;
     background: #fbfdff;
     padding: 16px;
-
     & + .renter-sectionBand {
       margin-top: 16px;
     }

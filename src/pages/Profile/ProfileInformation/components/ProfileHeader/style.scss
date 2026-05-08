@@ -72,6 +72,12 @@
     .ant-image-cover {
       border-radius: 50%;
     }
+    .ant-image{
+      border-radius: 50%;
+      justify-content: center;
+      display: flex;
+      align-items: center;
+    }
 
     .avatar-upload {
       display: flex;

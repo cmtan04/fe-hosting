@@ -165,6 +165,7 @@ export const SignUp = () => {
             <Col span={12}>
               <FormDatePicker
                 label="Ngày sinh"
+                placeholder="YYYY/MM/DD"
                 name="dateOfBirth"
                 vertical={true}
                 formItemProps={{

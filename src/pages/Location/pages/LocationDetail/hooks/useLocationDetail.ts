@@ -23,21 +23,6 @@ import { ROUTER_PATH } from "@/router/Route";
 import { useRequireLoginAction } from "@common/hooks/useRequireLoginAction";
 
 export const useLocationDetail = () => {
-  const media: MediaItem[] = [
-    {
-      url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=60",
-      type: "image",
-    },
-    {
-      url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=60",
-      type: "image",
-    },
-    {
-      url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=60",
-      type: "image",
-    },
-  ];
-
   const location = useLocation();
   const { code: locationCodeFromParams } = useParams<{ code: string }>();
   const locationCode =
@@ -69,6 +54,12 @@ export const useLocationDetail = () => {
     queryFn: () => getLocationByCode(locationCode),
     enabled: !!locationCode,
   });
+
+  const media: MediaItem[] =
+    locationDetail?.media?.map((m) => ({
+      url: m.url,
+      type: m.type.toLowerCase() as "image" | "video",
+    })) || [];
 
   const { data: commentData, refetch: refetchComment } = useQuery({
     queryKey: [LocationEndpoint.GET_LOCATION_COMMENT, filter],

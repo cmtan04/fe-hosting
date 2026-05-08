@@ -7,7 +7,10 @@ interface StepHeaderProps {
 
 export const StepHeader = ({ title, onCancel }: StepHeaderProps) => {
   return (
-    <div className="renter-step-header">
+    <div
+      className="renter-step-header"
+      style={{ display: "flex", justifyContent: "space-between" }}
+    >
       <h1 className="header-title">{title}</h1>
       <button
         className="header-close"

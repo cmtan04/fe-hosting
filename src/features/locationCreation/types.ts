@@ -111,7 +111,7 @@ export const createCreateLocationRequestFromDraft = (
           serviceCode: service.serviceCode,
           isFree: service.isFree ?? Number(service.basePrice ?? 0) <= 0,
           basePrice: Number(service.basePrice ?? 0),
-          unit: service.unit ?? "FULL",
+          unit: service.unit ?? "Trọn gói",
           quantity: Number(service.quantity ?? 1),
         }
       : {
@@ -119,7 +119,7 @@ export const createCreateLocationRequestFromDraft = (
           description: service.description,
           isFree: service.isFree ?? Number(service.basePrice ?? 0) <= 0,
           basePrice: Number(service.basePrice ?? 0),
-          unit: service.unit ?? "FULL",
+          unit: service.unit ?? "Trọn gói",
           quantity: Number(service.quantity ?? 1),
         },
   ),

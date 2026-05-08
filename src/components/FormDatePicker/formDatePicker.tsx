@@ -9,6 +9,7 @@ interface IFormDatePicker {
   datePickerProps?: DatePickerProps;
   name: string;
   vertical?: boolean;
+  placeholder?: string;
 }
 
 export const FormDatePicker = ({
@@ -17,6 +18,7 @@ export const FormDatePicker = ({
   datePickerProps,
   name,
   vertical = false,
+  placeholder,
 }: IFormDatePicker) => {
   return (
     <Form.Item
@@ -29,6 +31,7 @@ export const FormDatePicker = ({
       <DatePicker
         className="form-date-picker__picker"
         {...datePickerProps}
+        placeholder={placeholder}
       />
     </Form.Item>
   );

@@ -14,7 +14,7 @@ export const ProfileColumn = ({ user, onClick }: ProfileColumnProps) => {
   return (
     <Col className="column">
       <h2 style={{ marginTop: "0px", paddingLeft: "8px" }}>Giới thiệu</h2>
-      <p className="subtitle">{user?.bio}</p>
+      <p className="subtitle">{user?.bio || "Chưa cập nhật giới thiệu"}</p>
       <div className="meta">
         <p className="meta-item">
           <img className="icon" src={locationIcon} alt="" />

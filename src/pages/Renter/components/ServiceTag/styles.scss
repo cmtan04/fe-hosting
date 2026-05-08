@@ -1,55 +1,83 @@
 @import "@/color.scss";
 
-.renter {
-  &__serviceTag {
-    width: 100%;
-    margin: 0 !important;
-    padding: 8px 0px;
-    border: 1px solid #d9e2ec;
-    border-radius: 8px;
-    background: #fff;
-    transition:
-      border-color 0.18s ease,
-      box-shadow 0.18s ease;
+.renter__serviceTag {
+  width: 100%;
+  margin: 0 !important;
+  padding: 8px 0px;
+  border: 1px solid #d9e2ec;
+  border-radius: 8px;
+  background: #fff;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
 
-    &:hover {
-      border-color: #bcccdc;
-    }
-
-    &.active {
-      border-color: $primary_color;
-      box-shadow: 0 0 0 2px rgba(0, 108, 114, 0.08);
-      background: #fcffff;
-    }
-
-    .ant-col {
-      display: flex;
-      align-items: center;
-      min-width: 0;
-    }
-
-    .ant-col-24 {
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: center;
-      gap: 4px;
-    }
+  &:hover {
+    border-color: #bcccdc;
   }
 
-  &__serviceTag-icon {
-    object-fit: cover;
-    border-radius: 6px;
-    background: #f8fafc;
+  &.active {
+    border-color: $primary_color;
+    box-shadow: 0 0 0 2px rgba(0, 108, 114, 0.08);
+    background: #fcffff;
+  }
+
+  .ant-col {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .ant-col-24 {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .service-tag-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
   }
 
   .service-name {
     margin: 0 !important;
     color: #102a43;
-    font-size: 12px;
-    line-height: 17px;
+    font-size: 13px;
+    line-height: 1.4;
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  .service-tag-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .service-type {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 1px 6px;
+    border-radius: 4px;
+
+    &.free {
+      color: #059669;
+      background: #ecfdf5;
+    }
+
+    &.paid {
+      color: #61758a;
+      background: #f1f5f9;
+    }
+  }
+}
+
+.renter__serviceTag-icon {
+  object-fit: cover;
+  border-radius: 6px;
+  background: #f8fafc;
 }
