@@ -1,7 +1,13 @@
 import { useState } from "react";
-import { Modal } from "antd";
-import { LeftOutlined, RightOutlined, CloseOutlined } from "@ant-design/icons";
+import { PlayCircleFilled } from "@ant-design/icons";
 import "./style.scss";
+import Lightbox from "yet-another-react-lightbox";
+// 1. Import Plugin logic (từ thư mục plugins)
+import Video from "yet-another-react-lightbox/plugins/video";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import "yet-another-react-lightbox/styles.css"; // CSS tổng
+import "yet-another-react-lightbox/plugins/thumbnails.css"; // CSS riêng cho thumbnail
 
 interface MediaItem {
   url: string;
@@ -11,153 +17,103 @@ interface MediaItem {
 
 interface MediaGalleryProps {
   media: MediaItem[];
-  className?: string;
 }
 
-const DEFAULT_VIDEO_THUMB = "/default-video-thumb.png";
-
-export const MediaGallery = ({ media, className = "" }: MediaGalleryProps) => {
-  const [showModal, setShowModal] = useState(false);
+export const MediaGallery = ({ media }: MediaGalleryProps) => {
+  const [visible, setVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
 
   if (!media || media.length === 0) {
     return (
-      <div className={`media-gallery ${className} media-gallery--empty`}>
-        <figure className="media-gallery__preview">
-          <div className="media-gallery__placeholder">
-            
-          </div>
-        </figure>
+      <div className="media-gallery-empty">
+        <div className="media-gallery-placeholder">Chưa có ảnh/video</div>
       </div>
     );
   }
 
-  const mainMedia = media[0];
-  const remainingCount = media.length - 1;
-
-  const handleNext = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentIndex((prev) => (prev + 1) % media.length);
-  };
-
-  const handlePrev = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentIndex((prev) => (prev - 1 + media.length) % media.length);
-  };
-
-  const renderMedia = (item: MediaItem) => {
-    if (item.type === "video") {
-      return (
-        <video
-          controls
-          className="media-viewer__content"
-        >
-          <source src={item.url} />
-          Trình duyệt không hỗ trợ video.
-        </video>
-      );
-    }
-    return (
-      <img
-        src={item.url}
-        alt={`Media ${currentIndex + 1}`}
-        className="media-viewer__content"
-      />
-    );
+  const handleOpenPreview = (index: number) => {
+    setCurrentIndex(index);
+    setVisible(true);
   };
 
   const getThumbSrc = (item: MediaItem) => {
     if (item.type === "video") {
-      return item.thumbnail || DEFAULT_VIDEO_THUMB;
+      return item.url.replace(".mp4", ".jpg");
     }
     return item.url;
   };
 
-  const currentMedia = media[currentIndex];
+  const renderGrid = () => {
+    const count = media.length;
 
-  return (
-    <>
+    return (
       <div
-        className={`media-gallery ${className}`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={() => setShowModal(true)}
+        className="media-grid media-grid--single"
+        onClick={() => handleOpenPreview(0)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            handleOpenPreview(0);
+          }
+        }}
       >
-        <figure className="media-gallery__preview">
-          <img
-            src={getThumbSrc(mainMedia as any)}
-            alt="Preview"
-          />
-
-          {remainingCount > 0 && (
-            <div
-              className={`media-gallery__overlay ${isHovered ? "visible" : ""}`}
-            >
-              <span className="media-gallery__count">+{remainingCount}</span>
+        <div className="media-grid__item main">
+          <img src={getThumbSrc(media[0])} alt="" />
+          {media[0].type === "video" && (
+            <PlayCircleFilled className="video-icon" />
+          )}
+          {count > 1 && (
+            <div className="media-grid__overlay">
+              <span>+{count - 1}</span>
             </div>
           )}
-        </figure>
-      </div>
-
-      <Modal
-        open={showModal}
-        onCancel={() => {
-          setShowModal(false);
-          setCurrentIndex(0);
-        }}
-        footer={null}
-        width="90vw"
-        centered
-        destroyOnClose
-        className="media-gallery-modal"
-        closeIcon={<CloseOutlined style={{ color: "#fff", fontSize: 24 }} />}
-      >
-        <div className="media-viewer">
-          <div className="media-viewer__main">
-            {currentMedia && renderMedia(currentMedia)}
-
-            {media.length > 1 && (
-              <>
-                <button
-                  className="media-viewer__nav media-viewer__nav--prev"
-                  onClick={handlePrev}
-                >
-                  <LeftOutlined />
-                </button>
-                <button
-                  className="media-viewer__nav media-viewer__nav--next"
-                  onClick={handleNext}
-                >
-                  <RightOutlined />
-                </button>
-              </>
-            )}
-
-            <div className="media-viewer__counter">
-              {currentIndex + 1} / {media.length}
-            </div>
-          </div>
-
-          <div className="media-viewer__thumbnails">
-            {media.map((item, index) => (
-              <div
-                key={index}
-                className={`media-viewer__thumbnail ${index === currentIndex ? "active" : ""}`}
-                onClick={() => setCurrentIndex(index)}
-              >
-                <img
-                  src={getThumbSrc(item)}
-                  alt={`Thumbnail ${index + 1}`}
-                />
-                {item.type === "video" && (
-                  <div className="media-viewer__thumbnail-video-icon">▶</div>
-                )}
-              </div>
-            ))}
-          </div>
         </div>
-      </Modal>
-    </>
+      </div>
+    );
+  };
+
+  return (
+    <div className="media-gallery-container">
+      {renderGrid()}
+
+      <Lightbox
+        open={visible}
+        close={() => setVisible(false)}
+        index={currentIndex}
+        slides={media.map((item) =>
+          item.type === "video"
+            ? {
+                type: "video" as const,
+                sources: [{ src: item.url, type: "video/mp4" }],
+                poster: getThumbSrc(item),
+              }
+            : { src: item.url }
+        )}
+        plugins={[Video, Zoom, Thumbnails]}
+        thumbnails={{
+          position: "bottom",
+          width: 120,
+          height: 80,
+          gap: 16,
+          border: 0,
+          
+        }}
+        zoom={{
+          maxZoomPixelRatio: 3,
+        }}
+        video={{
+          autoPlay: true,
+          controls: true,
+        }}
+        on={{
+          view: ({ index }) => setCurrentIndex(index),
+        }}
+        carousel={{
+          finite: false,
+        }}
+      />
+
+    </div>
   );
 };

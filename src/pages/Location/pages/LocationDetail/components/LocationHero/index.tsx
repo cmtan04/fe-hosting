@@ -20,15 +20,20 @@ export const LocationHero = ({ media, locationDetail }: LocationHeroProps) => {
       <Col span={24} className="location-hero__col">
         <div className="location-hero__media">
           <MediaGallery media={media} />
-          <button 
+          <button
             className="location-hero__share-btn"
-            onClick={() => handleShare(locationDetail?.locationCode || "", locationDetail?.locationName)}
+            onClick={() =>
+              handleShare(
+                locationDetail?.locationCode || "",
+                locationDetail?.locationName,
+              )
+            }
           >
             <img src={shareIcon} alt="Share" />
             <span>Chia sẻ</span>
           </button>
         </div>
-        <div className="location-hero__info">
+        <Col span={12} className="location-hero__info">
           <p className="content-label">
             <span>
               <img
@@ -41,16 +46,17 @@ export const LocationHero = ({ media, locationDetail }: LocationHeroProps) => {
           <h1 className="content-name">{locationDetail?.locationName}</h1>
           <div className="location-hero__address">
             <p className="address">
-              <span>
+              <div>
                 <img src={pin} alt="Pin" />
-              </span>
-              <span>{locationDetail?.address?.[0]?.fullAddress} </span>
+                {locationDetail?.address?.[0]?.fullAddress}
+              </div>
+
               <span className="note">
-                ({locationDetail?.address?.[0]?.addressNote})
+                {locationDetail?.address?.[0]?.addressNote}
               </span>
             </p>
           </div>
-        </div>
+        </Col>
       </Col>
     </Row>
   );

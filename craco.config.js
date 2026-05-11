@@ -14,5 +14,12 @@ module.exports = {
       "@router": path.resolve(__dirname, "src/router"),
       "@socket": path.resolve(__dirname, "src/socket"),
     },
+    configure: (webpackConfig) => {
+      webpackConfig.resolve.fallback = {
+        ...webpackConfig.resolve.fallback,
+        path: require.resolve("path-browserify"),
+      };
+      return webpackConfig;
+    },
   },
 };
