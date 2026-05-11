@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import { Button, Col, Row } from "antd";
 import type { LocationDto } from "@/api/dtos/location.dto";
 import pin from "@/assets/svg/home/pin.svg";
 import "./style.scss";
@@ -11,8 +11,8 @@ export const LocationAddress = ({ locationDetail }: LocationAddressProps) => {
   return (
     <Row gutter={[16, 16]} className="location-address">
       <Col span={24}>
-        <p className="wrap-label">Vị trí</p>
-        <p className="wrap-title">Địa chỉ cụ thể</p>
+        <h3 className="wrap-label">Vị trí</h3>
+        <h4 className="wrap-title">Địa chỉ cụ thể</h4>
         <div className="wrap-content">
           {locationDetail?.address?.map((item, index) => (
             <div
@@ -21,20 +21,20 @@ export const LocationAddress = ({ locationDetail }: LocationAddressProps) => {
             >
               <div className="wrap-content-row-info">
                 <img src={pin} alt="" />
-                <div className="content">
-                  <p className="name">{item.addressName}</p>
+                <div className="name">{item.fullAddress}</div>
+              </div>
+
+              <div className="wrap-content-row-map">
+                <button className="wrap-content-row-map-btn">
                   <a
-                    className="wrap-content-row-map-open note"
+                    className="note"
                     href={`https://www.google.com/maps/search/?api=1&query=${item.addressLat},${item.addressLong}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {item.fullAddress}
+                    Mở trong Google Maps
                   </a>
-                </div>
-              </div>
-
-              <div className="wrap-content-row-map">
+                </button>
                 <iframe
                   className="wrap-content-row-map-frame"
                   title={`map-${index}`}

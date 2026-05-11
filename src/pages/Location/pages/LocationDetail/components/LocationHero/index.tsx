@@ -33,7 +33,7 @@ export const LocationHero = ({ media, locationDetail }: LocationHeroProps) => {
             <span>Chia sẻ</span>
           </button>
         </div>
-        <Col span={12} className="location-hero__info">
+        <div className="location-hero__info">
           <p className="content-label">
             <span>
               <img
@@ -45,18 +45,18 @@ export const LocationHero = ({ media, locationDetail }: LocationHeroProps) => {
           </p>
           <h1 className="content-name">{locationDetail?.locationName}</h1>
           <div className="location-hero__address">
-            <p className="address">
-              <div>
+            <div className="address">
+              <span>
                 <img src={pin} alt="Pin" />
                 {locationDetail?.address?.[0]?.fullAddress}
-              </div>
+              </span>
 
               <span className="note">
                 {locationDetail?.address?.[0]?.addressNote}
               </span>
-            </p>
+            </div>
           </div>
-        </Col>
+        </div>
       </Col>
     </Row>
   );

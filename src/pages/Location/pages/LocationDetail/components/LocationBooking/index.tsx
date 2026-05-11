@@ -65,24 +65,6 @@ export const LocationBooking = ({
         >
           Thuê ngay
         </Button>
-        <Button
-          type="default"
-          block
-          className="contact-action"
-          style={{ display: "none" }}
-          onClick={() =>
-            onContactOwner(
-              locationDetail?.ownerCode ?? "",
-              MessageTypeEnum.CONTACT,
-              locationDetail?.locationCode,
-            )
-          }
-        >
-          <span>
-            <img src={message} alt="Message" />
-          </span>
-          <span>Liên hệ</span>
-        </Button>
       </div>
     </div>
   );

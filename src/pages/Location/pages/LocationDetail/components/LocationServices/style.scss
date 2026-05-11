@@ -21,48 +21,6 @@
     line-height: 1.2;
   }
 
-  .wrap-content-service {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
-    gap: 16px;
-  }
-
-  .location-serviceRow {
-    padding: 16px;
-    border: 1px solid #e2d9c8;
-    border-radius: 12px;
-    background: #fff;
-    transition: all 0.25s ease;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-
-    &:hover {
-      border-color: #e9ab0d;
-      box-shadow: 0 4px 15px rgba(233, 171, 13, 0.08);
-      transform: translateY(-2px);
-    }
-
-    .location-serviceRow__tag {
-      .renter__serviceTag {
-        border: none !important;
-        background: transparent !important;
-        padding: 0 !important;
-        box-shadow: none !important;
-        min-height: unset !important;
-        
-        .service-name {
-          font-size: 15px;
-          color: #1a1410;
-        }
-
-        .service-type {
-          font-size: 12px;
-        }
-      }
-    }
-  }
-
   .location-serviceDescription {
     margin-top: 12px;
     padding-top: 12px;

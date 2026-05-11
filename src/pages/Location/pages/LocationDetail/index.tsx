@@ -42,14 +42,21 @@ export const LocationDetail = () => {
         </Col>
 
         <Col xs={24} lg={8} className="location-detail-page__sidebar">
-          <LocationBooking
-            locationDetail={locationDetail}
-            onContactOwner={handleContactOwner}
-          />
-          <LocationOwner
-            locationDetail={locationDetail}
-            onContactOwner={handleContactOwner}
-          />
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12} lg={24}>
+              <LocationBooking
+                locationDetail={locationDetail}
+                onContactOwner={handleContactOwner}
+              />
+            </Col>
+
+            <Col xs={24} sm={12} lg={24}>
+              <LocationOwner
+                locationDetail={locationDetail}
+                onContactOwner={handleContactOwner}
+              />
+            </Col>
+          </Row>
         </Col>
       </Row>
 

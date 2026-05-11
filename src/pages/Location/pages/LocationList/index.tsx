@@ -4,7 +4,7 @@ import { useLocationList } from "./hooks/useLocationList";
 import { LocationCard } from "../../components/LocationCard";
 import { Pagination } from "../../../../components/PaginationCommon/paginationCommon";
 import { LocationFilterDrawer } from "../../components/LocationFilterDrawer";
-import { Button } from "antd";
+import { Button, Row, Col } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
 import { isAxiosError } from "axios";
 import { DEFAULT_MESSAGE } from "../../../../common/constants/constants";
@@ -38,9 +38,15 @@ export const LocationList = () => {
 
   const renderContent = () => {
     if (isLoading) {
-      return Array.from({ length: 8 }, (_, index) => (
-        <div key={index} className="location__card-skeleton" />
-      ));
+      return (
+        <Row gutter={[24, 24]}>
+          {Array.from({ length: 8 }, (_, index) => (
+            <Col xs={24} sm={12} md={8} lg={6} key={index}>
+              <div className="location__card-skeleton" />
+            </Col>
+          ))}
+        </Row>
+      );
     }
 
     if (isError) {
@@ -75,25 +81,29 @@ export const LocationList = () => {
         </div>
       );
     }
-    console.log(locations);
-    return locations.map((locationItem: LocationDto) => (
-      <LocationCard
-        key={locationItem.locationCode}
-        code={locationItem.locationCode}
-        typeName={locationItem.typeName}
-        name={locationItem.locationName}
-        description={locationItem.locationDescription}
-        address={locationItem.address?.[0]?.fullAddress}
-        rate={locationItem.locationRate}
-        price={
-          locationItem.locationPrice || locationItem.locationPriceAfterDeal
-        }
-        priceUnit={locationItem.locationPriceUnit}
-        image={locationItem.locationLogo}
-        isFavourite={false}
-        onClick={handleCardClick}
-      />
-    ));
+    return (
+      <Row gutter={[24, 24]}>
+        {locations.map((locationItem: LocationDto) => (
+          <Col xs={24} sm={12} md={8} lg={6} key={locationItem.locationCode}>
+            <LocationCard
+              code={locationItem.locationCode}
+              typeName={locationItem.typeName}
+              name={locationItem.locationName}
+              description={locationItem.locationDescription}
+              address={locationItem.address?.[0]?.fullAddress}
+              rate={locationItem.locationRate}
+              price={
+                locationItem.locationPrice || locationItem.locationPriceAfterDeal
+              }
+              priceUnit={locationItem.locationPriceUnit}
+              image={locationItem.locationLogo}
+              isFavourite={false}
+              onClick={handleCardClick}
+            />
+          </Col>
+        ))}
+      </Row>
+    );
   };
 
   return (

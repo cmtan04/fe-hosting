@@ -8,22 +8,12 @@ interface LocationOverviewProps {
 
 export const LocationOverview = ({ locationDetail }: LocationOverviewProps) => {
   return (
-    <>
-      <Row gutter={[16, 16]} className="location-overview__ratings">
-        <Rate defaultValue={Number(locationDetail?.locationRate)} />
-        <span className="code">
-          Chưa có đánh giá · Mã: <span>{locationDetail?.locationCode}</span>
-        </span>
-      </Row>
-      <Row gutter={[16, 16]} className="location-overview__description">
-        <Col span={24}>
-          <p className="wrap-label">Giới thiệu</p>
-          <p className="wrap-title">Về không gian này</p>
-          <p className="wrap-content">
-            {locationDetail?.locationDescription}
-          </p>
-        </Col>
-      </Row>
-    </>
+    <Row gutter={[16, 16]} className="location-overview__description">
+      <Col span={24}>
+        <h3 className="wrap-label">Giới thiệu</h3>
+        <h4 className="wrap-title">Về không gian này</h4>
+        <p className="wrap-content">{locationDetail?.locationDescription}</p>
+      </Col>
+    </Row>
   );
 };

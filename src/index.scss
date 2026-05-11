@@ -1,4 +1,10 @@
 @import "./color.scss";
+
+html,
+body {
+  overflow-x: hidden;
+}
+
 * {
   font-family: $font_family_1 !important;
 }
@@ -13,7 +19,7 @@
   justify-content: flex-start;
   gap: 8px;
   .notification {
-    min-width: 386px;
+    min-width: min(386px, calc(100vw - 32px));
     height: 48px;
     border-radius: 4px;
     padding: 14px 16px;

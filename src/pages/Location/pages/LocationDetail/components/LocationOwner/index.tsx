@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button, Image } from "antd";
 import type { LocationDto } from "@/api/dtos/location.dto";
 import address from "@/assets/images/address.svg";
 import mail from "@/assets/images/mail.svg";
@@ -19,7 +19,15 @@ export const LocationOwner = ({
 }: LocationOwnerProps) => {
   return (
     <div className="location-owner">
-      <img src={locationDetail?.ownerAvatar || ""} alt="Owner" />
+      <Image
+        src={locationDetail?.ownerAvatar || ""}
+        alt="Owner"
+        style={{
+          width: "240px",
+          aspectRatio: "1 / 1",
+          objectFit: "cover",
+        }}
+      />
       <div className="owner-info">
         <h1 className="title">Liên hệ</h1>
         <p className="owner-name">

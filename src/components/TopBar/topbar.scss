@@ -1,5 +1,8 @@
 @import "../../color.scss";
 
+// ═══════════════════════════════════════════
+// TopBar — Core
+// ═══════════════════════════════════════════
 .top__bar {
   position: fixed;
   top: 0px;
@@ -32,6 +35,7 @@
     gap: 12px;
   }
 
+  // ─── Logo ───
   &-logo {
     display: flex;
     flex-direction: row;
@@ -39,6 +43,7 @@
     align-items: center;
     position: relative;
     gap: 12px;
+    text-decoration: none !important;
 
     img {
       width: 45px;
@@ -66,6 +71,7 @@
     }
   }
 
+  // ─── Horizontal Menu (desktop) ───
   &-menu {
     .ant-menu {
       background-color: transparent !important;
@@ -148,6 +154,7 @@
     }
   }
 
+  // ─── Host CTA ───
   &-host {
     width: fit-content;
     height: 40px !important;
@@ -177,6 +184,7 @@
     }
   }
 
+  // ─── Account Button ───
   &-account {
     width: 80px;
     height: 40px !important;
@@ -204,6 +212,7 @@
     }
   }
 
+  // ─── Guest Auth Buttons ───
   &-guest {
     display: flex;
     align-items: center;
@@ -244,6 +253,11 @@
     }
   }
 
+  // ─── Profile Dropdown (desktop) ───
+  .topbar__profile-section {
+    position: relative;
+  }
+
   .profile__dropdown {
     position: absolute;
     background-color: #ffffff;
@@ -255,35 +269,324 @@
     display: flex;
     gap: 8px;
     flex-direction: column;
-    &-item {
-      padding: 8px 0px;
-      cursor: pointer;
-      &:hover {
-        background-color: darken(#ffffff, 10%);
-        border-radius: 12px;
-      }
-      .ant-col {
-        display: flex;
-        height: fit-content;
-        flex-direction: column;
-        justify-content: center;
-        &-4 {
-          img {
-            width: 24px;
-            height: 24px;
-          }
-        }
+    z-index: 100;
 
+    &-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: 12px;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: darken(#ffffff, 5%);
+      }
+
+      &-icon {
+        flex-shrink: 0;
+
+        img {
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      &-label {
         p {
-          padding-left: 12px;
-          margin: 0px !important;
+          margin: 0;
+          font-size: 14px;
+          font-weight: 500;
+          font-family: $font_family_1;
+          color: $text_color_1;
+          white-space: nowrap;
         }
       }
     }
   }
 }
 
-// Drop down menu
+// ═══════════════════════════════════════════
+// Hamburger Button
+// ═══════════════════════════════════════════
+.topbar__hamburger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid $text_color_1;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: $background-color-1;
+  }
+
+  .hamburger-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 20px;
+    height: 20px;
+
+    span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background-color: $text_color_1;
+      border-radius: 2px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-origin: center;
+    }
+
+    &.open {
+      span:nth-child(1) {
+        transform: translateY(6px) rotate(45deg);
+      }
+      span:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+      span:nth-child(3) {
+        transform: translateY(-6px) rotate(-45deg);
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// Mobile Drawer
+// ═══════════════════════════════════════════
+.topbar__drawer {
+  .ant-drawer-body {
+    padding: 0 !important;
+  }
+
+  // ─── Drawer Header ───
+  .topbar__drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid darken(#ffffff, 8%);
+  }
+
+  .topbar__drawer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+    }
+
+    span {
+      font-weight: 600;
+      font-size: 18px;
+      color: $color-text-primary;
+      font-family: $font_family_1;
+    }
+  }
+
+  .topbar__drawer-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    font-size: 18px;
+    color: $text_color_1;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: darken(#ffffff, 6%);
+    }
+  }
+
+  // ─── Drawer Content ───
+  .topbar__drawer-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  // ─── Drawer Menu ───
+  .topbar__drawer-menu {
+    border-right: none !important;
+    padding: 8px 12px;
+
+    .ant-menu-item {
+      font-size: 15px;
+      font-weight: 500;
+      color: $text_color_1 !important;
+      font-family: $font_family_1;
+      border-radius: 8px;
+      margin-bottom: 2px;
+
+      &:hover,
+      &-selected {
+        background-color: $background-color-1 !important;
+        color: $text_color_3 !important;
+      }
+
+      &::after {
+        display: none !important;
+      }
+    }
+
+    .ant-menu-submenu {
+      .ant-menu-submenu-title {
+        font-size: 15px;
+        font-weight: 500;
+        color: $text_color_1 !important;
+        font-family: $font_family_1;
+        border-radius: 8px;
+
+        &:hover {
+          background-color: $background-color-1 !important;
+          color: $text_color_3 !important;
+        }
+      }
+
+      .ant-menu-sub {
+        background: transparent !important;
+
+        .ant-menu-item {
+          font-size: 14px;
+          font-weight: 400;
+          padding-left: 40px !important;
+        }
+      }
+
+      &::after {
+        display: none !important;
+      }
+    }
+  }
+
+  // ─── Drawer Divider ───
+  .topbar__drawer-divider {
+    height: 1px;
+    background-color: darken(#ffffff, 8%);
+    margin: 4px 20px;
+  }
+
+  // ─── Drawer Actions ───
+  .topbar__drawer-actions {
+    padding: 12px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .top__bar-host {
+      height: auto !important;
+      padding: 10px 0;
+
+      span,
+      &-action {
+        font-size: 15px;
+        font-weight: 500;
+      }
+    }
+
+    .topbar__profile-section {
+      position: relative;
+
+      .top__bar-account {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 0 12px;
+        gap: 12px;
+        border-radius: 12px;
+        height: 48px !important;
+      }
+
+      .profile__dropdown {
+        position: static;
+        box-shadow: none;
+        border-radius: 12px;
+        background-color: darken(#ffffff, 2%);
+        padding: 8px;
+        margin-top: 8px;
+      }
+    }
+
+    .top__bar-guest {
+      flex-direction: column;
+      gap: 8px;
+
+      .guest-login,
+      .guest-signup {
+        width: 100%;
+        height: 44px;
+        font-size: 15px;
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// Responsive: Tablet (≤ 1024px)
+// ═══════════════════════════════════════════
+@media (max-width: 1024px) {
+  .top__bar {
+    .left {
+      gap: 16px;
+    }
+
+    &-logo {
+      &::after {
+        display: none;
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// Responsive: Mobile (≤ 768px)
+// ═══════════════════════════════════════════
+@media (max-width: 768px) {
+  .top__bar {
+    height: 56px;
+    padding: 6px 0;
+
+    .left {
+      padding: 0 12px;
+    }
+
+    .right {
+      padding: 0 12px;
+    }
+
+    &-logo {
+      img {
+        width: 38px;
+        height: 38px;
+      }
+
+      span {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// Dropdown menu (submenu popup — desktop)
+// ═══════════════════════════════════════════
 .ant-menu-submenu-popup {
   .ant-menu {
     background-color: #ffffff !important;
@@ -324,12 +627,16 @@
   }
 }
 
-//Link style reset
-a {
-  text-decoration: none !important;
-  color: $text_color_1 !important;
+// ═══════════════════════════════════════════
+// Link style reset (scoped to TopBar)
+// ═══════════════════════════════════════════
+.top__bar {
+  a {
+    text-decoration: none !important;
+    color: $text_color_1 !important;
 
-  &:hover {
-    color: $text_color_4 !important;
+    &:hover {
+      color: $text_color_4 !important;
+    }
   }
 }

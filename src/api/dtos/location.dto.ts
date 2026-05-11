@@ -73,15 +73,12 @@ export interface CreateLocationRequestDto {
   media?: LocationMediaDto[];
 }
 
-export interface UpdateLocationRequestDto
-  extends Partial<CreateLocationRequestDto> {}
+export interface UpdateLocationRequestDto extends Partial<CreateLocationRequestDto> {}
 
 export interface ServiceDto {
   serviceCode: string;
   serviceName: string;
-  serviceDescription?: string;
-  serviceLogo?: string;
-  serviceBackGround?: string;
+  description: string;
   servicePrice?: number | string;
   servicePriceType?: ServicePriceType;
   serviceDiscount?: number;

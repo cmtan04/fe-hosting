@@ -12,35 +12,24 @@ interface LocationServicesProps {
 export const LocationServices = ({ locationDetail }: LocationServicesProps) => {
   return (
     <Row gutter={[16, 16]} className="location-services">
-      <Col span={12}>
+      <Col span={24}>
         <p className="wrap-label">Tiện ích & Dịch vụ</p>
         <p className="wrap-title">Những gì bạn sẽ nhận được</p>
-        <div className="wrap-content-service">
+        <Row gutter={[16, 16]}>
           {locationDetail?.services?.map((service) => (
-            <div
-              key={service.serviceCode}
-              className="location-serviceRow"
-            >
-              <div className="location-serviceRow__tag">
-                <ServiceTag
-                  icon={<CheckOutlined style={{ color: "green" }} />}
-                  name={service.serviceName}
-                  price={String(service.servicePrice)}
-                  description={service.serviceDescription ?? ""}
-                  active={true}
-                  isFree={service.isFree}
-                  unit={resolveServiceUnit(service.unit)}
-                />
-              </div>
-
-              {service.serviceDescription && (
-                <div className="renter-selectedServiceDescription">
-                  {service.serviceDescription}
-                </div>
-              )}
-            </div>
+            <Col span={12} key={service.serviceCode}>
+              <ServiceTag
+                icon={<CheckOutlined style={{ color: "green" }} />}
+                name={service.serviceName}
+                price={String(service.basePrice)}
+                description={service.description ?? ""}
+                active={true}
+                isFree={service.isFree}
+                unit={resolveServiceUnit(service.unit)}
+              />
+            </Col>
           ))}
-        </div>
+        </Row>
       </Col>
     </Row>
   );

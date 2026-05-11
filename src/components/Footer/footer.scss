@@ -1,0 +1,227 @@
+@import "../../color.scss";
+
+// ─────────────────────────────────────────────────
+// Footer — self-contained styles
+// ─────────────────────────────────────────────────
+
+.footer {
+  width: 100%;
+  background: linear-gradient(
+    180deg,
+    darken($black_color, 2%) 0%,
+    $black_color 100%
+  );
+  color: rgba($white_color, 0.85);
+  font-family: $font_family_1;
+
+  // ── Main content area ──
+  &__main {
+    padding: 56px;
+  }
+
+  // ── Brand column ──
+  &__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.85;
+    }
+
+    img {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+
+    &-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: $white_color;
+      letter-spacing: -0.3px;
+    }
+  }
+
+  &__tagline {
+    font-size: 14px;
+    line-height: 1.65;
+    color: rgba($white_color, 0.65);
+    max-width: 300px;
+    margin: 0;
+  }
+
+  // ── Social links ──
+  &__socials {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  &__social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba($white_color, 0.08);
+    color: rgba($white_color, 0.65);
+    transition: all 0.25s ease;
+
+    &:hover {
+      background: rgba($white_color, 0.15);
+      color: $white_color;
+      transform: translateY(-2px);
+    }
+
+    svg {
+      display: block;
+    }
+  }
+
+  // ── Navigation columns ──
+  &__col {
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+    gap: 4px;
+
+    &-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: $white_color;
+      margin: 0 0 12px;
+      letter-spacing: 0.2px;
+      position: relative;
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 24px;
+        height: 2px;
+        border-radius: 2px;
+        background: $secondary_color;
+      }
+    }
+
+    &-list {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    &-item {
+      a {
+        display: inline-block;
+        font-size: 14px;
+        color: rgba($white_color, 0.85);
+        text-decoration: none;
+        padding: 5px 0;
+        transition:
+          color 0.2s ease,
+          transform 0.2s ease;
+
+        &:hover {
+          color: $white_color;
+          transform: translateX(3px);
+        }
+      }
+    }
+  }
+
+  // ── Bottom bar ──
+  &__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 80px;
+    border-top: 1px solid rgba($white_color, 0.08);
+    font-size: 13px;
+    color: rgba($white_color, 0.35);
+
+    a {
+      color: rgba($white_color, 0.45);
+      text-decoration: none;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: rgba($white_color, 0.75);
+      }
+    }
+
+    &-sep {
+      color: rgba($white_color, 0.2);
+      user-select: none;
+    }
+  }
+
+  // ─────────────────────────────────────────────────
+  // Responsive
+  // ─────────────────────────────────────────────────
+
+  @media (max-width: 1024px) {
+    .footer__main {
+      grid-template-columns: 1fr 1fr;
+      gap: 40px 32px;
+      padding: 48px 40px 32px;
+    }
+
+    .footer__bottom {
+      padding: 18px 40px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .footer__main {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      padding: 40px 24px 28px;
+    }
+
+    .footer__brand {
+      align-items: center;
+      text-align: center;
+    }
+
+    .footer__tagline {
+      max-width: 100%;
+    }
+
+    .footer__socials {
+      justify-content: center;
+    }
+
+    .footer__col {
+      align-items: center;
+      text-align: center;
+
+      &-title::after {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    .footer__bottom {
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 16px 24px;
+      gap: 4px 8px;
+    }
+  }
+}

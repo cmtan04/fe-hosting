@@ -105,14 +105,15 @@
       border-radius: 4px;
       margin-top: 24px;
       cursor: pointer;
+      transition: 0.2s;
 
       &:hover {
         background: #b8963f !important;
-        transform: translateY(-2px);
+        transform: scale(1.01);
       }
 
       &:active {
-        transform: translateY(0);
+        transform: scale(1.02);
       }
     }
   }

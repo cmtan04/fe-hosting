@@ -8,6 +8,7 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import "yet-another-react-lightbox/styles.css"; // CSS tổng
 import "yet-another-react-lightbox/plugins/thumbnails.css"; // CSS riêng cho thumbnail
+import { Flex } from "antd";
 
 interface MediaItem {
   url: string;
@@ -25,8 +26,16 @@ export const MediaGallery = ({ media }: MediaGalleryProps) => {
 
   if (!media || media.length === 0) {
     return (
-      <div className="media-gallery-empty">
-        <div className="media-gallery-placeholder">Chưa có ảnh/video</div>
+      <div
+        style={{
+          width: "100%",
+          height: "80% !important",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        Chưa có ảnh/video{" "}
       </div>
     );
   }
@@ -88,7 +97,7 @@ export const MediaGallery = ({ media }: MediaGalleryProps) => {
                 sources: [{ src: item.url, type: "video/mp4" }],
                 poster: getThumbSrc(item),
               }
-            : { src: item.url }
+            : { src: item.url },
         )}
         plugins={[Video, Zoom, Thumbnails]}
         thumbnails={{
@@ -97,7 +106,6 @@ export const MediaGallery = ({ media }: MediaGalleryProps) => {
           height: 80,
           gap: 16,
           border: 0,
-          
         }}
         zoom={{
           maxZoomPixelRatio: 3,
@@ -113,7 +121,6 @@ export const MediaGallery = ({ media }: MediaGalleryProps) => {
           finite: false,
         }}
       />
-
     </div>
   );
 };
