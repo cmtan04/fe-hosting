@@ -1,152 +1,155 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
+import { useCallback, useRef, useEffect, useState } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import type { ProfileLocationFilter } from "@common/types/profile";
-import { getLocationByFilter } from "@api/configs/location.config";
+import {
+  getLocationByFilter,
+  normalizeLocationTypeCode,
+} from "@api/configs/location.config";
 import { LocationEndpoint } from "@api/endpoints/location.endpoint";
 import { ROUTER_PATH } from "@router/Route";
 import {
-  LOCATION_METADATA,
-  ROOM_TYPE_METADATA,
-} from "@common/constants/constants";
-import {
   DEFAULT_LIMIT,
   DEFAULT_PAGE,
-  buildMergedFilter,
-  buildSearchParamsFromFilter,
-  getFilterSignature,
-  normalizeFilter,
-  normalizeRentBannerId,
-  normalizeSearchValue,
-  parseFilterFromSearchParams,
+  parseFilterFromURL,
+  buildURLFromFilter,
 } from "../utils";
-
-interface LocationRouteState {
-  rent?: string;
-  location?: string;
-  page?: number;
-}
 
 export const useLocationList = () => {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Từ khóa tìm kiếm từ Banner
-  const [keyword, setKeyword] = useState<string | undefined>(undefined);
-  // Trạng thái hiển thị của ngăn lọc (Filter Drawer)
+  // Trạng thái hiển thị của ngăn lọc trên mobile
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Lấy dữ liệu lọc từ location state (được truyền khi chuyển trang)
-  const routeState = (location.state as LocationRouteState | null) ?? null;
+  // ── Xử lý location.state lần đầu (tương thích cũ) ─────
+  const hasHandledState = useRef(false);
+  useEffect(() => {
+    if (hasHandledState.current) return;
+    const routeState = location.state as { rent?: string; location?: string } | null;
+    if (!routeState?.rent && !routeState?.location) return;
 
-  // Chuyển đổi routeState thành đối tượng filter
-  const routeFilter = useMemo<ProfileLocationFilter>(() => {
-    const nextFilter: ProfileLocationFilter = {};
-    if (routeState?.location) nextFilter.addressRegion = routeState.location;
-    if (routeState?.rent) nextFilter.locationType = routeState.rent;
-    if (typeof routeState?.page === "number" && routeState.page > 0)
-      nextFilter.page = routeState.page;
-    return nextFilter;
-  }, [routeState?.location, routeState?.page, routeState?.rent]);
+    hasHandledState.current = true;
+    const params = new URLSearchParams(searchParams);
 
-  // State filter nội bộ dùng cho các cuộc gọi API
-  const [filter, setFilter] = useState<ProfileLocationFilter>(() => {
-    const queryFilter = parseFilterFromSearchParams(searchParams);
-    return buildMergedFilter(routeFilter, queryFilter, {
-      page: DEFAULT_PAGE,
-      limit: DEFAULT_LIMIT,
+    if (routeState.rent) {
+      const typeCode = normalizeLocationTypeCode(routeState.rent);
+      if (typeCode) params.set("typeCode", typeCode);
+    }
+    if (routeState.location) {
+      params.set("region", routeState.location);
+    }
+
+    // Clear state và chuyển sang URL params
+    navigate(`${ROUTER_PATH.LOCATIONS}?${params.toString()}`, {
+      replace: true,
+      state: null,
     });
-  });
+  }, [location.state, navigate, searchParams]);
 
-  // Sử dụng React Query để lấy danh sách địa điểm mỗi khi 'filter' thay đổi
+  // ── Derived filter từ URL (nguồn sự thật duy nhất) ─────
+  const filter = parseFilterFromURL(searchParams);
+
+  // ── API call (Infinite) ────────────────────────────────
   const {
     data: locationData,
     isLoading,
     isFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
     isError,
     error,
     refetch,
-  } = useQuery({
-    queryKey: [LocationEndpoint.GET_LOCATION_BY_FILTER, filter],
-    queryFn: () => getLocationByFilter(filter),
+  } = useInfiniteQuery({
+    queryKey: [
+      LocationEndpoint.GET_LOCATION_BY_FILTER,
+      filter.searchValue,
+      filter.locationType,
+      filter.addressCity,
+      filter.addressRegion,
+      filter.minPrice,
+      filter.maxPrice,
+      filter.minArea,
+      filter.maxArea,
+      filter.sortBy,
+      filter.sortOrder,
+      // Lưu ý: filter.page không đưa vào queryKey vì infinite scroll quản lý pageParam riêng
+    ],
+    queryFn: ({ pageParam = 1 }) => 
+      getLocationByFilter({ ...filter, page: pageParam as number }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const currentPage = Number(lastPage.page) || 1;
+      const totalPages = Number(lastPage.totalPages) || 1;
+      return currentPage < totalPages ? currentPage + 1 : undefined;
+    },
+    placeholderData: keepPreviousData,
   });
 
-  // Effect: Đồng bộ filter nội bộ với URL params và Route state
-  useEffect(() => {
-    const queryFilter = parseFilterFromSearchParams(searchParams);
-    setFilter((prevFilter) => {
-      const nextFilter = buildMergedFilter(
-        routeFilter,
-        queryFilter,
-        prevFilter,
-      );
-      if (getFilterSignature(prevFilter) === getFilterSignature(nextFilter)) {
-        return prevFilter;
-      }
-      return nextFilter;
-    });
-  }, [routeFilter, searchParams]);
-
-  // Effect: Cập nhật filter khi từ khóa tìm kiếm từ Banner thay đổi
-  useEffect(() => {
-    if (keyword === undefined) return;
-    const nextSearchValue = normalizeSearchValue(keyword);
-    setFilter((prevFilter) => {
-      const nextFilter = normalizeFilter({
-        ...prevFilter,
-        searchValue: nextSearchValue,
-        page: DEFAULT_PAGE,
+  // ── Cập nhật filter (ghi vào URL) ─────────────────────
+  const updateFilter = useCallback(
+    (newFilter: ProfileLocationFilter) => {
+      const nextParams = buildURLFromFilter({
+        ...newFilter,
+        page: undefined, // Xóa page khỏi URL khi thay đổi filter để reset về đầu
       });
-      if (getFilterSignature(prevFilter) === getFilterSignature(nextFilter)) {
-        return prevFilter;
-      }
-      return nextFilter;
-    });
-  }, [keyword]);
+      setSearchParams(nextParams, {
+        replace: true,
+        preventScrollReset: true,
+      });
+    },
+    [setSearchParams],
+  );
 
-  // Effect: Đồng bộ trạng thái filter ngược lại URL search params
-  useEffect(() => {
-    const nextSearchParams = buildSearchParamsFromFilter(filter);
-    if (searchParams.toString() !== nextSearchParams.toString()) {
-      setSearchParams(nextSearchParams, { replace: true });
-    }
-  }, [filter, searchParams, setSearchParams]);
+  // ── Banner search: set q=, xóa hết filter cũ ──────────
+  const handleSearch = useCallback(
+    (keyword: string) => {
+      const trimmed = keyword.trim();
+      if (!trimmed) return;
+      updateFilter({
+        searchValue: trimmed,
+      });
+    },
+    [updateFilter],
+  );
 
-  const handlePageChange = (page: number) => {
-    setFilter((prevFilter) => normalizeFilter({ ...prevFilter, page }));
-  };
+  // ── Sidebar filter: giữ nguyên q=, cập nhật filter ────
+  const handleFilterApply = useCallback(
+    (sidebarFilter: ProfileLocationFilter) => {
+      updateFilter({
+        ...sidebarFilter,
+        searchValue: filter.searchValue,
+      });
+    },
+    [updateFilter, filter.searchValue],
+  );
 
-  const handleCardClick = (code: string) => {
-    const url = ROUTER_PATH.LOCATION_DETAIL.replace(":code", code);
-    navigate(url, { state: { code } });
-  };
-
-  // Tính toán dữ liệu Banner (tiêu đề, hình ảnh) dựa trên địa điểm/loại hình thuê hiện tại
-  const bannerKey =
-    searchParams.get("location") ??
-    routeState?.location ??
-    searchParams.get("rent") ??
-    routeState?.rent;
-  const bannerProps =
-    LOCATION_METADATA[bannerKey] ??
-    ROOM_TYPE_METADATA[normalizeRentBannerId(bannerKey)];
+  const handleCardClick = useCallback(
+    (code: string) => {
+      const url = ROUTER_PATH.LOCATION_DETAIL.replace(":code", code);
+      navigate(url, { state: { code } });
+    },
+    [navigate],
+  );
 
   return {
     locationData,
     isLoading,
     isFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
     isError,
     error,
     refetch,
     filter,
-    setFilter,
+    updateFilter,
+    handleFilterApply,
+    handleSearch,
+    handleCardClick,
     isFilterOpen,
     setIsFilterOpen,
-    handlePageChange,
-    handleCardClick,
-    keyword,
-    setKeyword,
-    bannerProps,
   };
 };

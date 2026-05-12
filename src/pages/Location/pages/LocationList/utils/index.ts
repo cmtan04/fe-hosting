@@ -1,144 +1,57 @@
 import type { ProfileLocationFilter } from "@common/types/profile";
 
 export const DEFAULT_PAGE = 1;
-export const DEFAULT_LIMIT = 20;
+export const DEFAULT_LIMIT = 12;
 
-export const cleanString = (value?: string | null) => {
-  const trimmedValue = value?.trim();
-  return trimmedValue || undefined;
-};
+// ── Helpers ──────────────────────────────────────────────
 
-export const normalizeSearchValue = (value?: string | null) => {
-  if (value === undefined || value === null || value === "") {
-    return undefined;
-  }
-  return value;
-};
+const cleanString = (value?: string | null): string | undefined =>
+  value?.trim() || undefined;
 
-export const parsePositiveInt = (value?: string | null) => {
+const parsePositiveInt = (value?: string | null): number | undefined => {
   if (!value) return undefined;
-  const parsedValue = Number(value);
-  if (!Number.isInteger(parsedValue) || parsedValue <= 0) {
-    return undefined;
-  }
-  return parsedValue;
+  const n = Number(value);
+  return Number.isInteger(n) && n > 0 ? n : undefined;
 };
 
-export const normalizeRentBannerId = (value?: string) =>
-  value?.trim().toLowerCase().replace(/_/g, "-");
+// ── URL → Filter ────────────────────────────────────────
 
-export const parseFilterFromSearchParams = (
+export const parseFilterFromURL = (
   searchParams: URLSearchParams,
-): ProfileLocationFilter => {
-  const querySearchValue = searchParams.get("q") ?? searchParams.get("search");
-  return {
-    addressRegion: cleanString(searchParams.get("location")),
-    locationType: cleanString(searchParams.get("rent")),
-    searchValue: normalizeSearchValue(querySearchValue),
-    page: parsePositiveInt(searchParams.get("page")),
-    limit: parsePositiveInt(searchParams.get("limit")),
-    minPrice: parsePositiveInt(searchParams.get("minPrice")),
-    maxPrice: parsePositiveInt(searchParams.get("maxPrice")),
-    minArea: parsePositiveInt(searchParams.get("minArea")),
-    maxArea: parsePositiveInt(searchParams.get("maxArea")),
-    addressCity: cleanString(searchParams.get("city")),
-  };
-};
+): ProfileLocationFilter => ({
+  searchValue: cleanString(searchParams.get("q")),
+  locationType: cleanString(searchParams.get("typeCode")),
+  addressCity: cleanString(searchParams.get("city")),
+  addressRegion: cleanString(searchParams.get("region")),
+  minPrice: parsePositiveInt(searchParams.get("minPrice")),
+  maxPrice: parsePositiveInt(searchParams.get("maxPrice")),
+  minArea: parsePositiveInt(searchParams.get("minArea")),
+  maxArea: parsePositiveInt(searchParams.get("maxArea")),
+  page: parsePositiveInt(searchParams.get("page")) ?? DEFAULT_PAGE,
+  limit: parsePositiveInt(searchParams.get("limit")) ?? DEFAULT_LIMIT,
+  sortBy: cleanString(searchParams.get("sortBy")),
+  sortOrder: (searchParams.get("sortOrder") as "ASC" | "DESC") || undefined,
+});
 
-export const normalizeFilter = (
+// ── Filter → URL ────────────────────────────────────────
+
+export const buildURLFromFilter = (
   filter: ProfileLocationFilter,
-): ProfileLocationFilter => {
-  return {
-    ...filter,
-    addressRegion: cleanString(filter.addressRegion),
-    locationType: cleanString(filter.locationType),
-    searchValue: normalizeSearchValue(filter.searchValue),
-    page:
-      typeof filter.page === "number" && filter.page > 0
-        ? filter.page
-        : DEFAULT_PAGE,
-    limit:
-      typeof filter.limit === "number" && filter.limit > 0
-        ? filter.limit
-        : DEFAULT_LIMIT,
-  };
-};
+): URLSearchParams => {
+  const params = new URLSearchParams();
 
-/**
- * Remove keys whose value is `undefined` so that `Object.assign` does not
- * overwrite valid values in the target with `undefined`.
- */
-const stripUndefined = (obj: any): any => {
-  const result: any = {};
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key) && obj[key] !== undefined) {
-      result[key] = obj[key];
-    }
-  }
-  return result;
-};
+  if (filter.searchValue) params.set("q", filter.searchValue);
+  if (filter.locationType) params.set("typeCode", filter.locationType);
+  if (filter.addressCity) params.set("city", filter.addressCity);
+  if (filter.addressRegion) params.set("region", filter.addressRegion);
+  if (filter.minPrice !== undefined) params.set("minPrice", String(filter.minPrice));
+  if (filter.maxPrice !== undefined) params.set("maxPrice", String(filter.maxPrice));
+  if (filter.minArea !== undefined) params.set("minArea", String(filter.minArea));
+  if (filter.maxArea !== undefined) params.set("maxArea", String(filter.maxArea));
+  if (filter.sortBy) params.set("sortBy", filter.sortBy);
+  if (filter.sortOrder) params.set("sortOrder", filter.sortOrder);
+  if ((filter.page ?? DEFAULT_PAGE) > DEFAULT_PAGE) params.set("page", String(filter.page));
+  if ((filter.limit ?? DEFAULT_LIMIT) !== DEFAULT_LIMIT) params.set("limit", String(filter.limit));
 
-export const buildMergedFilter = (
-  routeFilter?: ProfileLocationFilter,
-  queryFilter?: ProfileLocationFilter,
-  baseFilter?: ProfileLocationFilter,
-): ProfileLocationFilter => {
-  const mergedFilter: ProfileLocationFilter = {};
-  if (baseFilter) Object.assign(mergedFilter, stripUndefined(baseFilter));
-  if (queryFilter) Object.assign(mergedFilter, stripUndefined(queryFilter));
-  if (routeFilter) Object.assign(mergedFilter, stripUndefined(routeFilter));
-
-  mergedFilter.page =
-    routeFilter?.page ?? queryFilter?.page ?? baseFilter?.page ?? DEFAULT_PAGE;
-  mergedFilter.limit =
-    routeFilter?.limit ??
-    queryFilter?.limit ??
-    baseFilter?.limit ??
-    DEFAULT_LIMIT;
-
-  return normalizeFilter(mergedFilter);
-};
-
-export const buildSearchParamsFromFilter = (filter: ProfileLocationFilter) => {
-  const normalizedFilter = normalizeFilter(filter);
-  const nextSearchParams = new URLSearchParams();
-
-  if (normalizedFilter.addressRegion)
-    nextSearchParams.set("location", normalizedFilter.addressRegion);
-  if (normalizedFilter.locationType)
-    nextSearchParams.set("rent", normalizedFilter.locationType);
-  if (normalizedFilter.searchValue)
-    nextSearchParams.set("q", normalizedFilter.searchValue);
-  if (normalizedFilter.minPrice !== undefined)
-    nextSearchParams.set("minPrice", String(normalizedFilter.minPrice));
-  if (normalizedFilter.maxPrice !== undefined)
-    nextSearchParams.set("maxPrice", String(normalizedFilter.maxPrice));
-  if (normalizedFilter.minArea !== undefined)
-    nextSearchParams.set("minArea", String(normalizedFilter.minArea));
-  if (normalizedFilter.maxArea !== undefined)
-    nextSearchParams.set("maxArea", String(normalizedFilter.maxArea));
-  if (normalizedFilter.addressCity)
-    nextSearchParams.set("city", normalizedFilter.addressCity);
-  if ((normalizedFilter.page ?? DEFAULT_PAGE) > DEFAULT_PAGE)
-    nextSearchParams.set("page", String(normalizedFilter.page));
-  if ((normalizedFilter.limit ?? DEFAULT_LIMIT) !== DEFAULT_LIMIT)
-    nextSearchParams.set("limit", String(normalizedFilter.limit));
-
-  return nextSearchParams;
-};
-
-export const getFilterSignature = (filter: ProfileLocationFilter) => {
-  const normalizedFilter = normalizeFilter(filter);
-  return JSON.stringify({
-    addressRegion: normalizedFilter.addressRegion ?? "",
-    locationType: normalizedFilter.locationType ?? "",
-    searchValue: normalizedFilter.searchValue ?? "",
-    minPrice: normalizedFilter.minPrice ?? "",
-    maxPrice: normalizedFilter.maxPrice ?? "",
-    minArea: normalizedFilter.minArea ?? "",
-    maxArea: normalizedFilter.maxArea ?? "",
-    addressCity: normalizedFilter.addressCity ?? "",
-    page: normalizedFilter.page ?? DEFAULT_PAGE,
-    limit: normalizedFilter.limit ?? DEFAULT_LIMIT,
-  });
+  return params;
 };

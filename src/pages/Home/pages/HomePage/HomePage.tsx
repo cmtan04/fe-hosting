@@ -1,19 +1,20 @@
 import "../home.scss";
 import "./homePage.scss";
-import homeMap1 from "../../../../assets/svg/home/home_map1.svg";
-import homeMap2 from "../../../../assets/svg/home/home_map4.svg";
-import homeMap3 from "../../../../assets/svg/home/home_map3.svg";
-import search from "../../../../assets/lotties/home/search.json";
-import call from "../../../../assets/lotties/home/call.json";
-import find from "../../../../assets/lotties/home/find.json";
-import docs from "../../../../assets/lotties/home/docs.json";
+import homeMap1 from "@assets/svg/home/home_map1.svg";
+import homeMap2 from "@assets/svg/home/home_map4.svg";
+import homeMap3 from "@assets/svg/home/home_map3.svg";
+import search from "@assets/lotties/home/search.json";
+import call from "@assets/lotties/home/call.json";
+import find from "@assets/lotties/home/find.json";
+import docs from "@assets/lotties/home/docs.json";
 import Lottie from "lottie-react";
-import type { HomeCardProps } from "../../../../components/HomeCard/HomeCard";
-import { HomeCarousel } from "../../../../components/HomeCarousel/HomeCarousel";
+import type { HomeCardProps } from "@components/HomeCard/HomeCard";
+import { HomeCarousel } from "@components/HomeCarousel/HomeCarousel";
 import { useNavigate } from "react-router-dom";
-import { ROUTER_PATH } from "../../../../router/Route";
-import homeFrame1 from "../../../../assets/svg/home/homeFrame1.svg";
-import { Banner } from "../../../../components/Banner/Banner";
+import { ROUTER_PATH } from "@router/Route";
+import homeFrame1 from "@assets/svg/home/homeFrame1.svg";
+import { Banner } from "@components/Banner/Banner";
+import { Row, Col } from "antd";
 export const HomePage = () => {
   const navigate = useNavigate();
 
@@ -177,52 +178,42 @@ export const HomePage = () => {
           <img src={homeMap3} alt="" className="map3" />
         </div>
       </div>
-      <div className="home_page-row-4">
-        <div className="row__content">
-          <h1 className="row__content-title">
-            Khám phá các loại hình cho thuê phổ biến
-          </h1>
-          <div className="row__action">
-            <div className="row__action-left">
-              <p className="row__content-description">
-                Chúng tôi cung cấp đa dạng loại hình không gian cho thuê, đáp
-                ứng nhu cầu sinh hoạt, làm việc và tổ chức sự kiện của cá nhân
-                cũng như doanh nghiệp.
-              </p>
-            </div>
-          </div>
-          <div className="row__content-suggest">
-            <HomeCarousel
-              items={sampleHomes}
-              autoPlay={true}
-              autoPlaySpeed={3000}
-              dots={true}
-              slidesToShow={1}
-            />
-          </div>
-        </div>
-      </div>
       <div className="home_page-row-5">
         <div className="row__content">
           <h1 className="row__content-title">Hỗ trợ & Đồng hành cùng bạn</h1>
-          <p className="row__content-description">
-            Chúng tôi luôn sẵn sàng hỗ trợ trong suốt quá trình tìm và thuê chỗ
-            ở.
-          </p>
         </div>
-        <div className="row__description">
+        <div className="row__action">
+          <div className="row__action-left">
+            <p className="row__content-description">
+              Đội ngũ hỗ trợ luôn sẵn sàng giải đáp thắc mắc và hỗ trợ bạn
+              trong suốt quá trình sử dụng.
+            </p>
+          </div>
+        </div>
+        <Row
+          gutter={[16, 16]}
+          justify={"center"}
+          className="row__description"
+        >
           {supportSteps.map((step) => (
-            <div key={step.id} className="row__description-item">
-              <Lottie className="lottie-icon" animationData={step.icon} />
-              <div className="div">
-                <h3 className="row__description-title">{step.title}</h3>
-                <p className="row__description-description">
-                  {step.description}
-                </p>
+            <Col
+              xs={24}
+              md={12}
+              lg={6}
+              key={step.id}
+            >
+              <div className="row__description-item">
+                <Lottie className="lottie-icon" animationData={step.icon} />
+                <div className="div">
+                  <h3 className="row__description-title">{step.title}</h3>
+                  <p className="row__description-description">
+                    {step.description}
+                  </p>
+                </div>
               </div>
-            </div>
+            </Col>
           ))}
-        </div>
+        </Row>
       </div>
     </div>
   );

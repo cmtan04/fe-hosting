@@ -1,9 +1,6 @@
 import { Button, Form, Row } from "antd";
 import "./style.scss";
-import type {
-  SelectOptionProps,
-  TableCommonProps,
-} from "@common/types/common";
+import type { SelectOptionProps, TableCommonProps } from "@common/types/common";
 import { LocationEndpoint } from "@api/endpoints/location.endpoint";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -98,8 +95,10 @@ export const ProfileLocation = () => {
       label: "Giá niêm yết",
       value: "locationPrice",
       render: (value: number, record: any) => (
-        <span>{value?.toLocaleString()} VNĐ{record.locationPriceUnit}</span>
-      )
+        <span>
+          {value?.toLocaleString()} VNĐ{record.locationPriceUnit}
+        </span>
+      ),
     },
     {
       key: 5,
@@ -152,15 +151,12 @@ export const ProfileLocation = () => {
         <p>Danh sách các địa điểm mà bạn đã cung cấp.</p>
       </div>
       <div className="profile__location-body">
-        <div className="search">
-          <FormSearch
-            name="locationName"
-            label=""
-            placeholder="Tìm kiếm địa điểm của bạn..."
-            onSearch={onSubmitSearch}
-            searchProps={{ enterButton: "Tìm kiếm" }}
-          />
-        </div>
+        <FormSearch
+          name="locationName"
+          label=""
+          placeholder="Tìm kiếm địa điểm của bạn..."
+          onSearch={onSubmitSearch}
+        />
 
         <div className="profile__location-body-result">
           <Row gutter={[16, 16]} className="header">

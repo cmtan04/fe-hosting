@@ -19,4 +19,6 @@ export interface ProfileLocationFilter {
   maxArea?: number;
   page?: number;
   limit?: number;
+  sortBy?: string;
+  sortOrder?: "ASC" | "DESC";
 }

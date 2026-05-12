@@ -1,0 +1,142 @@
+.location__bar {
+  background-color: var(--white);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+
+  &-image {
+    position: relative;
+    flex-shrink: 0;
+    padding: 0 !important;
+    aspect-ratio: 16/9;
+
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    .action {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      button {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.9);
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        &:hover {
+          background-color: var(--white);
+          transform: scale(1.05);
+        }
+
+        &.action--favourite {
+          color: var(--text-secondary);
+        }
+
+        &.action--share {
+          color: var(--text-secondary);
+        }
+
+        &.action--edit {
+          color: var(--primary-color);
+        }
+      }
+    }
+  }
+
+  &-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  &-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &-rate {
+    font-size: 14px;
+    color: #fadb14;
+  }
+
+  &-address {
+    font-size: 0.875rem;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    gap: 4px; /* Small gap for natural look */
+    width: 100%;
+    min-width: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+
+    .anticon {
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+  }
+
+  &-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    display: block; /* Switch to block for simpler truncation */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-bottom: 12px;
+  }
+
+  &-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-top: auto;
+  }
+
+  &-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ff4d4f;
+    margin: 0;
+  }
+}
+

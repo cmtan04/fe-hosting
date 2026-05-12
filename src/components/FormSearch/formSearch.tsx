@@ -54,6 +54,7 @@ export const FormSearch = ({
         bordered={bordered}
         status={status}
         onSearch={onSearch}
+        enterButton="Tìm kiếm"
         {...searchProps}
       />
     </Form.Item>

@@ -77,26 +77,31 @@ export const Banner = ({
 
   const suggestions = useMemo(() => {
     const pathname = location.pathname;
-    const routeState = (location.state as BannerLocationState | null) ?? null;
     const searchParams = new URLSearchParams(location.search);
-    const scopedRent = searchParams.get("rent") ?? routeState?.rent;
-    const scopedLocation = searchParams.get("location") ?? routeState?.location;
+    const scopedTypeCode = searchParams.get("typeCode");
+    const scopedRegion = searchParams.get("region");
 
     if (pathname.startsWith(ROUTER_PATH.LOCATIONS)) {
-      const normalizedRent = scopedRent
-        ?.trim()
-        .toLowerCase()
-        .replace(/_/g, "-");
-      if (normalizedRent && RENT_QUERY_SUGGESTIONS[normalizedRent]) {
-        return RENT_QUERY_SUGGESTIONS[normalizedRent];
+      // Map typeCode → rent key dùng cho gợi ý
+      const typeCodeToRent: Record<string, string> = {
+        ROOM: "motel",
+        APARTMENT: "apartment",
+        OFFICE: "office",
+        HOUSE: "full-house",
+        SHOP: "venue",
+      };
+      const rentKey = scopedTypeCode
+        ? typeCodeToRent[scopedTypeCode]
+        : undefined;
+      if (rentKey && RENT_QUERY_SUGGESTIONS[rentKey]) {
+        return RENT_QUERY_SUGGESTIONS[rentKey];
       }
 
-      const normalizedLocation = scopedLocation?.trim();
-      if (normalizedLocation) {
+      if (scopedRegion) {
         return [
-          normalizedLocation,
+          scopedRegion,
           ...LOCATIONS_ROUTE_SUGGESTIONS.filter(
-            (suggestion) => suggestion !== normalizedLocation,
+            (suggestion) => suggestion !== scopedRegion,
           ),
         ];
       }
@@ -113,7 +118,7 @@ export const Banner = ({
     }
 
     return DEFAULT_SEARCH_SUGGESTIONS;
-  }, [location.pathname, location.search, location.state]);
+  }, [location.pathname, location.search]);
 
   const handleSearch = (value: string) => {
     if (!value.trim()) {
@@ -134,16 +139,12 @@ export const Banner = ({
         <p className="banner__content-description">
           {description ?? DEFAULT_DESCRIPTION}
         </p>
-        <div className="banner__content-search">
-          <FormSearch
-            label=""
-            name="bannerSearch"
-            placeholder="Tìm kiếm theo tên, địa chỉ..."
-            onSearch={handleSearch}
-            formItemProps={{ className: "banner__search-item" }}
-            searchProps={{ enterButton: "Tìm kiếm" }}
-          />
-        </div>
+        <FormSearch
+          label=""
+          name="bannerSearch"
+          placeholder="Tìm kiếm theo tên, địa chỉ..."
+          onSearch={handleSearch}
+        />
 
         <div className="banner__suggestions">
           <span className="banner__suggestions-label">Gợi ý:</span>

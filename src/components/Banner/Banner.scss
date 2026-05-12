@@ -71,7 +71,7 @@
 
     &-search {
       width: min(720px, 100%);
-      margin-top: 28px;
+      padding: 0 !important;
       border-radius: 18px;
       background: rgba(255, 255, 255, 0.96);
       box-shadow: 0 20px 48px rgba(0, 0, 0, 0.2);
@@ -120,7 +120,7 @@
     }
 
     &-item.ant-btn {
-      height: 30px;
+      height: 100%;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.35);
       background: rgba(0, 35, 52, 0.72);

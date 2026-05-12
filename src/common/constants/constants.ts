@@ -101,6 +101,12 @@ export const ROOM_TYPE_METADATA: Record<string, RoomTypeMetadata> = {
   },
 };
 
+ROOM_TYPE_METADATA["room"] = ROOM_TYPE_METADATA["motel"];
+ROOM_TYPE_METADATA["office"] = ROOM_TYPE_METADATA["ofice"];
+ROOM_TYPE_METADATA["house"] = ROOM_TYPE_METADATA["full_house"];
+ROOM_TYPE_METADATA["shop"] = ROOM_TYPE_METADATA["venue"];
+ROOM_TYPE_METADATA["dorm"] = ROOM_TYPE_METADATA["motel"]; // Fallback for dorm
+
 export const LOCATION_METADATA: Record<string, LocationMetadata> = {
   north: {
     id: "north",

@@ -18,118 +18,34 @@ export const items = () => [
   },
   {
     key: 2,
-    label: (
-      <span>
-        Loại hình <img src={down} alt="Logo" />
-      </span>
-    ),
-    children: [
-      {
-        key: 21,
-        value: RENT_TYPE.MOTEL,
-        label: (
-          <Link
-            to={ROUTER_PATH.LOCATIONS}
-            state={{ rent: RENT_TYPE.MOTEL, page: 1 }}
-          >
-            Phòng trọ
-          </Link>
-        ),
-      },
-      {
-        key: 22,
-        value: RENT_TYPE.APARTMENT,
-        label: (
-          <Link
-            to={ROUTER_PATH.LOCATIONS}
-            state={{ rent: RENT_TYPE.APARTMENT, page: 1 }}
-          >
-            Căn hộ
-          </Link>
-        ),
-      },
-      {
-        key: 23,
-        value: RENT_TYPE.OFFICE,
-        label: (
-          <Link
-            to={ROUTER_PATH.LOCATIONS}
-            state={{ rent: RENT_TYPE.OFFICE, page: 1 }}
-          >
-            Văn phòng
-          </Link>
-        ),
-      },
-      {
-        key: 24,
-        value: RENT_TYPE.FULL_HOUSE,
-        label: (
-          <Link
-            to={ROUTER_PATH.LOCATIONS}
-            state={{ rent: RENT_TYPE.FULL_HOUSE, page: 1 }}
-          >
-            Nhà nguyên căn
-          </Link>
-        ),
-      },
-      {
-        key: 25,
-        value: RENT_TYPE.VENUE,
-        label: (
-          <Link
-            to={ROUTER_PATH.LOCATIONS}
-            state={{ rent: RENT_TYPE.VENUE, page: 1 }}
-          >
-            Địa điểm tổ chức sự kiện
-          </Link>
-        ),
-      },
-    ],
+    label: <Link to={ROUTER_PATH.LOCATIONS}>Danh sách địa điểm</Link>,
+    
   },
   {
     key: 3,
-    label: (
-      <span>
-        Khu vực <img src={down} alt="Logo" />
-      </span>
-    ),
+    label: <span>Khu vực</span>,
     children: [
       {
         key: 31,
         value: LOCATION_TYPE.NORTH,
         label: (
-          <Link
-            to={ROUTER_PATH.LOCATIONS}
-            state={{ location: LOCATION_TYPE.NORTH, page: 1 }}
-          >
-            Miền Bắc
-          </Link>
+          <Link to={`${ROUTER_PATH.LOCATIONS}?region=north`}>Miền Bắc</Link>
         ),
       },
       {
         key: 32,
         value: LOCATION_TYPE.CENTRAL,
         label: (
-          <Link
-            to={ROUTER_PATH.LOCATIONS}
-            state={{ location: LOCATION_TYPE.CENTRAL, page: 1 }}
-          >
-            Miền Trung
-          </Link>
+          <Link to={`${ROUTER_PATH.LOCATIONS}?region=central`}>Miền Trung</Link>
         ),
       },
       {
         key: 33,
         value: LOCATION_TYPE.SOUTH,
         label: (
-          <Link
-            to={ROUTER_PATH.LOCATIONS}
-            state={{ location: LOCATION_TYPE.SOUTH, page: 1 }}
-          >
-            Miền Nam
-          </Link>
+          <Link to={`${ROUTER_PATH.LOCATIONS}?region=south`}>Miền Nam</Link>
         ),
-      }
+      },
     ],
   },
   {

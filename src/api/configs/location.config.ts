@@ -28,16 +28,16 @@ const LOCATION_TYPE_CODE_MAP: Record<string, string> = {
   shop: "SHOP",
 };
 
-const normalizeLocationTypeCode = (value?: string | null) => {
-  const normalizedValue = value?.trim();
-
-  if (!normalizedValue) {
-    return undefined;
-  }
-
-  return (
-    LOCATION_TYPE_CODE_MAP[normalizedValue.toLowerCase()] ?? normalizedValue
-  );
+export const normalizeLocationTypeCode = (value?: string | null) => {
+  if (!value) return undefined;
+  return value
+    .split(',')
+    .map(val => {
+      const trimmedValue = val.trim();
+      return LOCATION_TYPE_CODE_MAP[trimmedValue.toLowerCase()] ?? trimmedValue;
+    })
+    .filter(Boolean)
+    .join(',');
 };
 
 const mapAddress = (address: LocationAddressDto) => ({
@@ -125,6 +125,8 @@ const toLocationQueryParams = (filter: ProfileLocationFilter) => ({
       : undefined,
   page: filter.page,
   limit: filter.limit,
+  sortBy: filter.sortBy,
+  sortOrder: filter.sortOrder,
 });
 
 export const getAllLocationType = async (): Promise<LocationTypeDto[]> => {

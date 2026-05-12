@@ -95,10 +95,10 @@ export const Footer = () => {
 
   return (
     <footer className="footer" id="footer">
-      {/* ─── Main Footer Content ─── */}
+      {/* Main Footer Content */}
       <Row gutter={[16, 16]} className="footer__main">
         {/* Brand Column */}
-        <Col xs={24} lg={6} className="footer__brand">
+        <Col xs={24}  md={8} lg={6} className="footer__brand">
           <Link to={ROUTER_PATH.HOME} className="footer__logo">
             <img src={background} alt="Hostings Logo" />
             <span className="footer__logo-text">Hostings</span>
@@ -127,30 +127,35 @@ export const Footer = () => {
         {/* Nav Columns */}
         <Col xs={24} lg={18}>
           <Row gutter={[16, 16]} className="footer__nav">
-          {FOOTER_COLUMNS.map((col) => (
-            <Col xs={24} sm={8} lg={8} key={col.title} className="footer__col">
-              <h3 className="footer__col-title">{col.title}</h3>
-              <ul className="footer__col-list">
-                {col.links.map((link) => (
-                  <li key={link.label} className="footer__col-item">
-                    {link.external ? (
-                      <a
-                        href={link.to}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {link.label}
-                      </a>
-                    ) : (
-                      <Link to={link.to} state={link.state}>
-                        {link.label}
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </Col>
-          ))}
+            {FOOTER_COLUMNS.map((col) => (
+              <Col
+                xs={12}
+                md={8}
+                key={col.title}
+                className="footer__col"
+              >
+                <h3 className="footer__col-title">{col.title}</h3>
+                <ul className="footer__col-list">
+                  {col.links.map((link) => (
+                    <li key={link.label} className="footer__col-item">
+                      {link.external ? (
+                        <a
+                          href={link.to}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {link.label}
+                        </a>
+                      ) : (
+                        <Link to={link.to} state={link.state}>
+                          {link.label}
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </Col>
+            ))}
           </Row>
         </Col>
       </Row>
