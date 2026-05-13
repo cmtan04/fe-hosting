@@ -17,11 +17,6 @@ export const items = () => [
     label: <Link to={ROUTER_PATH.HOME}>Trang chủ</Link>,
   },
   {
-    key: 2,
-    label: <Link to={ROUTER_PATH.LOCATIONS}>Danh sách địa điểm</Link>,
-    
-  },
-  {
     key: 3,
     label: <span>Khu vực</span>,
     children: [

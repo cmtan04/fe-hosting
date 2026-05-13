@@ -74,8 +74,8 @@ export const LocationList = () => {
           {Array.from({ length: 8 }, (_, index) => (
             <Col
               xs={24}
-              sm={12}
-              lg={viewMode === "grid" ? 8 : 24}
+              sm={viewMode === "grid" ? 12 : 24}
+              md={viewMode === "grid" ? 8 : 24}
               xl={viewMode === "grid" ? 6 : 24}
               key={index}
             >
@@ -146,7 +146,7 @@ export const LocationList = () => {
               <Col
                 xs={24}
                 sm={viewMode === "grid" ? 12 : 24}
-                lg={viewMode === "grid" ? 8 : 24}
+                md={viewMode === "grid" ? 8 : 24}
                 key={locationItem.locationCode}
               >
                 {viewMode === "grid" && isSmall ? (
@@ -184,7 +184,7 @@ export const LocationList = () => {
       <div className="location__list">
         <Row gutter={[24, 24]}>
           {isDesktop && (
-            <Col xs={0} lg={8}>
+            <Col span={8}>
               <LocationFilterDrawer
                 open={false}
                 onClose={() => {}}
@@ -242,13 +242,21 @@ export const LocationList = () => {
                 {!isDesktop && (
                   <Button
                     icon={<FilterOutlined />}
-                    onClick={() => setIsFilterOpen(true)}
+                    onClick={() => setIsFilterOpen(!isFilterOpen)}
                   >
                     Lọc
                   </Button>
                 )}
               </div>
             </div>
+            {!isDesktop && isFilterOpen && (
+              <LocationFilterDrawer
+                open={isFilterOpen}
+                onClose={() => setIsFilterOpen(false)}
+                initialFilter={filter}
+                onApply={handleFilterApply}
+              />
+            )}
 
             {isFetching && !isLoading && !isFetchingNextPage && (
               <p className="location__list-status">
@@ -260,15 +268,6 @@ export const LocationList = () => {
           </Col>
         </Row>
       </div>
-
-      {!isDesktop && (
-        <LocationFilterDrawer
-          open={isFilterOpen}
-          onClose={() => setIsFilterOpen(false)}
-          initialFilter={filter}
-          onApply={handleFilterApply}
-        />
-      )}
     </div>
   );
 };

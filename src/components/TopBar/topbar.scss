@@ -12,10 +12,16 @@
   height: 64px;
   padding: 8px 0px;
   background-color: $white_color;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  display: block;
   border-bottom: 1px solid $secondary_color;
+
+  .top__bar-desktop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+  }
 
   .left {
     display: flex;
@@ -33,6 +39,38 @@
     align-items: center;
     padding: 0px 16px;
     gap: 12px;
+  }
+
+  &-mobile {
+    display: none;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 12px;
+  }
+
+  &-mobile-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+  }
+
+  &-mobile-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &-mobile-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
   }
 
   // ─── Logo ───
@@ -68,6 +106,15 @@
       width: 1px;
       height: 100%;
       background-color: $text_color_1;
+    }
+
+    &--mobile {
+      flex: 1 1 auto;
+      justify-content: center;
+
+      &::after {
+        display: none;
+      }
     }
   }
 
@@ -253,9 +300,35 @@
     }
   }
 
+  .topbar__actions-trigger {
+    border: 2px solid $text_color_1;
+    border-radius: 999px;
+    background: $white_color;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+
+    .actions-trigger-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .actions-trigger-label {
+      font-family: $font_family_1;
+      font-size: 14px;
+      font-weight: 600;
+      color: $text_color_1;
+      white-space: nowrap;
+    }
+  }
+
   // ─── Profile Dropdown (desktop) ───
   .topbar__profile-section {
-    position: relative;
+    display: flex;
   }
 
   .profile__dropdown {
@@ -272,6 +345,9 @@
     z-index: 100;
 
     &-item {
+      border: none;
+      background: transparent;
+      width: 100%;
       padding: 8px 12px;
       cursor: pointer;
       display: flex;
@@ -378,6 +454,13 @@
     border-bottom: 1px solid darken(#ffffff, 8%);
   }
 
+  .topbar__drawer-title {
+    font-family: $font_family_1;
+    font-size: 18px;
+    font-weight: 700;
+    color: $color-text-primary;
+  }
+
   .topbar__drawer-logo {
     display: flex;
     align-items: center;
@@ -421,6 +504,28 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+  }
+
+  .topbar__drawer-content--menu {
+    padding: 8px 0 16px;
+  }
+
+  .topbar__drawer-content--actions {
+    padding: 0 0 16px;
+  }
+
+  &--menu {
+    .ant-drawer-content-wrapper {
+      width: 320px !important;
+      max-width: 90vw;
+    }
+  }
+
+  &--actions {
+    .ant-drawer-content-wrapper {
+      width: 360px !important;
+      max-width: 90vw;
+    }
   }
 
   // ─── Drawer Menu ───
@@ -536,6 +641,89 @@
       }
     }
   }
+
+  .topbar__drawer-actions-list {
+    padding: 12px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .topbar__drawer-actions-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .topbar__drawer-actions-heading {
+    font-family: $font_family_1;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: $text_color_1;
+    opacity: 0.72;
+  }
+
+  .topbar__drawer-action-item {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .topbar__drawer-action-row {
+    width: 100%;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: none;
+
+    &.ant-btn {
+      height: auto;
+      line-height: 1.5;
+    }
+
+    &--primary {
+      color: $white_color !important;
+      background: $text_color_1;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    &:hover {
+      background-color: $background-color-1;
+      color: $text_color_3 !important;
+    }
+
+    &--primary:hover {
+      background-color: $text_color_4;
+      border-color: $text_color_4;
+      color: $white_color !important;
+    }
+  }
+
+  .topbar__drawer-action-row-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+
+    img {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  .topbar__drawer-action-row-label {
+    flex: 1 1 auto;
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -543,8 +731,12 @@
 // ═══════════════════════════════════════════
 @media (max-width: 1024px) {
   .top__bar {
-    .left {
-      gap: 16px;
+    .top__bar-desktop {
+      display: none;
+    }
+
+    &-mobile {
+      display: flex;
     }
 
     &-logo {
@@ -630,13 +822,11 @@
 // ═══════════════════════════════════════════
 // Link style reset (scoped to TopBar)
 // ═══════════════════════════════════════════
-.top__bar {
-  a {
-    text-decoration: none !important;
-    color: $text_color_1 !important;
+.top__bar a {
+  text-decoration: none !important;
+  color: $text_color_1 !important;
 
-    &:hover {
-      color: $text_color_4 !important;
-    }
+  &:hover {
+    color: $text_color_4 !important;
   }
 }

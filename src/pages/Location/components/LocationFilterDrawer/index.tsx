@@ -42,7 +42,7 @@ export const LocationFilterDrawer = ({
 }: LocationFilterProps) => {
   const [form] = Form.useForm();
   const screens = useBreakpoint();
-  const isDesktop = screens.md;
+  const isDesktop = screens.lg;
 
   const { data: locationTypes } = useQuery({
     queryKey: [LocationEndpoint.GET_ALL_LOCATION_TYPE],
