@@ -29,7 +29,6 @@ export const LocationOwner = ({
         }}
       />
       <div className="owner-info">
-        <h1 className="title">Liên hệ</h1>
         <p className="owner-name">
           <span>
             <img src={profileIcn} alt="Profile" />
@@ -70,7 +69,7 @@ export const LocationOwner = ({
           <span>
             <img src={message} alt="Message" />
           </span>
-          <span>Liên hệ</span>
+          <span>Liên hệ ngay</span>
         </Button>
       </div>
     </div>

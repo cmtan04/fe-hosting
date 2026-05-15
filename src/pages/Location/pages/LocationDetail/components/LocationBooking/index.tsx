@@ -20,55 +20,33 @@ export const LocationBooking = ({
 
   return (
     <div className="location-booking">
-      <div className="row-1">
-        <p className="label">Gia thue</p>
-        <p className={`tag ${isRented ? "rented" : "available"}`}>
-          {isRented ? "Da thue" : "Co the lien he"}
-        </p>
-      </div>
 
       <div className="row-2">
         <div className="sum-price">
           <p className="sum-price-end">
-            <sup>d</sup>
+            <sup>đ</sup>
             {formatMoney(displayPrice)}/ {locationDetail?.locationPriceUnit}
           </p>
         </div>
 
         <div className="detail-price">
           <div className="detail-price-rent">
-            <p className="detail-price-label">Gia thue</p>
+            <p className="detail-price-label">Giá</p>
             <p className="detail-price-value">
-              <sup>d</sup>
+              <sup>đ</sup>
               {formatMoney(displayPrice)}/ {locationDetail?.locationPriceUnit}
             </p>
           </div>
 
           {locationDetail?.minTime && locationDetail?.maxTime && (
             <div className="detail-price-time">
-              <p className="detail-price-label">Thoi gian thue</p>
+              <p className="detail-price-label">Thời gian thuê</p>
               <p className="detail-price-value">
                 {locationDetail.minTime} - {locationDetail.maxTime}
               </p>
             </div>
           )}
         </div>
-
-        <Button
-          type="primary"
-          block
-          icon={<MessageOutlined />}
-          disabled={isRented || !locationDetail?.ownerCode}
-          onClick={() =>
-            onContactOwner(
-              locationDetail?.ownerCode ?? "",
-              MessageTypeEnum.RENT,
-              locationDetail?.locationCode,
-            )
-          }
-        >
-          Nhan chu phong
-        </Button>
       </div>
     </div>
   );
