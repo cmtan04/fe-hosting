@@ -1,6 +1,6 @@
+import { MessageOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import type { LocationDto } from "@/api/dtos/location.dto";
-import message from "@/assets/svg/profile/chat.svg";
 import { MessageTypeEnum } from "@/common/constants/constants";
 import { formatMoney } from "@/common/contexts/format";
 import "./style.scss";
@@ -14,38 +14,41 @@ export const LocationBooking = ({
   locationDetail,
   onContactOwner,
 }: LocationBookingProps) => {
+  const isRented = locationDetail?.renterCode !== null;
+  const displayPrice =
+    locationDetail?.locationPriceAfterDeal || locationDetail?.locationPrice || 0;
+
   return (
     <div className="location-booking">
       <div className="row-1">
-        <p className="label">Giá thuê</p>
-        <p className="tag">
-          {locationDetail?.renterCode !== null ? "Đã thuê" : "Còn trống"}
+        <p className="label">Gia thue</p>
+        <p className={`tag ${isRented ? "rented" : "available"}`}>
+          {isRented ? "Da thue" : "Co the lien he"}
         </p>
       </div>
+
       <div className="row-2">
         <div className="sum-price">
           <p className="sum-price-end">
-            <sup>đ</sup>
-            {formatMoney(locationDetail?.locationPrice || locationDetail?.locationPriceAfterDeal)}/ {locationDetail?.locationPriceUnit}
+            <sup>d</sup>
+            {formatMoney(displayPrice)}/ {locationDetail?.locationPriceUnit}
           </p>
         </div>
 
         <div className="detail-price">
           <div className="detail-price-rent">
-            <p className="detail-price-label">Giá thuê</p>
+            <p className="detail-price-label">Gia thue</p>
             <p className="detail-price-value">
-              <sup>đ</sup>
-              {formatMoney(locationDetail?.locationPrice || locationDetail?.locationPriceAfterDeal)}/ {locationDetail?.locationPriceUnit}
+              <sup>d</sup>
+              {formatMoney(displayPrice)}/ {locationDetail?.locationPriceUnit}
             </p>
           </div>
 
-          
-
           {locationDetail?.minTime && locationDetail?.maxTime && (
             <div className="detail-price-time">
-              <p className="detail-price-label">Thời gian thuê</p>
+              <p className="detail-price-label">Thoi gian thue</p>
               <p className="detail-price-value">
-                {locationDetail?.minTime} - {locationDetail?.maxTime}
+                {locationDetail.minTime} - {locationDetail.maxTime}
               </p>
             </div>
           )}
@@ -54,7 +57,8 @@ export const LocationBooking = ({
         <Button
           type="primary"
           block
-          disabled={locationDetail?.renterCode !== null}
+          icon={<MessageOutlined />}
+          disabled={isRented || !locationDetail?.ownerCode}
           onClick={() =>
             onContactOwner(
               locationDetail?.ownerCode ?? "",
@@ -63,7 +67,7 @@ export const LocationBooking = ({
             )
           }
         >
-          Thuê ngay
+          Nhan chu phong
         </Button>
       </div>
     </div>

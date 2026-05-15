@@ -5,9 +5,7 @@ import location from "../../assets/images/profile/icn_location.svg";
 import logout from "../../assets/images/profile/icn_logout.svg";
 import profile from "../../assets/images/profile/icn_profile.svg";
 import down from "../../assets/svg/icn-down_single.svg";
-import bill from "../../assets/svg/profile/bill.svg";
 import chat from "../../assets/svg/profile/chat.svg";
-import contract from "../../assets/svg/profile/contract.svg";
 import payment from "../../assets/svg/profile/payment.svg";
 import { LOCATION_TYPE, RENT_TYPE, TYPE_LOG_OUT } from "../constants/constants";
 
@@ -78,27 +76,15 @@ export const profileItems: ProfileItem[] = [
   },
   {
     key: 3,
-    icon: contract,
-    label: "Hợp đồng của tôi",
-    href: ROUTER_PATH.PROFILE_LOCATION,
-  },
-  {
-    key: 4,
     icon: chat,
     label: "Đoạn chat",
     href: ROUTER_PATH.PROFILE_CHAT,
   },
   {
-    key: 5,
-    icon: bill,
-    label: "Hóa đơn",
-    href: ROUTER_PATH.PROFILE_LOCATION,
-  },
-  {
-    key: 6,
+    key: 4,
     icon: payment,
-    label: "Thanh toán",
-    href: ROUTER_PATH.PROFILE_LOCATION,
+    label: "Gói đăng tin",
+    href: ROUTER_PATH.PROFILE_OWNER_PACKAGE,
   },
   {
     key: TYPE_LOG_OUT,

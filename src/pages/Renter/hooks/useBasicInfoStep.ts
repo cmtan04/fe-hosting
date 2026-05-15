@@ -67,6 +67,8 @@ export const useBasicInfoStep = ({
       availableTo: values.availableTo
         ? dayjs(values.availableTo).format(DATE_FORMAT)
         : undefined,
+      cancellationFeePercent: values.cancellationFeePercent,
+      rescheduleFeePercent: values.rescheduleFeePercent,
     });
   };
 
@@ -90,6 +92,8 @@ export const useBasicInfoStep = ({
       availableTo: values.availableTo
         ? dayjs(values.availableTo).format(DATE_FORMAT)
         : undefined,
+      cancellationFeePercent: values.cancellationFeePercent,
+      rescheduleFeePercent: values.rescheduleFeePercent,
     });
   };
 
@@ -137,6 +141,8 @@ export const useBasicInfoStep = ({
       availableTo: draft.basicInfo.availableTo
         ? dayjs(draft.basicInfo.availableTo, DATE_FORMAT)
         : undefined,
+      cancellationFeePercent: draft.basicInfo.cancellationFeePercent,
+      rescheduleFeePercent: draft.basicInfo.rescheduleFeePercent,
     }),
     [draft.basicInfo],
   );

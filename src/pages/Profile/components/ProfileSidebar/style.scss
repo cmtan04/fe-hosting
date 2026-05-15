@@ -1,0 +1,47 @@
+@import "@/color.scss";
+
+.profile-sidebar {
+  background-color: $primary_color;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba($white_color, 0.1);
+  height: fit-content;
+  position: sticky;
+  top: 90px;
+
+  .profile-menu {
+    background: transparent;
+    border: none;
+    color: $white_color;
+
+    .ant-menu-item {
+      height: 50px;
+      line-height: 50px;
+      margin: 4px 0;
+      color: rgba($white_color, 0.7);
+
+      &:hover {
+        color: #c9a84c !important;
+        background-color: rgba(#c9a84c, 0.1) !important;
+      }
+
+      &-selected {
+        background-color: rgba(#c9a84c, 0.2) !important;
+        color: #c9a84c !important;
+        font-weight: 600;
+
+        &::after {
+          border-right: 3px solid #c9a84c !important;
+        }
+      }
+
+      .anticon {
+        font-size: 18px;
+      }
+    }
+
+    .ant-menu-item-divider {
+      border-top-color: rgba($white_color, 0.1);
+    }
+  }
+}

@@ -19,6 +19,8 @@ export interface BasicInfoStepFormValues {
   hasTimeLimit?: boolean;
   availableFrom?: dayjs.Dayjs;
   availableTo?: dayjs.Dayjs;
+  cancellationFeePercent?: number;
+  rescheduleFeePercent?: number;
 }
 
 export interface BasicInfoStepSubmitValue {
@@ -32,6 +34,8 @@ export interface BasicInfoStepSubmitValue {
   hasTimeLimit: boolean;
   availableFrom?: string;
   availableTo?: string;
+  cancellationFeePercent?: number;
+  rescheduleFeePercent?: number;
 }
 
 export interface BasicInfoDraftPatch {
@@ -45,6 +49,8 @@ export interface BasicInfoDraftPatch {
   hasTimeLimit?: boolean;
   availableFrom?: string;
   availableTo?: string;
+  cancellationFeePercent?: number;
+  rescheduleFeePercent?: number;
 }
 
 export interface AddressDraftPatch {

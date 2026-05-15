@@ -1,5 +1,6 @@
 import type {
   CreateLocationRequestDto,
+  LocationDto,
   LocationServiceSelectionDto,
 } from "../../api/dtos/location.dto";
 import {
@@ -7,6 +8,7 @@ import {
   DEFAULT_LOCATION_LONGITUDE,
 } from "../mapAddress/locationDefaults";
 import {
+  mapLocationMediaToEditable,
   mapEditableMediaToRequest,
   type EditableLocationMediaItem,
 } from "./media";
@@ -23,6 +25,8 @@ export interface CreateLocationDraft {
     hasTimeLimit: boolean;
     availableFrom?: string;
     availableTo?: string;
+    cancellationFeePercent?: number;
+    rescheduleFeePercent?: number;
     media: EditableLocationMediaItem[];
   };
   address: {
@@ -52,6 +56,8 @@ export const createEmptyLocationDraft = (): CreateLocationDraft => ({
     hasTimeLimit: false,
     availableFrom: undefined,
     availableTo: undefined,
+    cancellationFeePercent: 0,
+    rescheduleFeePercent: 0,
     media: [],
   },
   address: {
@@ -77,6 +83,8 @@ export const createCreateLocationRequestFromDraft = (
   description: draft.basicInfo.description || undefined,
   note: draft.basicInfo.note || undefined,
   area: draft.basicInfo.area,
+  cancellationFeePercent: draft.basicInfo.cancellationFeePercent,
+  rescheduleFeePercent: draft.basicInfo.rescheduleFeePercent,
   pricing: {
     price: Number(draft.basicInfo.price ?? 0),
     priceUnit: draft.basicInfo.priceUnit,
@@ -129,3 +137,54 @@ export const createCreateLocationRequestFromDraft = (
 export const mapDraftToCreateLocationRequest = (
   draft: CreateLocationDraft,
 ): CreateLocationRequestDto => createCreateLocationRequestFromDraft(draft);
+
+export const mapLocationToDraft = (location: LocationDto): CreateLocationDraft => {
+  const primaryAddress = location.address?.[0];
+
+  return {
+    basicInfo: {
+      typeCode: location.typeCode,
+      locationName: location.locationName,
+      description: location.locationDescription ?? "",
+      note: location.locationNote ?? "",
+      area: location.locationArea ?? undefined,
+      price: Number(location.locationPrice ?? 0),
+      priceUnit: location.locationPriceUnit || "tháng",
+      hasTimeLimit: Boolean(location.minTime || location.maxTime),
+      availableFrom: location.minTime,
+      availableTo: location.maxTime,
+      cancellationFeePercent: location.cancellationFeePercent ?? 0,
+      rescheduleFeePercent: location.rescheduleFeePercent ?? 0,
+      media: mapLocationMediaToEditable(
+        location.media,
+        location.locationLogo || undefined,
+      ),
+    },
+    address: {
+      addressDetail: primaryAddress?.addressName ?? "",
+      fullAddress: primaryAddress?.fullAddress ?? "",
+      ward: primaryAddress?.addressWard ?? "",
+      city: primaryAddress?.addressCity || primaryAddress?.addressProvince || "",
+      country: primaryAddress?.addressCountry ?? "",
+      region: primaryAddress?.addressRegion ?? "",
+      latitude: Number(primaryAddress?.addressLat ?? DEFAULT_LOCATION_LATITUDE),
+      longitude: Number(primaryAddress?.addressLong ?? DEFAULT_LOCATION_LONGITUDE),
+      description: primaryAddress?.addressDescription ?? "",
+      note: primaryAddress?.addressNote ?? "",
+    },
+    services:
+      location.services?.map((service) => {
+        const basePrice = Number(service.basePrice ?? service.servicePrice ?? 0);
+
+        return {
+          serviceCode: service.serviceCode,
+          name: service.serviceName || service.name,
+          description: service.description || service.serviceDescription,
+          isFree: service.isFree ?? basePrice <= 0,
+          basePrice,
+          unit: service.unit ?? "Trọn gói",
+          quantity: Number(service.quantity ?? 1),
+        };
+      }) ?? [],
+  };
+};

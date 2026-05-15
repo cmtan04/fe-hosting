@@ -5,7 +5,9 @@ import { useNavigate } from "react-router-dom";
 import {
   createLocation,
   getAllLocationType,
+  updateLocation,
 } from "../../../api/configs/location.config";
+import { getMyOwnerPackage } from "../../../api/configs/payment.config";
 import {
   uploadImage,
   uploadVideo,
@@ -36,13 +38,30 @@ import type {
   AddressDraftPatch,
   AddressAndServicesStepSubmitValue,
 } from "../../../common/types/renter";
+import { ROUTER_PATH } from "../../../router/Route";
 
-export const useRenterPostRoom = () => {
+interface UseRenterPostRoomOptions {
+  mode?: "create" | "edit";
+  locationCode?: string;
+  storageKey?: string;
+}
+
+export const useRenterPostRoom = ({
+  mode = "create",
+  locationCode,
+  storageKey,
+}: UseRenterPostRoomOptions = {}) => {
   const navigate = useNavigate();
   const { setLoading } = useLoading();
   const { showNotification } = useNotification();
-  const { draft, updateBasicInfo, updateAddress, updateServices, reset } =
-    useCreateLocationDraft();
+  const {
+    draft,
+    updateBasicInfo,
+    updateAddress,
+    updateServices,
+    reset,
+    initialize,
+  } = useCreateLocationDraft(storageKey);
   const [step, setStep] = useState(0);
 
   const { data: typeList, isLoading: typeLoading } = useQuery({
@@ -53,6 +72,16 @@ export const useRenterPostRoom = () => {
   const { data: serviceList, isLoading: serviceLoading } = useQuery({
     queryKey: [ServiceEndpoint.GET_ALL_LOCATION_SERVICE],
     queryFn: () => getAllService(),
+  });
+
+  const {
+    data: ownerPackage,
+    isLoading: ownerPackageLoading,
+    refetch: refetchOwnerPackage,
+  } = useQuery({
+    queryKey: ["owner-package-me"],
+    queryFn: getMyOwnerPackage,
+    retry: false,
   });
 
   const uploadMutation = useMutation<UploadImageResponseDto, Error, FormData>({
@@ -92,6 +121,39 @@ export const useRenterPostRoom = () => {
     mutationFn: () => createLocation(mapDraftToCreateLocationRequest(draft)),
     onSuccess: (data) => {
       showNotification(data.message, NOTI_SUCCESS);
+      refetchOwnerPackage();
+      reset();
+      navigate(-1);
+    },
+    onError: (error) => {
+      if (isAxiosError(error) && error.response?.status === 402) {
+        const apiMessage =
+          typeof error.response?.data?.message === "string"
+            ? error.response.data.message
+            : "Trial da het han. Vui long mua goi dang tin de tiep tuc.";
+        showNotification(apiMessage, NOTI_ERROR);
+        navigate(ROUTER_PATH.PROFILE_OWNER_PACKAGE);
+        return;
+      }
+
+      const apiMessage =
+        isAxiosError(error) && typeof error.response?.data?.message === "string"
+          ? error.response?.data?.message
+          : DEFAULT_MESSAGE;
+      showNotification(apiMessage, NOTI_ERROR);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: () => {
+      if (!locationCode) {
+        throw new Error("Location code is required");
+      }
+
+      return updateLocation(locationCode, mapDraftToCreateLocationRequest(draft));
+    },
+    onSuccess: (data) => {
+      showNotification(data.message, NOTI_SUCCESS);
       reset();
       navigate(-1);
     },
@@ -99,6 +161,8 @@ export const useRenterPostRoom = () => {
       const apiMessage =
         isAxiosError(error) && typeof error.response?.data?.message === "string"
           ? error.response?.data?.message
+          : error instanceof Error && error.message
+          ? error.message
           : DEFAULT_MESSAGE;
       showNotification(apiMessage, NOTI_ERROR);
     },
@@ -108,16 +172,20 @@ export const useRenterPostRoom = () => {
     setLoading(
       typeLoading ||
         serviceLoading ||
+        ownerPackageLoading ||
         uploadMutation.isPending ||
         uploadVideoMutation.isPending ||
         uploadFileMutation.isPending ||
-        createMutation.isPending,
+        createMutation.isPending ||
+        updateMutation.isPending,
     );
   }, [
     createMutation.isPending,
+    updateMutation.isPending,
     serviceLoading,
     setLoading,
     typeLoading,
+    ownerPackageLoading,
     uploadMutation.isPending,
     uploadVideoMutation.isPending,
     uploadFileMutation.isPending,
@@ -135,6 +203,8 @@ export const useRenterPostRoom = () => {
       hasTimeLimit: value.hasTimeLimit,
       availableFrom: value.availableFrom,
       availableTo: value.availableTo,
+      cancellationFeePercent: value.cancellationFeePercent,
+      rescheduleFeePercent: value.rescheduleFeePercent,
     });
     setStep(1);
   };
@@ -231,6 +301,11 @@ export const useRenterPostRoom = () => {
       return;
     }
 
+    if (mode === "edit") {
+      updateMutation.mutate();
+      return;
+    }
+
     createMutation.mutate();
   };
 
@@ -245,8 +320,10 @@ export const useRenterPostRoom = () => {
     draft,
     typeList,
     serviceList,
+    ownerPackage,
+    refetchOwnerPackage,
     isUploading: uploadMutation.isPending,
-    isSubmitting: createMutation.isPending,
+    isSubmitting: createMutation.isPending || updateMutation.isPending,
 
     // Step handlers
     handleBasicInfoNext,
@@ -263,6 +340,7 @@ export const useRenterPostRoom = () => {
 
     // Submit handler
     handleCreateLocation,
+    initialize,
 
     // Services
     updateServices,

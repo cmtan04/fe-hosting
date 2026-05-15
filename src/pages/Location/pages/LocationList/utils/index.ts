@@ -1,7 +1,7 @@
 import type { ProfileLocationFilter } from "@common/types/profile";
 
 export const DEFAULT_PAGE = 1;
-export const DEFAULT_LIMIT = 12;
+export const DEFAULT_LIMIT = 6;
 
 // ── Helpers ──────────────────────────────────────────────
 
@@ -44,14 +44,20 @@ export const buildURLFromFilter = (
   if (filter.locationType) params.set("typeCode", filter.locationType);
   if (filter.addressCity) params.set("city", filter.addressCity);
   if (filter.addressRegion) params.set("region", filter.addressRegion);
-  if (filter.minPrice !== undefined) params.set("minPrice", String(filter.minPrice));
-  if (filter.maxPrice !== undefined) params.set("maxPrice", String(filter.maxPrice));
-  if (filter.minArea !== undefined) params.set("minArea", String(filter.minArea));
-  if (filter.maxArea !== undefined) params.set("maxArea", String(filter.maxArea));
+  if (filter.minPrice !== undefined)
+    params.set("minPrice", String(filter.minPrice));
+  if (filter.maxPrice !== undefined)
+    params.set("maxPrice", String(filter.maxPrice));
+  if (filter.minArea !== undefined)
+    params.set("minArea", String(filter.minArea));
+  if (filter.maxArea !== undefined)
+    params.set("maxArea", String(filter.maxArea));
   if (filter.sortBy) params.set("sortBy", filter.sortBy);
   if (filter.sortOrder) params.set("sortOrder", filter.sortOrder);
-  if ((filter.page ?? DEFAULT_PAGE) > DEFAULT_PAGE) params.set("page", String(filter.page));
-  if ((filter.limit ?? DEFAULT_LIMIT) !== DEFAULT_LIMIT) params.set("limit", String(filter.limit));
+  if ((filter.page ?? DEFAULT_PAGE) > DEFAULT_PAGE)
+    params.set("page", String(filter.page));
+  if ((filter.limit ?? DEFAULT_LIMIT) !== DEFAULT_LIMIT)
+    params.set("limit", String(filter.limit));
 
   return params;
 };

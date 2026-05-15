@@ -12,58 +12,22 @@ interface BannerProps {
   readonly onSearch?: (value: string) => void;
 }
 
-interface BannerLocationState {
-  rent?: string;
-  location?: string;
-}
-
 const DEFAULT_TITLE = "Tìm kiếm không gian phù hợp";
 const DEFAULT_DESCRIPTION =
   "Khám phá địa điểm theo khu vực, loại hình và nhu cầu của bạn.";
 
 const DEFAULT_SEARCH_SUGGESTIONS = [
   "Hà Nội",
-  "TP. Hồ Chí Minh",
-  "Đà Nẵng",
   "Phú Quốc",
-  "Căn hộ",
-  "Văn phòng",
+  "Hội An",
+  "Quận Đống Đa",
+  "Đường Giải Phóng",
 ];
 
-const LOCATIONS_ROUTE_SUGGESTIONS = [
-  "Phòng trọ",
-  "Căn hộ",
-  "Văn phòng",
-  "Nhà nguyên căn",
-  "Hà Nội",
-  "TP. Hồ Chí Minh",
-];
-
-const PROFILE_ROUTE_SUGGESTIONS = [
-  "Lịch hẹn",
-  "Hợp đồng",
-  "Địa điểm của tôi",
-  "Tin nhắn",
-  "Doanh thu",
-  "Đánh giá",
-];
-
-const RENTER_ROUTE_SUGGESTIONS = [
-  "Đăng địa điểm mới",
-  "Mô tả địa điểm",
-  "Giá thuê",
-  "Tiện ích",
-  "Ảnh địa điểm",
-  "Địa chỉ",
-];
-
-const RENT_QUERY_SUGGESTIONS: Record<string, string[]> = {
-  motel: ["Phòng trọ giá rẻ", "Phòng trọ gần trường", "Phòng trọ có gác"],
-  apartment: ["Căn hộ studio", "Căn hộ 1 phòng ngủ", "Căn hộ full nội thất"],
-  office: ["Văn phòng nhỏ", "Coworking", "Văn phòng trung tâm"],
-  "full-house": ["Nhà nguyên căn", "Nhà nhiều phòng ngủ", "Nhà có sân"],
-  full_house: ["Nhà nguyên căn", "Nhà nhiều phòng ngủ", "Nhà có sân"],
-  venue: ["Địa điểm tổ chức sự kiện", "Sảnh tiệc", "Phòng hội nghị"],
+const REGION_SUGGESTIONS: Record<string, string[]> = {
+  north: ["Hà Nội", "Hải Phòng", "Quảng Ninh", "Mù Cang Chải", "Tà Xùa"],
+  central: ["Đà Nẵng", "Hội An", "Huế", "Quảng Bình", "Sầm Sơn"],
+  south: ["Hồ Chí Minh", "Phú Quốc", "Cần Thơ", "Vũng Tàu", "Đà Lạt"],
 };
 
 export const Banner = ({
@@ -73,50 +37,18 @@ export const Banner = ({
   onSearch,
 }: BannerProps) => {
   const location = useLocation();
-  const hasImage = Boolean(image);
+  const imgSrc = image || "/assets/banner-default.jpg";
 
   const suggestions = useMemo(() => {
     const pathname = location.pathname;
     const searchParams = new URLSearchParams(location.search);
-    const scopedTypeCode = searchParams.get("typeCode");
     const scopedRegion = searchParams.get("region");
 
     if (pathname.startsWith(ROUTER_PATH.LOCATIONS)) {
-      // Map typeCode → rent key dùng cho gợi ý
-      const typeCodeToRent: Record<string, string> = {
-        ROOM: "motel",
-        APARTMENT: "apartment",
-        OFFICE: "office",
-        HOUSE: "full-house",
-        SHOP: "venue",
-      };
-      const rentKey = scopedTypeCode
-        ? typeCodeToRent[scopedTypeCode]
-        : undefined;
-      if (rentKey && RENT_QUERY_SUGGESTIONS[rentKey]) {
-        return RENT_QUERY_SUGGESTIONS[rentKey];
-      }
-
       if (scopedRegion) {
-        return [
-          scopedRegion,
-          ...LOCATIONS_ROUTE_SUGGESTIONS.filter(
-            (suggestion) => suggestion !== scopedRegion,
-          ),
-        ];
+        return REGION_SUGGESTIONS[scopedRegion] || [];
       }
-
-      return LOCATIONS_ROUTE_SUGGESTIONS;
     }
-
-    if (pathname.startsWith(ROUTER_PATH.RENTER)) {
-      return RENTER_ROUTE_SUGGESTIONS;
-    }
-
-    if (pathname.startsWith(ROUTER_PATH.PROFILE)) {
-      return PROFILE_ROUTE_SUGGESTIONS;
-    }
-
     return DEFAULT_SEARCH_SUGGESTIONS;
   }, [location.pathname, location.search]);
 
@@ -129,10 +61,9 @@ export const Banner = ({
   };
 
   return (
-    <div className={`banner${hasImage ? " banner--has-image" : ""}`}>
-      {hasImage ? (
-        <img className="banner__background-image" src={image} alt="" />
-      ) : null}
+    <div className=" banner--has-image">
+      <img className="banner__background-image" src={imgSrc} alt="" />
+
       <div className="banner__overlay" />
       <div className="banner__content">
         <h1 className="banner__content-title">{title ?? DEFAULT_TITLE}</h1>
@@ -149,7 +80,7 @@ export const Banner = ({
         <div className="banner__suggestions">
           <span className="banner__suggestions-label">Gợi ý:</span>
           <div className="banner__suggestions-list">
-            {suggestions.map((keyword) => (
+            {suggestions?.map((keyword) => (
               <Button
                 key={keyword}
                 className="banner__suggestions-item"

@@ -5,6 +5,7 @@ import { Button, Col, Row, Pagination } from "antd";
 import { LocationCard } from "../LocationCard";
 import type { LocationDto } from "@/api/dtos/location.dto";
 import { LocationFilterDrawer } from "../LocationFilterDrawer";
+import { isFavoriteLocation } from "@common/utils/favoriteLocations";
 import "../style.scss";
 
 export const LocationListView = (props: LocationListViewProps) => {
@@ -60,7 +61,11 @@ export const LocationListView = (props: LocationListViewProps) => {
         <p className="location__list-status">Đang cập nhật danh sách...</p>
       )}
 
-      <Row gutter={[24, 24]} className="location__list-content" ref={containerRef}>
+      <Row
+        gutter={[24, 24]}
+        className="location__list-content"
+        ref={containerRef}
+      >
         {!canFetchLocations && !isEmbedded ? (
           <Col span={24}>
             <div className="location__list-state">
@@ -68,7 +73,8 @@ export const LocationListView = (props: LocationListViewProps) => {
                 Chưa hỗ trợ xem toàn bộ địa điểm
               </p>
               <p className="location__list-state-description">
-                Hãy chọn loại hình hoặc khu vực từ menu để xem danh sách phù hợp.
+                Hãy chọn loại hình hoặc khu vực từ menu để xem danh sách phù
+                hợp.
               </p>
             </div>
           </Col>
@@ -131,7 +137,7 @@ export const LocationListView = (props: LocationListViewProps) => {
                   price={location.locationPrice}
                   priceUnit={location.locationPriceUnit}
                   image={location.locationLogo}
-                  isFavourite={false}
+                  isFavourite={isFavoriteLocation(location.locationCode)}
                   onClick={handleCardClick}
                 />
               </Col>
@@ -140,7 +146,13 @@ export const LocationListView = (props: LocationListViewProps) => {
       </Row>
 
       {canFetchLocations && !locationLoading && !isError && totalItems > 0 ? (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '32px' }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "32px",
+          }}
+        >
           <Pagination
             current={currentPage}
             total={totalItems}

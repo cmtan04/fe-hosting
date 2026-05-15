@@ -1,6 +1,7 @@
 import { Col, Row } from "antd";
 import type { LocationDto } from "@api/dtos/location.dto";
 import { LocationCard } from "@/pages/Location/components/LocationCard";
+import { isFavoriteLocation } from "@common/utils/favoriteLocations";
 import "./style.scss";
 
 interface RelatedLocationsProps {
@@ -44,10 +45,13 @@ export const RelatedLocations = ({
                   description={relatedLocation.locationDescription}
                   address={relatedLocation.address?.[0]?.fullAddress}
                   rate={relatedLocation.locationRate}
-                  price={relatedLocation.locationPrice || relatedLocation.locationPriceAfterDeal}
+                  price={
+                    relatedLocation.locationPrice ||
+                    relatedLocation.locationPriceAfterDeal
+                  }
                   priceUnit={relatedLocation.locationPriceUnit}
                   image={relatedLocation.locationLogo || ""}
-                  isFavourite={false}
+                  isFavourite={isFavoriteLocation(relatedLocation.locationCode)}
                   onClick={onCardClick}
                 />
               ))

@@ -1,19 +1,17 @@
 import "./style.scss";
 import { Col, Rate, Row, Tooltip } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRequireLoginAction } from "../../../../common/hooks/useRequireLoginAction";
 import { useShare } from "@/common/hooks/useShare";
+import { toggleFavoriteLocation } from "@common/utils/favoriteLocations";
 
 import {
   EditOutlined,
   EnvironmentOutlined,
-  FileTextOutlined,
   HeartFilled,
   HeartOutlined,
-  HomeOutlined,
-  InfoCircleOutlined,
   ShareAltOutlined,
-  TagOutlined,
+  StarFilled,
 } from "@ant-design/icons";
 
 interface LocationBarProps {
@@ -39,12 +37,31 @@ export const LocationBar = (props: LocationBarProps) => {
   const { requireLoginAction } = useRequireLoginAction();
   const { handleShare: shareAction } = useShare();
 
+  useEffect(() => {
+    setIsFavourite(props.isFavourite);
+  }, [props.isFavourite]);
+
   const handleFavourite = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     requireLoginAction(
       () => {
         setIsFavourite((prev) => !prev);
-        props.onFavouriteToggle?.(props.code);
+        if (props.onFavouriteToggle) {
+          props.onFavouriteToggle(props.code);
+          return;
+        }
+
+        toggleFavoriteLocation({
+          locationCode: props.code,
+          typeName: props.typeName,
+          name: props.name,
+          description: props.description,
+          address: props.address,
+          rate: props.rate,
+          price: props.price,
+          priceUnit: props.priceUnit,
+          image: props.image,
+        });
       },
       {
         message: "Bạn cần đăng nhập để thêm địa điểm vào danh sách yêu thích.",
@@ -66,14 +83,20 @@ export const LocationBar = (props: LocationBarProps) => {
     }
   };
 
-  const truncateText = (text: string = "", maxLength: number) => {
-    return text.length > maxLength
-      ? text.substring(0, maxLength) + "..."
-      : text;
-  };
-
   return (
-    <Row gutter={[16,16]} className="location__bar" onClick={() => props.onClick?.(props.code)}>
+    <Row
+      gutter={[16, 16]}
+      className="location__bar"
+      onClick={() => props.onClick?.(props.code)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          props.onClick?.(props.code);
+        }
+      }}
+    >
       <Col xs={24} sm={8} className="location__bar-image">
         <img src={props.image} alt="" />
         <div className="action">
@@ -103,9 +126,12 @@ export const LocationBar = (props: LocationBarProps) => {
           </div>
         </div>
 
+        <div className="location__bar-rate">
+            {props.rate} <StarFilled />
+        </div>
+
         <p className="location__bar-address">
-          <EnvironmentOutlined /> {" "}
-          {props.address}
+          <EnvironmentOutlined /> {props.address}
         </p>
 
         <Tooltip title={props.description}>

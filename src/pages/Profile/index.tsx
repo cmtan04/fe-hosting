@@ -2,6 +2,7 @@ import { Col, Row } from "antd";
 import { Outlet } from "react-router-dom";
 import "./style.scss";
 import { TopBar } from "@components/TopBar/TopBar";
+import { ProfileSidebar } from "./components/ProfileSidebar";
 
 export const Profile = () => {
   return (
@@ -9,8 +10,8 @@ export const Profile = () => {
       <div className="profile__top">
         <TopBar />
       </div>
-      <Row gutter={[16, 16]} className="profile__body">
-        <Col xl ={18}  xs={24} className="profile__body-content">
+      <Row className="profile__body">
+        <Col span={24} className="profile__body-content">
           <Outlet />
         </Col>
       </Row>

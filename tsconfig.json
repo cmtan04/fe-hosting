@@ -25,7 +25,7 @@
     "types": ["node"],
     "skipLibCheck": true,
 
-    "ignoreDeprecations": "5.0",
+    "ignoreDeprecations": "6.0",
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
@@ -40,5 +40,5 @@
       "@socket/*": ["src/socket/*"]
     }
   },
-  "include": ["src", "src/pages/Renter/.tsx"]
+  "include": ["src"]
 }

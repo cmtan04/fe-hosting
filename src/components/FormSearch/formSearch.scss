@@ -24,7 +24,7 @@
     display: inline-flex;
     align-items: stretch;
     height: 40px;
-    width: 100%;
+    width: min(720px, 80%);
     border-radius: 6px;
     overflow: hidden;
     transition: all 0.3s ease;

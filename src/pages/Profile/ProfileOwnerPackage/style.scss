@@ -1,0 +1,72 @@
+.profile-owner-package {
+  width: 100%;
+  min-height: 70vh;
+  padding: 24px;
+  background: #f8fafc;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+
+    h3 {
+      margin: 0 0 4px;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  &__summary,
+  &__plan,
+  &__payment {
+    border-radius: 8px;
+  }
+
+  &__date {
+    margin: 4px 0 0;
+    color: #102a43;
+    font-weight: 600;
+  }
+
+  &__loading {
+    padding: 24px 0;
+    color: #61758a;
+    text-align: center;
+  }
+
+  &__planHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+
+    h4 {
+      margin: 0;
+    }
+  }
+
+  &__price {
+    color: #0f766e;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
+  }
+
+  &__payment {
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-owner-package {
+    padding: 16px;
+
+    &__header {
+      flex-direction: column;
+    }
+  }
+}

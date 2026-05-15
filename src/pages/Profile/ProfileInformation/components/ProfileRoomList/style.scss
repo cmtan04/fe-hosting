@@ -20,6 +20,24 @@
       font-weight: 700;
       color: #00293a;
     }
+
+    .room-list-close {
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 1px solid #dfe8ec;
+      background: #ffffff;
+      color: #00293a;
+      cursor: pointer;
+      flex-shrink: 0;
+
+      &:hover {
+        background: #f4f8fa;
+      }
+    }
   }
 
   .room-list-content {
@@ -29,7 +47,7 @@
     overflow-x: auto;
     padding: 16px;
     scroll-behavior: smooth;
-    
+
     // Webkit browsers (Chrome, Safari, Edge)
     &::-webkit-scrollbar {
       height: 8px;
@@ -42,15 +60,14 @@
       cursor: pointer;
     }
 
-
     // Đảm bảo LocationCard không bị co lại khi dùng flex-nowrap
     & > * {
       flex: 0 0 auto;
     }
-    
+
     .location__card {
-        width: 220px;
-        margin-bottom: 4px; // Chừa chỗ cho shadow nếu có
+      width: 220px;
+      margin-bottom: 4px; // Chừa chỗ cho shadow nếu có
     }
   }
 

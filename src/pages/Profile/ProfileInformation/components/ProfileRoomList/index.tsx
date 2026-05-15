@@ -1,43 +1,78 @@
 import { Col } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
 import { LocationCard } from "../../../../Location/components/LocationCard";
-import { useProfileRoomList } from "../../hooks/useProfileRoomList";
-import { useNavigate } from "react-router-dom";
-import { ROUTER_PATH } from "../../../../../router/Route";
+import type { LocationDto } from "@api/dtos/location.dto";
 import "./style.scss";
 
 interface ProfileRoomListProps {
-  userCode?: string;
+  title: string;
+  rooms: LocationDto[];
+  isLoading: boolean;
+  isError: boolean;
+  totalItems: number;
+  loadingText: string;
+  errorText: string;
+  emptyText: string;
+  onCardClick: (code: string) => void;
+  onFavouriteToggle?: (code: string) => void;
+  onEdit?: (code: string) => void;
+  isFavourite?: (room: LocationDto) => boolean;
+  canEdit?: (room: LocationDto) => boolean;
+  getPrice?: (room: LocationDto) => number | undefined;
+  showEdit?: boolean;
+  onClose?: () => void;
 }
 
-export const ProfileRoomList = ({ userCode }: ProfileRoomListProps) => {
-  const { rooms, isLoading, isError, totalItems } = useProfileRoomList(userCode);
-  const navigate = useNavigate();
+export const ProfileRoomList = ({
+  title,
+  rooms,
+  isLoading,
+  isError,
+  totalItems,
+  loadingText,
+  errorText,
+  emptyText,
+  onCardClick,
+  onFavouriteToggle,
+  onEdit,
+  isFavourite,
+  canEdit,
+  getPrice,
+  showEdit,
+  onClose,
+}: ProfileRoomListProps) => {
+  const resolvePrice = (room: LocationDto) =>
+    getPrice ? getPrice(room) : room.locationPriceAfterDeal;
 
-  const handleCardClick = (code: string) => {
-    const url = ROUTER_PATH.LOCATION_DETAIL.replace(":code", code);
-    navigate(url, { state: { code } });
-  };
+  const resolveFavouriteState = (room: LocationDto) =>
+    isFavourite ? isFavourite(room) : false;
 
-  const handleEdit = (code: string) => {
-    const url = ROUTER_PATH.PROFILE_LOCATION_DETAIL.replace(":code", code);
-    navigate(url, { state: { code } });
-  };
+  const resolveShowEdit = (room: LocationDto) =>
+    Boolean(showEdit && (canEdit ? canEdit(room) : true));
 
   return (
     <Col span={24} className="profile__room-list">
       <div className="room-list-header">
-        <h2>Phòng của bạn ({totalItems})</h2>
+        <h2>
+          {title} ({totalItems})
+        </h2>
+        {onClose && (
+          <button
+            type="button"
+            className="room-list-close"
+            onClick={onClose}
+            aria-label="Đóng danh sách phòng đã thích"
+          >
+            <CloseOutlined />
+          </button>
+        )}
       </div>
 
       <div className="room-list-content">
-        {isLoading && (
-          <p className="room-list-status">Đang tải danh sách phòng...</p>
-        )}
-        {isError && (
-          <p className="room-list-status">Không thể tải danh sách phòng.</p>
-        )}
+        {isLoading && <p className="room-list-status">{loadingText}</p>}
+        {isError && <p className="room-list-status">{errorText}</p>}
         {!isLoading && !isError && rooms?.length === 0 && (
-          <p className="room-list-empty">Bạn chưa có phòng nào.</p>
+          <p className="room-list-empty">{emptyText}</p>
         )}
         {!isLoading &&
           !isError &&
@@ -50,16 +85,16 @@ export const ProfileRoomList = ({ userCode }: ProfileRoomListProps) => {
               description={room.locationDescription}
               address={room.address?.[0]?.fullAddress}
               rate={room.locationRate}
-              price={room.locationPriceAfterDeal}
+              price={resolvePrice(room)}
               image={room.locationLogo}
-              isFavourite={false}
-              showEdit={true}
-              onEdit={handleEdit}
-              onClick={handleCardClick}
+              isFavourite={resolveFavouriteState(room)}
+              showEdit={resolveShowEdit(room)}
+              onFavouriteToggle={onFavouriteToggle}
+              onEdit={onEdit}
+              onClick={onCardClick}
             />
           ))}
       </div>
     </Col>
-
   );
 };

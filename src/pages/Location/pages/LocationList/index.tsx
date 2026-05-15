@@ -14,6 +14,7 @@ import { DEFAULT_MESSAGE } from "@common/constants/constants";
 import type { LocationDto } from "@api/dtos/location.dto";
 import { useState, useEffect, useRef } from "react";
 import { LocationBar } from "../../components/LocationBar";
+import { isFavoriteLocation } from "@common/utils/favoriteLocations";
 
 export const LocationList = () => {
   const {
@@ -138,7 +139,7 @@ export const LocationList = () => {
                 locationItem.locationPriceAfterDeal,
               priceUnit: locationItem.locationPriceUnit,
               image: locationItem.locationLogo,
-              isFavourite: false,
+              isFavourite: isFavoriteLocation(locationItem.locationCode),
               onClick: handleCardClick,
             };
 

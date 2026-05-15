@@ -107,6 +107,32 @@ export const BasicInfoFields = () => {
         placeholder="Nhập mô tả chi tiết về không gian của bạn (ví dụ: Ưu điểm, Quy định, ...)"
         vertical={true}
       />
+      <Row gutter={[16, 16]}>
+        <Col span={12}>
+          <FormNumber
+            label="Phí hủy phòng (%)"
+            name="cancellationFeePercent"
+            placeholder="0"
+            vertical={true}
+            min={0}
+            max={100}
+            formatter={(value: any) => `${value}%`}
+            parser={(value: any) => value!.replace("%", "")}
+          />
+        </Col>
+        <Col span={12}>
+          <FormNumber
+            label="Phí đổi lịch (%)"
+            name="rescheduleFeePercent"
+            placeholder="0"
+            vertical={true}
+            min={0}
+            max={100}
+            formatter={(value: any) => `${value}%`}
+            parser={(value: any) => value!.replace("%", "")}
+          />
+        </Col>
+      </Row>
       {/* <Form.Item name="hasTimeLimit" valuePropName="checked">
         <Checkbox>Giới hạn thời gian cho thuê</Checkbox>
       </Form.Item>

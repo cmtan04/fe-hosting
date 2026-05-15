@@ -16,6 +16,7 @@ import { LocationList } from "@pages/Location/pages/LocationList";
 import { Home } from "@pages/Home/pages/Home";
 import { HomePage } from "@pages/Home/pages/HomePage/HomePage";
 import { LocationDetail } from "@pages/Location/pages/LocationDetail";
+import { ProfileOwnerPackage } from "@pages/Profile/ProfileOwnerPackage";
 
 export const WebRouter = () => (
   <Routes>
@@ -64,6 +65,10 @@ export const WebRouter = () => (
         <Route
           path={ROUTER_PATH.PROFILE_CHAT}
           element={<ProfileChat />}
+        ></Route>
+        <Route
+          path={ROUTER_PATH.PROFILE_OWNER_PACKAGE}
+          element={<ProfileOwnerPackage />}
         ></Route>
       </Route>
       {/* PROFILE */}

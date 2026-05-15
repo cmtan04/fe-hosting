@@ -8,19 +8,14 @@ import {
   getLocationByCode,
   getRelatedLocation,
 } from "@api/configs/location.config";
-import type {
-  LocationParamDto,
-} from "@api/dtos/location.dto";
+import { LocationParamDto } from "@api/dtos/location.dto";
 import { LocationEndpoint } from "@api/endpoints/location.endpoint";
 import type { MediaItem } from "@common/config/common-config";
-import {
-  DEFAULT_MESSAGE,
-  NOTI_ERROR,
-} from "@common/constants/constants";
+import { DEFAULT_MESSAGE, NOTI_ERROR } from "@common/constants/constants";
+import { useRequireLoginAction } from "@common/hooks/useRequireLoginAction";
 import { useLoading } from "@providers/loadingProvider";
 import { useNotification } from "@providers/notificationProvider";
 import { ROUTER_PATH } from "@/router/Route";
-import { useRequireLoginAction } from "@common/hooks/useRequireLoginAction";
 
 export const useLocationDetail = () => {
   const location = useLocation();
@@ -34,7 +29,7 @@ export const useLocationDetail = () => {
   const { requireLoginAction } = useRequireLoginAction();
 
   const [filter, setFilter] = useState<LocationParamDto>({
-    locationCode: locationCode,
+    locationCode,
     page: 1,
     limit: 10,
   });
@@ -42,7 +37,7 @@ export const useLocationDetail = () => {
   useEffect(() => {
     if (locationCode) {
       setFilter({
-        locationCode: locationCode,
+        locationCode,
         page: 1,
         limit: 10,
       });
@@ -51,8 +46,8 @@ export const useLocationDetail = () => {
 
   const { data: locationDetail, isLoading } = useQuery({
     queryKey: [LocationEndpoint.GET_LOCATION_BY_CODE, locationCode],
-    queryFn: () => getLocationByCode(locationCode),
-    enabled: !!locationCode,
+    queryFn: () => getLocationByCode(locationCode ?? ""),
+    enabled: Boolean(locationCode),
   });
 
   const media: MediaItem[] =
@@ -64,6 +59,7 @@ export const useLocationDetail = () => {
   const { data: commentData, refetch: refetchComment } = useQuery({
     queryKey: [LocationEndpoint.GET_LOCATION_COMMENT, filter],
     queryFn: () => getComment(filter),
+    enabled: Boolean(locationCode),
   });
 
   const {
@@ -71,10 +67,7 @@ export const useLocationDetail = () => {
     isLoading: relatedLocationLoading,
     isError: relatedLocationError,
   } = useQuery({
-    queryKey: [
-      `${LocationEndpoint.GET_RELATED_LOCATION}/related`,
-      locationCode,
-    ],
+    queryKey: [`${LocationEndpoint.GET_RELATED_LOCATION}/related`, locationCode],
     queryFn: () =>
       getRelatedLocation({
         locationCode: locationCode ?? "",
@@ -102,9 +95,7 @@ export const useLocationDetail = () => {
       toUserCd: string;
       type: string;
       locationCd?: string;
-    }) => {
-      return createConversation(toUserCd, type, locationCd);
-    },
+    }) => createConversation(toUserCd, type, locationCd),
     onSuccess: (data) => {
       navigate(ROUTER_PATH.PROFILE_CHAT, {
         state: {
@@ -143,7 +134,7 @@ export const useLocationDetail = () => {
         contactMutation.mutate({ toUserCd, type, locationCd });
       },
       {
-        message: "Bạn cần đăng nhập để liên hệ chủ địa điểm.",
+        message: "Ban can dang nhap de lien he chu phong.",
       },
     );
   };

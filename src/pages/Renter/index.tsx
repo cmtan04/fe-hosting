@@ -15,6 +15,8 @@ export const RenterLayout = () => {
     draft,
     typeList,
     serviceList,
+    ownerPackage,
+    refetchOwnerPackage,
     isUploading,
     isSubmitting,
     handleBasicInfoNext,
@@ -70,6 +72,8 @@ export const RenterLayout = () => {
             draft={draft}
             typeList={typeList}
             services={serviceList}
+            ownerPackage={ownerPackage}
+            onRefreshOwnerPackage={refetchOwnerPackage}
             currentStep={step}
             isSubmitting={isSubmitting}
             onBack={() => handleStepChange(1)}

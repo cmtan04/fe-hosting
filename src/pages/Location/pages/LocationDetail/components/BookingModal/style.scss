@@ -1,0 +1,141 @@
+@import "@/color.scss";
+
+.booking-modal {
+  .ant-modal-content {
+    background-color: $primary_color;
+    color: $white_color;
+    border-radius: 12px;
+    padding: 24px;
+    
+    .ant-modal-close {
+      color: $white_color;
+      &:hover {
+        background-color: rgba($white_color, 0.1);
+      }
+    }
+
+    .ant-modal-title {
+      background: transparent;
+      .ant-typography {
+        color: #c9a84c; // Gold accent
+        margin: 0;
+      }
+    }
+
+    .ant-divider {
+      border-color: rgba($white_color, 0.1);
+    }
+  }
+
+  &__content {
+    .location-info {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+
+      &__image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #c9a84c;
+      }
+
+      &__details {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .ant-typography {
+          color: $white_color;
+        }
+
+        .location-info__price {
+          color: #c9a84c;
+          font-weight: 600;
+          font-size: 16px;
+        }
+        
+        .location-info__address {
+          color: rgba($white_color, 0.7);
+          font-size: 13px;
+        }
+      }
+    }
+
+    .booking-form {
+      .ant-form-item-label > label {
+        color: $white_color;
+      }
+
+      .ant-picker {
+        background-color: rgba($white_color, 0.05);
+        border-color: rgba($white_color, 0.2);
+        .ant-picker-input > input {
+          color: $white_color;
+        }
+        .ant-picker-suffix {
+          color: rgba($white_color, 0.5);
+        }
+        .ant-picker-separator {
+          color: $white_color;
+        }
+      }
+
+      .ant-input {
+        background-color: rgba($white_color, 0.05);
+        border-color: rgba($white_color, 0.2);
+        color: $white_color;
+        &::placeholder {
+          color: rgba($white_color, 0.3);
+        }
+      }
+    }
+
+    .fee-policy {
+      margin-top: 16px;
+      padding: 12px;
+      background-color: rgba(#c9a84c, 0.1);
+      border-left: 4px solid #c9a84c;
+      border-radius: 4px;
+
+      &__icon {
+        color: #c9a84c;
+        margin-top: 4px;
+      }
+
+      .ant-typography {
+        color: rgba($white_color, 0.9);
+      }
+
+      ul {
+        margin: 4px 0 0;
+        padding-left: 20px;
+        color: rgba($white_color, 0.8);
+      }
+    }
+  }
+
+  .btn-pay {
+    background-color: #c9a84c;
+    color: #1a1410;
+    border: none;
+    font-weight: 600;
+    
+    &:hover {
+      background-color: lighten(#c9a84c, 10%) !important;
+      color: #1a1410 !important;
+    }
+  }
+
+  .btn-cancel {
+    background: transparent;
+    color: $white_color;
+    border-color: rgba($white_color, 0.3);
+
+    &:hover {
+      border-color: $white_color !important;
+      color: $white_color !important;
+    }
+  }
+}

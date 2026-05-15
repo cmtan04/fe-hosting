@@ -1,4 +1,4 @@
-import { Col, Row, Image, Spin } from "antd";
+import { Button, Col, Row, Image, Spin } from "antd";
 import fallbackAvatar from "@assets/images/profile/icn_profile.svg";
 import fallbackCover from "@assets/images/home/home-background2.jpg";
 import type { UserProfileResponseDto } from "@api/dtos/user.dto";
@@ -12,6 +12,8 @@ interface ProfileHeaderProps {
   isUploadingCover: boolean;
   onAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCoverChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  roomViewActionLabel?: string;
+  onRoomViewAction?: () => void;
 }
 
 export const ProfileHeader = ({
@@ -22,14 +24,16 @@ export const ProfileHeader = ({
   isUploadingCover,
   onAvatarChange,
   onCoverChange,
+  roomViewActionLabel,
+  onRoomViewAction,
 }: ProfileHeaderProps) => {
   const headerCover = coverUrl || user?.coverUrl || fallbackCover;
   const headerAvatar = url || user?.avatarUrl || fallbackAvatar;
   const headerName = user?.fullName || "Người dùng";
-  const headerSub =user?.username || "";
+  const headerSub = user?.username || "";
 
   return (
-    <Col md={24}className="profile__information-header">
+    <Col md={24} className="profile__information-header">
       <div className="profile__information-cover">
         <Image
           rootClassName="image-background"
@@ -69,7 +73,7 @@ export const ProfileHeader = ({
         </label>
       </div>
 
-      <Row gutter={[16, 16]}>
+      <Row >
         <Col lg={6} md={24} xs={24}>
           <div className="avatar-container">
             <Image
@@ -116,16 +120,25 @@ export const ProfileHeader = ({
           </div>
         </Col>
 
-        <Col lg={18} md={24} xs={24} className="profile__information-header-content">
+        <Col
+          lg={18}
+          md={24}
+          xs={24}
+          className="profile__information-header-content"
+        >
           <div className="content__info">
             <div className="content__info-head">
               <p className="content__info-text name">{headerName}</p>
+              <Button
+                type="primary"
+                onClick={onRoomViewAction}
+              >
+                {roomViewActionLabel}
+              </Button>
             </div>
             <p className="content__info-text subtitle">@{headerSub}</p>
           </div>
         </Col>
-
-        
       </Row>
     </Col>
   );

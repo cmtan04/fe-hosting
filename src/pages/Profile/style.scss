@@ -10,23 +10,27 @@
   }
 
   &__body {
-    min-width: 100%;
-    height: calc(100% - 64px);
+    width: 100% !important;
+    max-width: 1400px;
+    padding: 0 24px;
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap !important;
-    align-items: stretch;
-    margin: 0 !important;
+    align-items: flex-start;
+    margin: 0 auto !important;
+  }
 
-    > .ant-col {
-      min-width: 0;
-    }
+  &__body-sidebar {
+    padding: 0 !important;
   }
 
   &__body-content {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
     height: fit-content;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    border-radius: 12px;
+    border: 1px solid rgba($white_color, 0.1);
   }
 }

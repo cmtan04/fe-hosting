@@ -8,14 +8,14 @@ import {
   type EditableLocationMediaItem,
 } from "./media";
 
-const STORAGE_KEY = "create_location_draft_v2";
+const DEFAULT_STORAGE_KEY = "create_location_draft_v2";
 
-const readDraft = (): CreateLocationDraft => {
+const readDraft = (storageKey: string): CreateLocationDraft => {
   if (!globalThis.window) {
     return createEmptyLocationDraft();
   }
 
-  const raw = sessionStorage.getItem(STORAGE_KEY);
+  const raw = sessionStorage.getItem(storageKey);
   if (!raw) {
     return createEmptyLocationDraft();
   }
@@ -46,21 +46,23 @@ const readDraft = (): CreateLocationDraft => {
       services: parsed.services ?? [],
     } as CreateLocationDraft;
   } catch {
-    sessionStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem(storageKey);
     return createEmptyLocationDraft();
   }
 };
 
-export const useCreateLocationDraft = () => {
-  const [draft, setDraft] = useState<CreateLocationDraft>(readDraft);
+export const useCreateLocationDraft = (storageKey = DEFAULT_STORAGE_KEY) => {
+  const [draft, setDraft] = useState<CreateLocationDraft>(() =>
+    readDraft(storageKey),
+  );
 
   useEffect(() => {
     if (!globalThis.window) {
       return;
     }
 
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
-  }, [draft]);
+    sessionStorage.setItem(storageKey, JSON.stringify(draft));
+  }, [draft, storageKey]);
 
   const actions = useMemo(
     () => ({
@@ -86,11 +88,17 @@ export const useCreateLocationDraft = () => {
         const nextDraft = createEmptyLocationDraft();
         setDraft(nextDraft);
         if (globalThis.window) {
-          sessionStorage.removeItem(STORAGE_KEY);
+          sessionStorage.removeItem(storageKey);
+        }
+      },
+      initialize: (value: CreateLocationDraft) => {
+        setDraft(value);
+        if (globalThis.window) {
+          sessionStorage.setItem(storageKey, JSON.stringify(value));
         }
       },
     }),
-    [],
+    [storageKey],
   );
 
   return {

@@ -9,8 +9,6 @@ import {
 import { LocationEndpoint } from "@api/endpoints/location.endpoint";
 import { ROUTER_PATH } from "@router/Route";
 import {
-  DEFAULT_LIMIT,
-  DEFAULT_PAGE,
   parseFilterFromURL,
   buildURLFromFilter,
 } from "../utils";
@@ -129,7 +127,8 @@ export const useLocationList = () => {
   const handleCardClick = useCallback(
     (code: string) => {
       const url = ROUTER_PATH.LOCATION_DETAIL.replace(":code", code);
-      navigate(url, { state: { code } });
+      console.debug("[LocationList] navigate to detail", { code, url });
+      navigate(url);
     },
     [navigate],
   );

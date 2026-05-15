@@ -66,6 +66,8 @@ export interface CreateLocationRequestDto {
   description?: string;
   note?: string;
   area?: number;
+  cancellationFeePercent?: number;
+  rescheduleFeePercent?: number;
   pricing: LocationPricingDto;
   availability?: LocationAvailabilityDto;
   primaryAddress: LocationAddressDto;
@@ -78,7 +80,11 @@ export interface UpdateLocationRequestDto extends Partial<CreateLocationRequestD
 export interface ServiceDto {
   serviceCode: string;
   serviceName: string;
-  description: string;
+  description?: string;
+  serviceDescription?: string;
+  serviceLogo?: string;
+  code?: string;
+  name?: string;
   servicePrice?: number | string;
   servicePriceType?: ServicePriceType;
   serviceDiscount?: number;
@@ -159,6 +165,8 @@ export interface LocationDto {
   hasRent: number;
   renterCode: string | null;
   locationRate: number;
+  cancellationFeePercent?: number;
+  rescheduleFeePercent?: number;
   ownerCode: string;
   ownerName: string;
   ownerEmail: string;
