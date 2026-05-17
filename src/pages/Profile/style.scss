@@ -2,6 +2,7 @@
 
 .profile {
   width: 100%;
+  overflow: hidden !important;
 
   &__top {
     width: 100%;
@@ -19,9 +20,6 @@
     margin: 0 auto !important;
   }
 
-  &__body-sidebar {
-    padding: 0 !important;
-  }
 
   &__body-content {
     width: 100%;

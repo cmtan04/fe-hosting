@@ -1,6 +1,6 @@
-import pinIcn from "../../../assets/svg/profile/pin.svg";
-import { MessageTypeEnum } from "../../../common/constants/constants";
-import { formatLastMessageAt } from "../../../common/contexts/format";
+import pinIcn from "@assets/svg/profile/pin.svg";
+import { MessageTypeEnum } from "@common/constants/constants";
+import { formatLastMessageAt } from "@common/contexts/format";
 import "../style.scss";
 
 export interface ChatItemProps {
@@ -12,6 +12,7 @@ export interface ChatItemProps {
   focus?: boolean;
   type?: string;
   isPinned?: boolean;
+  unreadCount?: number;
 }
 
 export const ChatItem = (props: ChatItemProps) => {
@@ -33,6 +34,11 @@ export const ChatItem = (props: ChatItemProps) => {
             {props.name || "Cuộc trò chuyện"}
           </span>
           <span className="chat__item-meta">
+            {props.unreadCount !== undefined && props.unreadCount > 0 && (
+              <span className="chat__item-unread">
+                {props.unreadCount}
+              </span>
+            )}
             {props.isPinned && (
               <span className="chat__item-pin">
                 <img src={pinIcn} alt="pinned" />

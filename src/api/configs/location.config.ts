@@ -7,6 +7,7 @@ import type {
   LocationDetailApiDto,
   LocationDto,
   LocationParamDto,
+  LocationRadiusSearchParamDto,
   LocationSummaryDto,
   LocationTypeDto,
   PaginatedLocationApiDto,
@@ -86,6 +87,10 @@ const mapLocationSummary = (location: LocationSummaryDto): LocationDto => ({
   ownerPhone: location.owner.phone,
   ownerAddress: location.owner.fullAddress,
   ownerCity: location.owner.city,
+  distanceKm:
+    typeof location.distanceKm === "number"
+      ? Number(location.distanceKm)
+      : undefined,
   address: location.primaryAddress ? [mapAddress(location.primaryAddress)] : [],
   services: [],
   media: [],
@@ -143,6 +148,19 @@ export const getLocationByFilter = async (
     LocationEndpoint.GET_LOCATIONS,
     {
       params: toLocationQueryParams(filter),
+    },
+  );
+
+  return mapLocationListResponse(response.data);
+};
+
+export const getLocationsNearCoordinates = async (
+  params: LocationRadiusSearchParamDto,
+): Promise<PaginatedLocationDto> => {
+  const response = await axiosClient.get<PaginatedLocationApiDto>(
+    LocationEndpoint.GET_LOCATIONS,
+    {
+      params,
     },
   );
 

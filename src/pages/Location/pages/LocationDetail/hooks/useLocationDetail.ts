@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -10,6 +10,7 @@ import {
 } from "@api/configs/location.config";
 import { LocationParamDto } from "@api/dtos/location.dto";
 import { LocationEndpoint } from "@api/endpoints/location.endpoint";
+import { ConverationEndpoint } from "@api/endpoints/chat.endpoint";
 import type { MediaItem } from "@common/config/common-config";
 import { DEFAULT_MESSAGE, NOTI_ERROR } from "@common/constants/constants";
 import { useRequireLoginAction } from "@common/hooks/useRequireLoginAction";
@@ -24,6 +25,7 @@ export const useLocationDetail = () => {
     (location.state as { code?: string } | null)?.code ??
     locationCodeFromParams;
   const { setLoading } = useLoading();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { showNotification } = useNotification();
   const { requireLoginAction } = useRequireLoginAction();
@@ -96,10 +98,14 @@ export const useLocationDetail = () => {
       type: string;
       locationCd?: string;
     }) => createConversation(toUserCd, type, locationCd),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
+        queryKey: [ConverationEndpoint.GET_CHAT_CONVERSATION],
+      });
+
       navigate(ROUTER_PATH.PROFILE_CHAT, {
         state: {
-          conversationId: data?.id,
+          conversationId: data?.conversationId ?? data?.id,
           source: "location-detail",
         },
       });

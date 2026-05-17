@@ -42,7 +42,8 @@ export interface ConversationResponseDto {
 }
 
 export interface ConversationCreateResponseDto {
-  id: number;
+  id?: number;
+  conversationId?: number;
   createdByUserId: number;
   status: string;
   type: string;

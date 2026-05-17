@@ -1,0 +1,131 @@
+@import "@/color.scss";
+
+.chat-message-bubble {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+
+  &.is-mine {
+    justify-content: flex-end;
+
+    .chat-message-bubble__body {
+      background: rgba(53, 129, 124, 0.13);
+      border-color: rgba(53, 129, 124, 0.22);
+    }
+
+    .chat-message-bubble__text-bubble {
+      background: rgba(53, 129, 124, 0.13);
+      border-color: rgba(53, 129, 124, 0.22);
+    }
+  }
+
+  .ant-avatar {
+    flex: 0 0 auto;
+    align-self: flex-end;
+    background: #edf2f5;
+  }
+
+  &__content {
+    min-width: 0;
+    width: fit-content;
+    max-width: min(620px, 72%);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  &__body {
+    min-width: 0;
+    padding: 10px 12px 7px;
+    border: 1px solid #e5eaef;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #00293a;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+
+    &--media-only {
+      padding: 0;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    &--with-attachments {
+      padding: 0;
+      border: none;
+      background: transparent !important;
+      box-shadow: none;
+    }
+  }
+
+  &__text-bubble {
+    min-width: 0;
+    padding: 10px 12px 7px;
+    border: 1px solid #e5eaef;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #00293a;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+  }
+
+  &__text {
+    margin: 0 !important;
+    color: #00293a;
+    font-family: $font_family_1 !important;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 500;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  &__meta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    color: rgba(0, 41, 58, 0.48);
+    font-family: $font_family_1 !important;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.2;
+
+    .anticon {
+      font-size: 12px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-message-bubble {
+    &__content {
+      max-width: calc(100vw - 92px);
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .chat-message-bubble {
+    gap: 8px;
+
+    .ant-avatar {
+      width: 24px !important;
+      height: 24px !important;
+      line-height: 24px !important;
+    }
+
+    &__content {
+      max-width: calc(100vw - 78px);
+    }
+
+    &__body {
+      padding: 9px 10px 7px;
+    }
+
+    &__text-bubble {
+      padding: 9px 10px 7px;
+    }
+  }
+}

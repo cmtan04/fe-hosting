@@ -1,10 +1,10 @@
 import "../style.scss";
 import { DownloadOutlined, EyeOutlined } from "@ant-design/icons";
-import tick from "../../../assets/svg/tick.svg";
-import doubleTick from "../../../assets/svg/doubleTick.svg";
-import type { MessageAttachmentResponseDto } from "../../../api/dtos/chat.dto";
-import { formatLastMessageAt } from "../../../common/contexts/format";
-import { MessageType } from "../../../common/constants/constants";
+import tick from "@assets/svg/tick.svg";
+import doubleTick from "@assets/svg/doubleTick.svg";
+import type { MessageAttachmentResponseDto } from "@api/dtos/chat.dto";
+import { formatLastMessageAt } from "@common/contexts/format";
+import { MessageType } from "@common/constants/constants";
 
 export interface ChatLabelProps {
   isYour: boolean;
@@ -13,6 +13,7 @@ export interface ChatLabelProps {
   avartar: string;
   type?: string;
   attachments?: MessageAttachmentResponseDto[];
+  metadata?: Record<string, unknown> | null;
   onOpenImageViewer?: (
     images: MessageAttachmentResponseDto[],
     startIndex: number,

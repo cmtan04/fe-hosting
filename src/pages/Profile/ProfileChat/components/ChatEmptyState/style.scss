@@ -1,0 +1,29 @@
+@import "@/color.scss";
+
+.chat-empty-state {
+  width: 100%;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+
+  &__title {
+    margin: 8px 0 4px !important;
+    color: $primary-color;
+    font-family: $font_family_1 !important;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  &__description {
+    max-width: 340px;
+    margin: 0 auto !important;
+    color: rgba(0, 41, 58, 0.62);
+    font-family: $font_family_1 !important;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}

@@ -1,0 +1,68 @@
+@import "@/color.scss";
+
+.chat-header {
+  min-width: 0;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e5eaef;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+
+  .ant-avatar {
+    flex: 0 0 auto;
+    border-radius: 14px;
+    background: #edf2f5;
+  }
+
+  &__back {
+    flex: 0 0 auto;
+  }
+
+  &__content {
+    min-width: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__name {
+    color: #00293a;
+    font-family: $font_family_1 !important;
+    font-size: 17px;
+    line-height: 1.35;
+  }
+
+  &__email {
+    color: rgba(0, 41, 58, 0.62);
+    font-family: $font_family_1 !important;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  &__nickname-input {
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-header {
+    min-height: 64px;
+    padding: 8px 10px;
+
+    .ant-avatar {
+      width: 44px !important;
+      height: 44px !important;
+      line-height: 44px !important;
+      border-radius: 12px;
+    }
+
+    &__name {
+      font-size: 15px;
+    }
+  }
+}

@@ -1,0 +1,26 @@
+.chat-message-list {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid #e5eaef;
+  border-radius: 12px;
+  background: #f8fafb;
+
+  &__loading {
+    flex: 1 1 auto;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-message-list {
+    padding: 12px 10px;
+  }
+}

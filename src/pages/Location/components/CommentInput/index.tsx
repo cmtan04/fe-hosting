@@ -1,8 +1,7 @@
-import { Rate } from "antd";
+import { Button, Input, Rate } from "antd";
 import { useState } from "react";
 import type { ChatAndCommentDto } from "../../../../api/dtos/common.dto";
 import type { UserProfileResponseDto } from "../../../../api/dtos/user.dto";
-import { ChatInput } from "../../../../components/Chat/ChatInput";
 import "../style.scss";
 
 interface CommentInputProps {
@@ -12,17 +11,22 @@ interface CommentInputProps {
 
 export const CommentInput = (props: CommentInputProps) => {
   const [rate, setRate] = useState<number>();
+  const [content, setContent] = useState("");
 
-  const handleSubmitComment = (value: ChatAndCommentDto) => {
+  const handleSubmitComment = () => {
+    const trimmedContent = content.trim();
+    if (!trimmedContent) return;
+
     const payload: ChatAndCommentDto = {
-      content: value.content,
+      content: trimmedContent,
       ratevalue: rate,
-      metaData: value.metaData,
+      metaData: [],
     };
 
     props?.onSubmit(payload);
 
-    setRate(0);
+    setContent("");
+    setRate(undefined);
   };
   return (
     <div className="comment__input">
@@ -38,13 +42,24 @@ export const CommentInput = (props: CommentInputProps) => {
       <div className="comment__input-right">
         <div className="row-1">
           <p className="row-1-title">Đánh giá</p>
-          <Rate onChange={(value) => setRate(value)} />
+          <Rate value={rate} onChange={(value) => setRate(value)} />
         </div>
 
         <div className="row-2">
-          <ChatInput
-            onSubmit={(value: ChatAndCommentDto) => handleSubmitComment(value)}
+          <Input.TextArea
+            value={content}
+            onChange={(event) => setContent(event.target.value)}
+            onPressEnter={(event) => {
+              if (!event.shiftKey) {
+                event.preventDefault();
+                handleSubmitComment();
+              }
+            }}
+            rows={4}
           />
+          <Button type="primary" onClick={handleSubmitComment}>
+            Gui
+          </Button>
         </div>
       </div>
     </div>

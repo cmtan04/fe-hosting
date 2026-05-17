@@ -117,6 +117,7 @@ const CITY_TO_REGION = [
       "An Giang",
       "Đồng Tháp",
       "Cà Mau",
+      "Thành Phố Thủ Đức",
     ],
   },
 ] as const;

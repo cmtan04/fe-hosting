@@ -128,6 +128,7 @@ export interface LocationSummaryDto {
   type: LocationTypeSummaryDto;
   primaryAddress: LocationAddressDto | null;
   owner: LocationOwnerDto;
+  distanceKm?: number;
 }
 
 export interface LocationDetailApiDto extends LocationSummaryDto {
@@ -174,6 +175,7 @@ export interface LocationDto {
   ownerPhone?: string | null;
   ownerAddress?: string | null;
   ownerCity?: string | null;
+  distanceKm?: number;
   services?: ServiceDto[];
   address?: AddressDto[];
   media?: LocationMediaDto[];
@@ -220,6 +222,14 @@ export interface LocationParamDto {
 
 export interface RelatedLocationParamDto {
   locationCode: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface LocationRadiusSearchParamDto {
+  lat: number;
+  lng: number;
+  radiusKm: number;
   page?: number;
   limit?: number;
 }

@@ -1,20 +1,25 @@
 import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isAxiosError } from "axios";
-import { uploadImage } from "../../../api/configs/common.config";
-import { sendChatMessage } from "../../../api/configs/chat.config";
+import {
+  uploadFile,
+  uploadImage,
+  uploadVideo,
+} from "@api/configs/common.config";
+import { sendChatMessage } from "@api/configs/chat.config";
 import type {
   MessageResponseDto,
   SendMessageAttachmentDto,
-} from "../../../api/dtos/chat.dto";
-import emoji from "../../../assets/svg/emoji.svg";
-import remove from "../../../assets/svg/remove.svg";
-import send from "../../../assets/svg/send.svg";
+} from "@api/dtos/chat.dto";
+import emoji from "@assets/svg/emoji.svg";
+import file from "@assets/svg/file.svg";
+import remove from "@assets/svg/remove.svg";
+import send from "@assets/svg/send.svg";
 import {
   DEFAULT_MESSAGE,
   NOTI_ERROR,
-} from "../../../common/constants/constants";
-import { useNotification } from "../../../providers/notificationProvider";
+} from "@common/constants/constants";
+import { useNotification } from "@providers/notificationProvider";
 
 export interface ChatInputProps {
   conversationId: number;
@@ -111,17 +116,31 @@ export const ChatInput = (props: ChatInputProps) => {
     }
   };
 
+  const uploadAttachmentFile = async (file: File) => {
+    const formData = new FormData();
+
+    if (file.type.startsWith("image/")) {
+      formData.append("image", file);
+      return uploadImage(formData);
+    }
+
+    if (file.type.startsWith("video/")) {
+      formData.append("video", file);
+      return uploadVideo(formData);
+    }
+
+    formData.append("file", file);
+    return uploadFile(formData);
+  };
+
   const uploadAttachments = async (
     selectedFiles: File[],
   ): Promise<SendMessageAttachmentDto[]> => {
     return Promise.all(
       selectedFiles.map(async (file) => {
         try {
-          const formData = new FormData();
-          formData.append("file", file);
-
           const [uploadResult, dimensions] = await Promise.all([
-            uploadImage(formData),
+            uploadAttachmentFile(file),
             getImageDimensions(file),
           ]);
 
@@ -134,14 +153,15 @@ export const ChatInput = (props: ChatInputProps) => {
             height: dimensions?.height,
           };
         } catch (error) {
-          throw new Error(`Khong the tai file ${file.name}: ${resolveErrorMessage(error)}`);
+          throw new Error(
+            `Khong the tai file ${file.name}: ${resolveErrorMessage(error)}`,
+          );
         }
       }),
     );
   };
 
   const handleUploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("click");
     const selectedFiles = e.target.files;
     if (!selectedFiles || selectedFiles.length === 0) return;
 
@@ -266,11 +286,13 @@ export const ChatInput = (props: ChatInputProps) => {
         onClick={openFilePicker}
         disabled={isBusy}
         aria-label="Upload file"
-      />
+      >
+        <img src={file} alt="" />
+      </button>
       <input
         id="upload"
         type="file"
-        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
+        accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
         multiple
         ref={fileInputRef}
         onChange={handleUploadImage}

@@ -8,10 +8,7 @@ import {
 } from "@api/configs/location.config";
 import { LocationEndpoint } from "@api/endpoints/location.endpoint";
 import { ROUTER_PATH } from "@router/Route";
-import {
-  parseFilterFromURL,
-  buildURLFromFilter,
-} from "../utils";
+import { parseFilterFromURL, buildURLFromFilter } from "../utils";
 
 export const useLocationList = () => {
   const location = useLocation();
@@ -25,7 +22,10 @@ export const useLocationList = () => {
   const hasHandledState = useRef(false);
   useEffect(() => {
     if (hasHandledState.current) return;
-    const routeState = location.state as { rent?: string; location?: string } | null;
+    const routeState = location.state as {
+      rent?: string;
+      location?: string;
+    } | null;
     if (!routeState?.rent && !routeState?.location) return;
 
     hasHandledState.current = true;
@@ -75,7 +75,7 @@ export const useLocationList = () => {
       filter.sortOrder,
       // Lưu ý: filter.page không đưa vào queryKey vì infinite scroll quản lý pageParam riêng
     ],
-    queryFn: ({ pageParam = 1 }) => 
+    queryFn: ({ pageParam = 1 }) =>
       getLocationByFilter({ ...filter, page: pageParam as number }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
@@ -119,9 +119,10 @@ export const useLocationList = () => {
       updateFilter({
         ...sidebarFilter,
         searchValue: filter.searchValue,
+        addressRegion: filter.addressRegion,
       });
     },
-    [updateFilter, filter.searchValue],
+    [updateFilter, filter.searchValue, filter.addressRegion],
   );
 
   const handleCardClick = useCallback(

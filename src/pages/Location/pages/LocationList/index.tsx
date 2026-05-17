@@ -8,13 +8,20 @@ import {
   FilterOutlined,
   AppstoreOutlined,
   BarsOutlined,
+  EnvironmentOutlined,
 } from "@ant-design/icons";
 import { isAxiosError } from "axios";
 import { DEFAULT_MESSAGE } from "@common/constants/constants";
+import { getLocationByFilter } from "@api/configs/location.config";
 import type { LocationDto } from "@api/dtos/location.dto";
+import { LocationEndpoint } from "@api/endpoints/location.endpoint";
 import { useState, useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { LocationBar } from "../../components/LocationBar";
 import { isFavoriteLocation } from "@common/utils/favoriteLocations";
+import { LocationListMap } from "./components/LocationListMap";
+
+type LocationViewMode = "grid" | "list" | "map";
 
 export const LocationList = () => {
   const {
@@ -35,7 +42,7 @@ export const LocationList = () => {
     setIsFilterOpen,
   } = useLocationList();
 
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<LocationViewMode>("grid");
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   // Gộp tất cả các trang dữ liệu từ infinite query thành một mảng duy nhất
@@ -47,10 +54,41 @@ export const LocationList = () => {
   const errorMessage = isAxiosError(error)
     ? (error.response?.data?.message ?? DEFAULT_MESSAGE)
     : DEFAULT_MESSAGE;
+  const shouldFetchMapLocations =
+    viewMode === "map" && locationTotal > locations.length;
+
+  const {
+    data: mapLocationData,
+    isFetching: isFetchingMapLocations,
+  } = useQuery({
+    queryKey: [
+      LocationEndpoint.GET_LOCATION_BY_FILTER,
+      "map",
+      filter.searchValue,
+      filter.locationType,
+      filter.addressCity,
+      filter.addressRegion,
+      filter.minPrice,
+      filter.maxPrice,
+      filter.minArea,
+      filter.maxArea,
+      filter.sortBy,
+      filter.sortOrder,
+      locationTotal,
+    ],
+    queryFn: () =>
+      getLocationByFilter({
+        ...filter,
+        page: 1,
+        limit: locationTotal,
+      }),
+    enabled: shouldFetchMapLocations,
+  });
+  const mapLocations = mapLocationData?.data ?? locations;
 
   // Intersection Observer cho automatic infinite scroll
   useEffect(() => {
-    if (!hasNextPage || isFetchingNextPage) return;
+    if (viewMode === "map" || !hasNextPage || isFetchingNextPage) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -66,7 +104,7 @@ export const LocationList = () => {
     }
 
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [viewMode, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const renderContent = () => {
     if (isLoading) {
@@ -124,56 +162,72 @@ export const LocationList = () => {
 
     return (
       <>
-        <Row gutter={[24, 24]}>
-          {locations.map((locationItem: LocationDto) => {
-            // Khai báo biến ở đây (trong thân hàm map)
-            const itemProps = {
-              code: locationItem.locationCode,
-              typeName: locationItem.typeName,
-              name: locationItem.locationName,
-              description: locationItem.locationDescription,
-              address: locationItem.address?.[0]?.fullAddress,
-              rate: locationItem.locationRate,
-              price:
-                locationItem.locationPrice ||
-                locationItem.locationPriceAfterDeal,
-              priceUnit: locationItem.locationPriceUnit,
-              image: locationItem.locationLogo,
-              isFavourite: isFavoriteLocation(locationItem.locationCode),
-              onClick: handleCardClick,
-            };
+        {viewMode === "map" ? (
+          <>
+            {isFetchingMapLocations && (
+              <p className="location__list-status">
+                Dang cap nhat du lieu ban do...
+              </p>
+            )}
+            <LocationListMap
+              locations={mapLocations}
+              onOpenDetail={handleCardClick}
+            />
+          </>
+        ) : (
+          <Row gutter={[24, 24]}>
+            {locations.map((locationItem: LocationDto) => {
+              // Khai báo biến ở đây (trong thân hàm map)
+              const itemProps = {
+                code: locationItem.locationCode,
+                typeName: locationItem.typeName,
+                name: locationItem.locationName,
+                description: locationItem.locationDescription,
+                address: locationItem.address?.[0]?.fullAddress,
+                rate: locationItem.locationRate,
+                price:
+                  locationItem.locationPrice ||
+                  locationItem.locationPriceAfterDeal,
+                priceUnit: locationItem.locationPriceUnit,
+                image: locationItem.locationLogo,
+                isFavourite: isFavoriteLocation(locationItem.locationCode),
+                onClick: handleCardClick,
+              };
 
-            return (
-              <Col
-                xs={24}
-                sm={viewMode === "grid" ? 12 : 24}
-                md={viewMode === "grid" ? 8 : 24}
-                key={locationItem.locationCode}
-              >
-                {viewMode === "grid" && isSmall ? (
-                  <LocationCard {...itemProps} />
-                ) : (
-                  <LocationBar {...itemProps} />
-                )}
-              </Col>
-            );
-          })}
-        </Row>
+              return (
+                <Col
+                  xs={24}
+                  sm={viewMode === "grid" ? 12 : 24}
+                  md={viewMode === "grid" ? 8 : 24}
+                  key={locationItem.locationCode}
+                >
+                  {viewMode === "grid" && isSmall ? (
+                    <LocationCard {...itemProps} />
+                  ) : (
+                    <LocationBar {...itemProps} />
+                  )}
+                </Col>
+              );
+            })}
+          </Row>
+        )}
 
         {/* Cột mốc để trigger tải thêm */}
-        <div ref={loadMoreRef} style={{ height: "20px", margin: "20px 0" }}>
-          {isFetchingNextPage && (
-            <div
-              style={{
-                textAlign: "center",
-                color: "var(--primary-color)",
-                fontWeight: 500,
-              }}
-            >
-              Đang tải thêm kết quả...
-            </div>
-          )}
-        </div>
+        {viewMode !== "map" && (
+          <div ref={loadMoreRef} style={{ height: "20px", margin: "20px 0" }}>
+            {isFetchingNextPage && (
+              <div
+                style={{
+                  textAlign: "center",
+                  color: "var(--primary-color)",
+                  fontWeight: 500,
+                }}
+              >
+                Đang tải thêm kết quả...
+              </div>
+            )}
+          </div>
+        )}
       </>
     );
   };
@@ -238,6 +292,29 @@ export const LocationList = () => {
                       />
                     </Tooltip>
                   </div>
+                )}
+
+                <Tooltip title="Xem trong ban do">
+                  <Button
+                    type={viewMode === "map" ? "primary" : "default"}
+                    icon={<EnvironmentOutlined />}
+                    onClick={() => setViewMode("map")}
+                    size="small"
+                  >
+                    Ban do
+                  </Button>
+                </Tooltip>
+
+                {!isSmall && viewMode === "map" && (
+                  <Tooltip title="Quay lai danh sach">
+                    <Button
+                      icon={<BarsOutlined />}
+                      onClick={() => setViewMode("list")}
+                      size="small"
+                    >
+                      Danh sach
+                    </Button>
+                  </Tooltip>
                 )}
 
                 {!isDesktop && (
