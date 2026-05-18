@@ -34,7 +34,7 @@ export const getOwnerPackageActionLabel = (
   currentPlanCode?: string,
 ) => {
   if (currentPlanCode === plan.planCode) {
-    return "Gói hiện tại của bạn";
+    return "Gói hiện tại ";
   }
 
   if (currentPlanCode) {

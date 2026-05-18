@@ -83,7 +83,7 @@ export const ProfileOwnerPackage = () => {
   }
 
   let packagePlansContent = (
-    <Row gutter={[16, 16]}>
+    <Row gutter={[16, 16]} className="profile-owner-package__planList">
       {visiblePlans.map((plan) => (
         <Col xs={12} md={6} key={plan.planCode}>
           <OwnerPackagePlanCard
