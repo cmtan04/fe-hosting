@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { ROUTER_PATH } from "@/router/Route";
 import { useAuth } from "@common/contexts/authContext";
 import { FormSearch } from "@components/FormSearch/formSearch";
+import { EditOutlined, EyeOutlined } from "@ant-design/icons";
 
 export const ProfileLocation = () => {
   const [form] = Form.useForm();
@@ -58,7 +59,7 @@ export const ProfileLocation = () => {
     navigate(ROUTER_PATH.RENTER);
   };
 
-  const viewLocation = (value: string) => {
+  const EditLocation = (value: string) => {
     navigate(ROUTER_PATH.PROFILE_LOCATION_DETAIL, {
       state: {
         locationCode: value,
@@ -66,25 +67,11 @@ export const ProfileLocation = () => {
     });
   };
 
-  const rentOption: SelectOptionProps[] = [
-    {
-      key: 0,
-      value: 0,
-      label: "Chưa thuê",
-    },
-    {
-      key: 1,
-      value: 1,
-      label: "Đã thuê",
-    },
-  ];
+  const viewLocation = (value: string) => {
+    navigate(ROUTER_PATH.LOCATION_DETAIL.replace(":code", value));
+  };
 
   const header: TableCommonProps[] = [
-    {
-      key: 1,
-      label: "Mã địa điểm",
-      value: "locationCode",
-    },
     {
       key: 2,
       label: "Tên địa điểm",
@@ -101,26 +88,6 @@ export const ProfileLocation = () => {
       ),
     },
     {
-      key: 5,
-      label: "Trạng thái",
-      value: "hasRent",
-      render: (value: number) => {
-        if (value === 0) {
-          return (
-            <div className="status ready">
-              <p>{rentOption.find((item) => item.value === value)?.label}</p>
-            </div>
-          );
-        } else {
-          return (
-            <div className="status rented">
-              <p>{rentOption.find((item) => item.value === value)?.label}</p>
-            </div>
-          );
-        }
-      },
-    },
-    {
       key: 6,
       label: "Phân loại",
       value: "typeName",
@@ -131,11 +98,17 @@ export const ProfileLocation = () => {
       value: "action",
       render: (index: any, record: any) => {
         return (
-          <div className="action-column">
+          <div className="action-column" style={{ display: "flex", gap: "8px" }}>
             <Button
               htmlType="button"
-              icon={<img src={information} />}
+              icon={<EyeOutlined />}
               onClick={() => viewLocation(record.locationCode)}
+              className="button-infor"
+            />
+            <Button
+              htmlType="button"
+              icon={<EditOutlined />}
+              onClick={() => EditLocation(record.locationCode)}
               className="button-infor"
             />
           </div>

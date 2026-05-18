@@ -22,7 +22,6 @@ import {
 } from "../utils";
 
 interface ConversationFilter {
-  id: number;
   page: number;
   limit: number;
 }
@@ -51,7 +50,6 @@ export const useChatMessages = (
   const messageBodyRef = useRef<HTMLElement | null>(null);
   const messageEndRef = useRef<HTMLDivElement | null>(null);
   const [filter, setFilter] = useState<ConversationFilter>({
-    id: conversation?.conversationId || 0,
     page: 1,
     limit: 20,
   });
@@ -73,18 +71,19 @@ export const useChatMessages = (
   );
 
   useEffect(() => {
-    if (conversationId) {
-      setFilter((prev) => ({
-        ...prev,
-        id: conversationId,
-      }));
-    }
-  }, [conversationId]);
-
-  useEffect(() => {
     setNicknameInput(displayName);
     setIsNicknameEditing(false);
   }, [displayName, conversationId]);
+
+  const messageQueryKey = useMemo(
+    () => [
+      ConverationEndpoint.GET_CHAT_CONVERSATION_MESSAGE,
+      conversationId,
+      filter.page,
+      filter.limit,
+    ],
+    [conversationId, filter.limit, filter.page],
+  );
 
   const invalidateConversationList = useCallback(async () => {
     await queryClient.invalidateQueries({
@@ -120,9 +119,9 @@ export const useChatMessages = (
   });
 
   const { data: messages, isLoading } = useQuery<MessageResponseDto[]>({
-    queryKey: [ConverationEndpoint.GET_CHAT_CONVERSATION_MESSAGE, filter],
+    queryKey: messageQueryKey,
     queryFn: () =>
-      getConversationMessages(filter.id, {
+      getConversationMessages(conversationId!, {
         page: filter.page,
         limit: filter.limit,
       }),
@@ -155,7 +154,7 @@ export const useChatMessages = (
       if (event.data.conversationId !== conversationId) return;
 
       queryClient.setQueryData<MessageResponseDto[]>(
-        [ConverationEndpoint.GET_CHAT_CONVERSATION_MESSAGE, filter],
+        messageQueryKey,
         (currentMessages = []) => {
           if (currentMessages.some((item) => item.id === event.data.id)) {
             return currentMessages;
@@ -185,7 +184,7 @@ export const useChatMessages = (
         if (event.data.conversationId !== conversationId) return;
 
         queryClient.setQueryData<MessageResponseDto[]>(
-          [ConverationEndpoint.GET_CHAT_CONVERSATION_MESSAGE, filter],
+          messageQueryKey,
           (currentMessages = []) =>
             currentMessages.map((item) =>
               item.id === event.data.messageId
@@ -205,7 +204,7 @@ export const useChatMessages = (
       unsubscribeConversation();
       unsubscribeStatus();
     };
-  }, [conversationId, filter, queryClient]);
+  }, [conversationId, messageQueryKey, queryClient]);
 
   useEffect(() => {
     if (!messageBodyRef.current) return;

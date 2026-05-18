@@ -8,7 +8,7 @@ import {
   getLocationByCode,
   getRelatedLocation,
 } from "@api/configs/location.config";
-import { LocationParamDto } from "@api/dtos/location.dto";
+import type { LocationParamDto } from "@api/dtos/location.dto";
 import { LocationEndpoint } from "@api/endpoints/location.endpoint";
 import { ConverationEndpoint } from "@api/endpoints/chat.endpoint";
 import type { MediaItem } from "@common/config/common-config";

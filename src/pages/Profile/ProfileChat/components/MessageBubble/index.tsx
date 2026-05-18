@@ -1,4 +1,4 @@
-import { Avatar, Typography } from "antd";
+import { Avatar, Button, Typography } from "antd";
 import { CheckOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { MessageType } from "@common/constants/constants";
 import { formatLastMessageAt } from "@common/contexts/format";
@@ -6,6 +6,8 @@ import type { MessageBubbleView, OpenImageViewerHandler } from "../../types";
 import { AttachmentPreview } from "../AttachmentPreview";
 import { getMessageStatusLabel } from "../../utils";
 import "./style.scss";
+import { useNavigate } from "react-router-dom";
+import { ROUTER_PATH } from "@/router/Route";
 
 interface MessageBubbleProps {
   item: MessageBubbleView;
@@ -17,6 +19,7 @@ export const MessageBubble = ({
   onOpenImageViewer,
 }: MessageBubbleProps) => {
   const { message, isMine, avatarUrl, showStatus, messageStatus } = item;
+  const navigate = useNavigate();
   const statusLabel = getMessageStatusLabel(messageStatus);
   const attachments = message.attachments || [];
   const hasText = Boolean(message.content);
@@ -33,6 +36,17 @@ export const MessageBubble = ({
   ]
     .filter(Boolean)
     .join(" ");
+  const locationCode =
+    typeof message.metadata?.locationCd === "string"
+      ? message.metadata.locationCd
+      : null;
+  const handleSystemMessageClick = () => {
+    if (!locationCode) {
+      return;
+    }
+
+    navigate(ROUTER_PATH.LOCATION_DETAIL.replace(":code", locationCode));
+  };
 
   return (
     <div className={`chat-message-bubble ${isMine ? "is-mine" : ""}`}>
@@ -45,9 +59,9 @@ export const MessageBubble = ({
       <div className="chat-message-bubble__content">
         <div className={bodyClassName}>
           {message.type === MessageType.SYSTEM ? (
-            <Typography.Paragraph
-              className="chat-message-bubble__text"
+            <p
               dangerouslySetInnerHTML={{ __html: message.content || "" }}
+              onClick={handleSystemMessageClick}
             />
           ) : (
             <>

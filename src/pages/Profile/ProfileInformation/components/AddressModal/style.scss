@@ -1,19 +1,42 @@
 @import "@/color.scss";
 
 .profile__information-modal {
-  width: 60% !important;
-  & .ant-modal-container {
-    height: 520px !important;
+  width: min(960px, calc(100vw - 32px)) !important;
 
-    .map {
-      &__view {
-        max-height: 100% !important;
-        &__container {
-          .leaflet-container {
-            min-height: 480px;
-          }
-        }
+  .ant-modal-content {
+    padding: 20px;
+  }
+
+  .ant-modal-body {
+    height: 520px;
+    overflow: hidden;
+  }
+
+  .profile__information-modal-body {
+    height: 100%;
+  }
+
+  .map {
+    &__view {
+      height: 100%;
+
+      &__container {
+        height: 100%;
+        min-height: 0;
       }
+    }
+
+    &__view .leaflet-container {
+      height: 100%;
+      min-height: 0;
+      aspect-ratio: auto;
+      border-radius: 8px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .ant-modal-body {
+      height: 420px;
     }
   }
 }
