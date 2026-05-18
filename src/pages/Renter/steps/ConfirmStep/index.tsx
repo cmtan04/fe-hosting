@@ -15,12 +15,13 @@ import type {
 import type { CreateLocationDraft } from "@features/locationCreation/types";
 import { LocationMediaEditor } from "@components/LocationMediaEditor";
 import { resolveServiceUnit } from "@features/locationCreation/services";
-import { ServiceTag } from "@pages/Renter/components/ServiceTag";
 import {
   getOwnerPackagePlanLabel,
+  getVisibleOwnerPackagePlans,
   OwnerPackagePaymentInfoCard,
   OwnerPackagePlanCard,
 } from "@components/OwnerPackage";
+import { ServiceTag } from "@pages/Renter/components/ServiceTag";
 import { StepHeader } from "../../components/StepHeader";
 import { StepNavigation } from "../../components/StepNavigation";
 import { useConfirmStep } from "../../hooks/useConfirmStep";
@@ -83,6 +84,10 @@ export const ConfirmStep = ({
     enabled: isPackageModalOpen,
   });
 
+  const visiblePackagePlans = packagePlans
+    ? getVisibleOwnerPackagePlans(packagePlans, ownerPackage?.planCode)
+    : [];
+
   const buyPackageMutation = useMutation({
     mutationFn: buyOwnerPackage,
     onSuccess: async (data) => {
@@ -117,7 +122,7 @@ export const ConfirmStep = ({
 
   let packagePlansContent = (
     <Row gutter={[16, 16]}>
-      {packagePlans?.map((plan) => (
+      {visiblePackagePlans.map((plan) => (
         <Col xs={24} md={12} key={plan.planCode}>
           <OwnerPackagePlanCard
             plan={plan}
@@ -128,7 +133,12 @@ export const ConfirmStep = ({
             }
             onSelect={(planCode) => {
               setSelectedPlanCode(planCode);
-              if (packagePlans?.some((plan) => plan.planCode === planCode && Number(plan.price) <= 0)) {
+              if (
+                packagePlans?.some(
+                  (item) =>
+                    item.planCode === planCode && Number(item.price) <= 0,
+                )
+              ) {
                 setPaymentInfo(null);
               }
               buyPackageMutation.mutate({ planCode });
@@ -141,9 +151,10 @@ export const ConfirmStep = ({
 
   if (packagePlansLoading) {
     packagePlansContent = <p>Đang tải danh sách gói...</p>;
-  } else if (!packagePlans?.length) {
+  } else if (!visiblePackagePlans.length) {
     packagePlansContent = <Empty description="Chưa có gói đăng tin" />;
   }
+
   return (
     <div className="renter">
       <StepHeader title="Xác nhận thông tin" onCancel={onCancel} />
@@ -159,9 +170,7 @@ export const ConfirmStep = ({
           <div className="renter-packageStatus">
             <div>
               <span>Gói đăng tin</span>
-              <strong>
-                {getOwnerPackagePlanLabel(ownerPackage?.planCode)}
-              </strong>
+              <strong>{getOwnerPackagePlanLabel(ownerPackage?.planCode)}</strong>
             </div>
             <div>
               <span>Tin đang hiển thị</span>
@@ -268,7 +277,7 @@ export const ConfirmStep = ({
           </Button>
 
           {packagePlansContent}
-            
+
           {paymentInfo !== null && paymentInfo.amount > 0 && (
             <OwnerPackagePaymentInfoCard
               paymentInfo={paymentInfo}

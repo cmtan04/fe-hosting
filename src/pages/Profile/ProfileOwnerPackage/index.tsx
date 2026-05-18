@@ -4,10 +4,8 @@ import {
   Col,
   Empty,
   Row,
-  Space,
   Tag,
   Typography,
-  Statistic,
   message,
 } from "antd";
 import { CheckCircleOutlined, ClockCircleOutlined } from "@ant-design/icons";
@@ -21,15 +19,13 @@ import {
 import type { PaymentUrlResponseDto } from "@/api/dtos/payment.dto";
 import {
   getOwnerPackagePlanLabel,
+  getVisibleOwnerPackagePlans,
   OwnerPackagePaymentInfoCard,
   OwnerPackagePlanCard,
 } from "@components/OwnerPackage";
 import "./style.scss";
 
 const { Text, Title } = Typography;
-
-const formatDate = (value?: string | null) =>
-  value ? new Date(value).toLocaleString("vi-VN") : "Không giới hạn";
 
 export const ProfileOwnerPackage = () => {
   const [paymentInfo, setPaymentInfo] = useState<PaymentUrlResponseDto | null>(
@@ -49,6 +45,10 @@ export const ProfileOwnerPackage = () => {
     queryKey: ["owner-package-plans"],
     queryFn: getOwnerPackagePlans,
   });
+
+  const visiblePlans = plans
+    ? getVisibleOwnerPackagePlans(plans, subscription?.planCode)
+    : [];
 
   const buyMutation = useMutation({
     mutationFn: buyOwnerPackage,
@@ -84,7 +84,7 @@ export const ProfileOwnerPackage = () => {
 
   let packagePlansContent = (
     <Row gutter={[16, 16]}>
-      {plans?.map((plan) => (
+      {visiblePlans.map((plan) => (
         <Col xs={12} md={6} key={plan.planCode}>
           <OwnerPackagePlanCard
             className="profile-owner-package__plan"
@@ -105,7 +105,7 @@ export const ProfileOwnerPackage = () => {
     packagePlansContent = (
       <div className="profile-owner-package__loading">Dang tai...</div>
     );
-  } else if (!plans?.length) {
+  } else if (!visiblePlans.length) {
     packagePlansContent = <Empty description="Chua co goi dang tin" />;
   }
 
@@ -128,14 +128,12 @@ export const ProfileOwnerPackage = () => {
       </div>
 
       <Row gutter={[16, 16]}>
-        
-
         <Col span={24}>
           <Card title="Danh sách gói">{packagePlansContent}</Card>
         </Col>
       </Row>
 
-      {paymentInfo && paymentInfo.amount != 0 && (
+      {paymentInfo && paymentInfo.amount !== 0 && (
         <Card
           className="profile-owner-package__payment"
           title="Thanh toán SePay"

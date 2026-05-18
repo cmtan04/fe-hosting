@@ -16,7 +16,7 @@ export const LocationBooking = ({
 }: LocationBookingProps) => {
   const isRented = locationDetail?.renterCode !== null;
   const displayPrice =
-    locationDetail?.locationPriceAfterDeal || locationDetail?.locationPrice || 0;
+    locationDetail?.locationPrice || locationDetail?.locationPriceAfterDeal || 0;
 
   return (
     <div className="location-booking">

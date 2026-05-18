@@ -2,7 +2,7 @@ import { CreditCardOutlined } from "@ant-design/icons";
 import { Button, Card, Space, Typography } from "antd";
 import type { OwnerPackagePlanResponseDto } from "@api/dtos/payment.dto";
 import { formatMoney } from "@common/contexts/format";
-import { isFreePlan } from "../utils";
+import { getOwnerPackageActionLabel, isFreePlan } from "../utils";
 
 const { Text, Title } = Typography;
 
@@ -22,13 +22,7 @@ export const OwnerPackagePlanCard = ({
   className,
 }: OwnerPackagePlanCardProps) => {
   const isCurrentPlan = currentPlanCode === plan.planCode;
-  let actionLabel = "Mua gói";
-
-  if (isCurrentPlan) {
-    actionLabel = "Gói hiện tại của bạn";
-  } else if (isFreePlan(plan)) {
-    actionLabel = "Nhận ưu đãi";
-  }
+  const actionLabel = getOwnerPackageActionLabel(plan, currentPlanCode);
 
   return (
     <Card className={className}>
